@@ -1,20 +1,10 @@
-import { Component, OnInit } from '@angular/core'
-import { TranslateClientService } from './services/translate.service'
+import { Component } from '@angular/core'
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
   title = 'webapp'
-
-  constructor(private service: TranslateClientService) {}
-
-  ngOnInit(): void {
-    this.service
-      .listService()
-      .then((res) => console.log(res.services))
-      .catch((err) => console.error(err))
-  }
 }
