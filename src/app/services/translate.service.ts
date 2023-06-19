@@ -1,43 +1,31 @@
 import { Injectable } from '@angular/core'
+import { TranslateService } from '@buf/expectdigital_translate-agent.bufbuild_connect-es/translate/v1/translate_connect'
 import {
   CreateServiceRequest,
-  ListServicesRequest,
   ListServicesResponse,
   Service,
-} from 'proto/generated/proto/translate_pb'
-import { ServiceError, TranslateServiceClient } from 'proto/generated/proto/translate_pb_service'
+} from '@buf/expectdigital_translate-agent.bufbuild_es/translate/v1/translate_pb'
+import { createPromiseClient } from '@bufbuild/connect'
+import { createGrpcWebTransport } from '@bufbuild/connect-web'
 import { environment } from 'src/environments/environments'
 
 @Injectable({
   providedIn: 'root',
 })
-export class TranslateService {
-  private client: TranslateServiceClient
+export class TranslateClientService {
+  readonly transport = createGrpcWebTransport({ baseUrl: environment.backendUrl })
 
-  constructor() {
-    this.client = new TranslateServiceClient(environment.backendUrl)
+  readonly client = createPromiseClient(TranslateService, this.transport)
+
+  constructor() {}
+
+  listService(): Promise<ListServicesResponse> {
+    return this.client.listServices({})
   }
 
-  listService() {
-    const request = new ListServicesRequest()
-    this.client.listServices(request, (error: ServiceError | null, responseMessage: ListServicesResponse | null) => {
-      console.log(error)
-      console.log(responseMessage)
-    })
-  }
+  createService(serviceName: string): Promise<Service> {
+    const request = new CreateServiceRequest({ service: new Service({ name: serviceName }) })
 
-  createService() {
-    const request = new CreateServiceRequest()
-    const service1 = new Service()
-    service1.setId('abc')
-    service1.setName('TEST')
-    request.setService(service1)
-    this.client.createService(request, (error: ServiceError | null, responseMessage: Service | null) => {
-      if (error) {
-        console.error('Error:', error)
-        return
-      }
-      console.log('Response:', responseMessage)
-    })
+    return this.client.createService(request)
   }
 }

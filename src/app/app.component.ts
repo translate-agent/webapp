@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core'
-import { TranslateService } from './services/translate.service'
+import { TranslateClientService } from './services/translate.service'
 
 @Component({
   selector: 'app-root',
@@ -9,13 +9,12 @@ import { TranslateService } from './services/translate.service'
 export class AppComponent implements OnInit {
   title = 'webapp'
 
-  constructor(private service: TranslateService) {}
+  constructor(private service: TranslateClientService) {}
 
   ngOnInit(): void {
-    console.log()
-
-    this.service.createService()
-
-    // this.service.listService()
+    this.service
+      .listService()
+      .then((res) => console.log(res.services))
+      .catch((err) => console.error(err))
   }
 }
