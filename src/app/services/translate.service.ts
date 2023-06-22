@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core'
 import { TranslateService } from '@buf/expectdigital_translate-agent.bufbuild_connect-es/translate/v1/translate_connect'
 import {
   CreateServiceRequest,
+  ListMessagesResponse,
   ListServicesResponse,
   Service,
 } from '@buf/expectdigital_translate-agent.bufbuild_es/translate/v1/translate_pb'
@@ -27,7 +28,11 @@ export class TranslateClientService {
 
   createService(serviceName: string): Promise<Service> {
     const request = new CreateServiceRequest({ service: new Service({ name: serviceName }) })
-
     return this.client.createService(request)
+  }
+
+  listMessages(serviceId: string): Promise<ListMessagesResponse> {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
+    return this.client.listMessages({ serviceId })
   }
 }
