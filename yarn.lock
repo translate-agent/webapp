@@ -1329,66 +1329,6 @@
     "@babel/helper-validator-identifier" "^7.22.5"
     to-fast-properties "^2.0.0"
 
-"@buf/expectdigital_translate-agent.bufbuild_connect-es@^0.9.1-20230616132903-5580232ef149.1":
-  version "0.9.1-20230622103706-1a2eb58b7b39.1"
-  resolved "https://buf.build/gen/npm/v1/@buf/expectdigital_translate-agent.bufbuild_connect-es/-/expectdigital_translate-agent.bufbuild_connect-es-0.9.1-20230622103706-1a2eb58b7b39.1.tgz"
-  dependencies:
-    "@buf/expectdigital_translate-agent.bufbuild_es" "1.2.1-20230622103706-1a2eb58b7b39.1"
-    "@buf/googleapis_googleapis.bufbuild_connect-es" "0.9.1-20230502210827-cc916c318597.1"
-    "@buf/grpc-ecosystem_grpc-gateway.bufbuild_connect-es" "0.9.1-20230607214310-11c9972ea0fd.1"
-
-"@buf/expectdigital_translate-agent.bufbuild_es@1.2.1-20230622103706-1a2eb58b7b39.1", "@buf/expectdigital_translate-agent.bufbuild_es@^1.2.1-20230616132903-5580232ef149.1":
-  version "1.2.1-20230622103706-1a2eb58b7b39.1"
-  resolved "https://buf.build/gen/npm/v1/@buf/expectdigital_translate-agent.bufbuild_es/-/expectdigital_translate-agent.bufbuild_es-1.2.1-20230622103706-1a2eb58b7b39.1.tgz"
-  dependencies:
-    "@buf/googleapis_googleapis.bufbuild_es" "1.2.1-20230502210827-cc916c318597.1"
-    "@buf/grpc-ecosystem_grpc-gateway.bufbuild_es" "1.2.1-20230607214310-11c9972ea0fd.1"
-
-"@buf/googleapis_googleapis.bufbuild_connect-es@0.9.1-20230502210827-cc916c318597.1":
-  version "0.9.1-20230502210827-cc916c318597.1"
-  resolved "https://buf.build/gen/npm/v1/@buf/googleapis_googleapis.bufbuild_connect-es/-/googleapis_googleapis.bufbuild_connect-es-0.9.1-20230502210827-cc916c318597.1.tgz"
-  dependencies:
-    "@buf/googleapis_googleapis.bufbuild_es" "1.2.1-20230502210827-cc916c318597.1"
-
-"@buf/googleapis_googleapis.bufbuild_es@1.2.1-20230502210827-cc916c318597.1":
-  version "1.2.1-20230502210827-cc916c318597.1"
-  resolved "https://buf.build/gen/npm/v1/@buf/googleapis_googleapis.bufbuild_es/-/googleapis_googleapis.bufbuild_es-1.2.1-20230502210827-cc916c318597.1.tgz"
-
-"@buf/grpc-ecosystem_grpc-gateway.bufbuild_connect-es@0.9.1-20230607214310-11c9972ea0fd.1":
-  version "0.9.1-20230607214310-11c9972ea0fd.1"
-  resolved "https://buf.build/gen/npm/v1/@buf/grpc-ecosystem_grpc-gateway.bufbuild_connect-es/-/grpc-ecosystem_grpc-gateway.bufbuild_connect-es-0.9.1-20230607214310-11c9972ea0fd.1.tgz"
-  dependencies:
-    "@buf/googleapis_googleapis.bufbuild_connect-es" "0.9.1-20230502210827-cc916c318597.1"
-    "@buf/grpc-ecosystem_grpc-gateway.bufbuild_es" "1.2.1-20230607214310-11c9972ea0fd.1"
-
-"@buf/grpc-ecosystem_grpc-gateway.bufbuild_es@1.2.1-20230607214310-11c9972ea0fd.1":
-  version "1.2.1-20230607214310-11c9972ea0fd.1"
-  resolved "https://buf.build/gen/npm/v1/@buf/grpc-ecosystem_grpc-gateway.bufbuild_es/-/grpc-ecosystem_grpc-gateway.bufbuild_es-1.2.1-20230607214310-11c9972ea0fd.1.tgz"
-  dependencies:
-    "@buf/googleapis_googleapis.bufbuild_es" "1.2.1-20230502210827-cc916c318597.1"
-
-"@bufbuild/connect-web@^0.10.1":
-  version "0.10.1"
-  resolved "https://registry.npmjs.org/@bufbuild/connect-web/-/connect-web-0.10.1.tgz"
-  integrity sha512-INeF8pEVAO/wbkSO+cbqC01RunwS12EW4yxHm2BpjC4bHN7GHAWgORepl3W6rXqeTV+MOiPKOrAy+BhBclbTEw==
-  dependencies:
-    "@bufbuild/connect" "0.10.1"
-
-"@bufbuild/connect@0.10.1":
-  version "0.10.1"
-  resolved "https://registry.npmjs.org/@bufbuild/connect/-/connect-0.10.1.tgz"
-  integrity sha512-rqdZakAdajdSnRO342K7S3gZnUPMYXF2JsUDMA4vpR34SYdWYXiL2mclUMTaUk+EfLK04ulyejNaFAc0e5o8Qw==
-
-"@bufbuild/connect@^0.9.1":
-  version "0.9.1"
-  resolved "https://registry.npmjs.org/@bufbuild/connect/-/connect-0.9.1.tgz"
-  integrity sha512-4O/PSMLWd3oQkwBuJBGBzFtPsnFC5dTRPGHFNFODna9wZJ6r45ccsOWsA4qXBL7gW2EKw93zRa0KVuge2dCOQQ==
-
-"@bufbuild/protobuf@^1.2.1":
-  version "1.2.1"
-  resolved "https://registry.npmjs.org/@bufbuild/protobuf/-/protobuf-1.2.1.tgz"
-  integrity sha512-cwwGvLGqvoaOZmoP5+i4v/rbW+rHkguvTehuZyM2p/xpmaNSdT2h3B7kHw33aiffv35t1XrYHIkdJSEkSEMJuA==
-
 "@colors/colors@1.5.0":
   version "1.5.0"
   resolved "https://registry.npmjs.org/@colors/colors/-/colors-1.5.0.tgz"
