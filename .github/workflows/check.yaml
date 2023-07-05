@@ -1,0 +1,16 @@
+name: Check
+on: push
+jobs:
+  Check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v3
+      - name: Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Dependencies
+        run: yarn install
+      - name: Lint
+        run: yarn lint

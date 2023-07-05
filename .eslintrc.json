@@ -1,0 +1,67 @@
+{
+  "root": true,
+  "overrides": [
+    {
+      "files": ["*.ts"],
+      "parserOptions": {
+        "project": ["tsconfig.json", "e2e/tsconfig.json"],
+        "createDefaultProgram": true
+      },
+      "extends": [
+        "plugin:@angular-eslint/recommended",
+        "plugin:@angular-eslint/template/process-inline-templates",
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:prettier/recommended"
+      ],
+      "rules": {
+        "id-blacklist": 0,
+        "@angular-eslint/component-selector": [
+          "error",
+          {
+            "type": "element",
+            "prefix": "app",
+            "style": "kebab-case"
+          }
+        ],
+        "@angular-eslint/directive-selector": [
+          "error",
+          {
+            "type": "attribute",
+            "prefix": "app",
+            "style": "camelCase"
+          }
+        ],
+        "semi": "off",
+        "@typescript-eslint/semi": 0,
+        "@typescript-eslint/member-delimiter-style": 0,
+        "@typescript-eslint/naming-convention": [
+          "error",
+          {
+            "selector": "default",
+            "format": ["camelCase"],
+            "leadingUnderscore": "allow",
+            "trailingUnderscore": "allow"
+          },
+          {
+            "selector": "variable",
+            "format": ["camelCase", "UPPER_CASE"],
+            "leadingUnderscore": "allow",
+            "trailingUnderscore": "allow"
+          },
+          {
+            "selector": "typeLike",
+            "format": ["PascalCase"]
+          }
+        ],
+        "@typescript-eslint/no-non-null-assertion": 0,
+        "@typescript-eslint/no-unused-vars": ["error"]
+      }
+    },
+    {
+      "files": ["*.html"],
+      "extends": ["plugin:@angular-eslint/template/recommended"],
+      "rules": {}
+    }
+  ]
+}
