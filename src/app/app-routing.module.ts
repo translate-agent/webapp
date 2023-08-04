@@ -1,7 +1,7 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { ServiceComponent } from './components/service/service.component';
-import { ServicesComponent } from './components/services/services.component';
+import { NgModule } from '@angular/core'
+import { RouterModule, Routes } from '@angular/router'
+import { ServiceComponent } from './components/service/service.component'
+import { ServicesComponent } from './components/services/services.component'
 
 const routes: Routes = [
   {
@@ -16,7 +16,7 @@ const routes: Routes = [
     path: 'services/:id',
     component: ServiceComponent,
   },
-];
+]
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
