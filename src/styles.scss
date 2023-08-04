@@ -45,7 +45,7 @@ body {
 }
 body {
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
 
 .border .mdc-text-field--outlined .mdc-notched-outline__leading {
@@ -64,9 +64,7 @@ body {
   display: none;
 }
 
-.serviceList
-  .mdc-list-item__content
-  .mat-mdc-list-item-unscoped-content.mdc-list-item__primary-text {
+.serviceList .mdc-list-item__content .mat-mdc-list-item-unscoped-content.mdc-list-item__primary-text {
   display: flex;
   justify-content: space-between;
 }

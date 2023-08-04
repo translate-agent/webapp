@@ -1,8 +1,5 @@
 <mat-dialog-content>
-  <form
-    [formGroup]="form"
-    style="display: flex; flex-direction: column; gap: 20px; width: 100%"
-  >
+  <form [formGroup]="form" style="display: flex; flex-direction: column; gap: 20px; width: 100%">
     <div style="display: flex; gap: 20px">
       <mat-form-field appearance="outline">
         <mat-label>Language</mat-label>
@@ -11,46 +8,32 @@
       <mat-form-field appearance="outline">
         <mat-label>Services</mat-label>
         <mat-select formControlName="serviceId">
-          <mat-option
-            *ngFor="let service of serviceList | async"
-            [value]="service.id"
-            >{{ service.name }}</mat-option
-          >
+          <mat-option *ngFor="let service of serviceList | async" [value]="service.id">{{ service.name }}</mat-option>
         </mat-select>
       </mat-form-field>
     </div>
-    <mat-form-field appearance="outline">
+    <!-- <mat-form-field appearance="outline">
       <mat-label>Schema</mat-label>
       <mat-select formControlName="schema">
         <mat-option *ngFor="let sch of schema | keyvalue" [value]="sch.value">{{
           sch.key
         }}</mat-option>
       </mat-select>
-    </mat-form-field>
+    </mat-form-field> -->
     <div style="display: flex; justify-content: space-between">
       <section>
-        <mat-checkbox color="primary" formControlName="original"
-          >Original language</mat-checkbox
-        >
+        <mat-checkbox color="primary" formControlName="original">Original language</mat-checkbox>
       </section>
       <section>
-        <mat-checkbox color="primary" formControlName="populateTranslations"
-          >Populate translations</mat-checkbox
-        >
+        <mat-checkbox color="primary" formControlName="populateTranslations">Populate translations</mat-checkbox>
       </section>
     </div>
   </form>
-  <input type="file" (change)="onFileSelected($event)" />
+  <input #file type="file" (change)="onFileSelected($event)" id="upload" hidden />
+  <label for="upload">Choose file</label>
+  <div>{{ file.value }}</div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-button mat-dialog-close>Cancel</button>
-  <button
-    color="primary"
-    mat-raised-button
-    mat-dialog-close
-    cdkFocusInitial
-    (click)="upload()"
-  >
-    Upload
-  </button>
+  <button color="primary" mat-raised-button mat-dialog-close cdkFocusInitial (click)="upload()">Upload</button>
 </mat-dialog-actions>
