@@ -1,5 +1,13 @@
+import { AsyncPipe, NgFor } from '@angular/common'
 import { Component, OnInit } from '@angular/core'
-import { FormBuilder } from '@angular/forms'
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms'
+import { MatButtonModule } from '@angular/material/button'
+import { MatCheckboxModule } from '@angular/material/checkbox'
+import { MatOptionModule } from '@angular/material/core'
+import { MatDialogModule } from '@angular/material/dialog'
+import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatInputModule } from '@angular/material/input'
+import { MatSelectModule } from '@angular/material/select'
 import { map, shareReplay } from 'rxjs'
 import { TranslateClientService } from 'src/app/services/translate-client.service'
 
@@ -18,6 +26,19 @@ import { TranslateClientService } from 'src/app/services/translate-client.servic
   selector: 'app-upload-translation-file',
   templateUrl: './upload-translation-file.component.html',
   styleUrls: ['./upload-translation-file.component.scss'],
+  standalone: true,
+  imports: [
+    MatDialogModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    NgFor,
+    MatOptionModule,
+    MatCheckboxModule,
+    MatButtonModule,
+    AsyncPipe,
+  ],
 })
 export class UploadTranslationFileComponent implements OnInit {
   readonly form = this.fb.nonNullable.group({

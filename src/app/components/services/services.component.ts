@@ -1,7 +1,12 @@
+import { NgFor, NgIf } from '@angular/common'
 import { Component, OnInit } from '@angular/core'
-import { MatDialog } from '@angular/material/dialog'
-import { MatSnackBar } from '@angular/material/snack-bar'
-import { Router } from '@angular/router'
+import { MatButtonModule } from '@angular/material/button'
+import { MatDialog, MatDialogModule } from '@angular/material/dialog'
+import { MatDividerModule } from '@angular/material/divider'
+import { MatIconModule } from '@angular/material/icon'
+import { MatListModule } from '@angular/material/list'
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar'
+import { Router, RouterLink } from '@angular/router'
 import { Service } from '@buf/expectdigital_translate-agent.bufbuild_es/translate/v1/translate_pb'
 import { TranslateClientService } from 'src/app/services/translate-client.service'
 import { CreateServiceComponent } from '../create-service/create-service.component'
@@ -10,13 +15,20 @@ import { CreateServiceComponent } from '../create-service/create-service.compone
   selector: 'app-services',
   templateUrl: './services.component.html',
   styleUrls: ['./services.component.scss'],
+  standalone: true,
+  imports: [
+    NgIf,
+    MatButtonModule,
+    MatListModule,
+    NgFor,
+    MatDividerModule,
+    RouterLink,
+    MatIconModule,
+    MatDialogModule,
+    MatSnackBarModule,
+  ],
 })
 export class ServicesComponent implements OnInit {
-  // readonly serviceList = this.service.listService().pipe(
-  //   map((v) => v.services),
-  //   shareReplay(1)
-  // );
-
   services: Service[] = []
 
   constructor(

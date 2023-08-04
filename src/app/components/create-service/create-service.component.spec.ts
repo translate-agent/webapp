@@ -8,7 +8,7 @@ describe('CreateServiceComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [CreateServiceComponent],
+      imports: [CreateServiceComponent],
     }).compileComponents()
 
     fixture = TestBed.createComponent(CreateServiceComponent)

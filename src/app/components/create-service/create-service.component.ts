@@ -1,6 +1,9 @@
 import { Component } from '@angular/core'
-import { FormBuilder, Validators } from '@angular/forms'
-import { MatDialogRef } from '@angular/material/dialog'
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms'
+import { MatButtonModule } from '@angular/material/button'
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog'
+import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatInputModule } from '@angular/material/input'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { TranslateClientService } from 'src/app/services/translate-client.service'
 
@@ -8,6 +11,8 @@ import { TranslateClientService } from 'src/app/services/translate-client.servic
   selector: 'app-create-service',
   templateUrl: './create-service.component.html',
   styleUrls: ['./create-service.component.scss'],
+  standalone: true,
+  imports: [MatDialogModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule],
 })
 export class CreateServiceComponent {
   readonly form = this.fb.nonNullable.group({

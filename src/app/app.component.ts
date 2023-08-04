@@ -1,102 +1,13 @@
 import { Component } from '@angular/core'
-import { FormBuilder } from '@angular/forms'
-import { MatDialog } from '@angular/material/dialog'
-import { Router } from '@angular/router'
-import { TranslateClientService } from './services/translate-client.service'
+import { RouterOutlet } from '@angular/router'
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
+  standalone: true,
+  imports: [RouterOutlet],
 })
 export class AppComponent {
   title = 'webapp'
-
-  // readonly languageNames = new Intl.DisplayNames(['en'], { type: 'language' })
-
-  // readonly form = this.fb.nonNullable.group({
-  //   service: '',
-  //   fuzzy: false,
-  // })
-
-  // readonly serviceList = this.service.listService().pipe(
-  //   map((v) => v.services),
-  //   shareReplay(1)
-  // )
-
-  // readonly allMessages = this.form.controls.service.valueChanges.pipe(
-  //   switchMap((id) => this.service.listMessages(id)),
-  //   shareReplay(1)
-  // )
-
-  // messages: Messages[] = []
-
-  // filteredMessages = combineLatest({
-  //   messages: this.allMessages.pipe(
-  //     map((v) => {
-  //       return v.messages
-  //     }),
-  //     map((v: Messages[]) => v.sort((a, b) => (a.language === 'en' ? -1 : b.language === 'en' ? 1 : 0)))
-  //   ),
-  //   fuzzy: this.form.controls.fuzzy.valueChanges.pipe(startWith(false)),
-  // }).pipe(
-  //   map(({ messages }) => messages.filter((v) => v.messages.some((message) => message.status === Message_Status.FUZZY)))
-  // )
-
-  // messagesEng = this.filteredMessages.pipe(map((v) => v.filter((x) => x.language.includes('en'))))
-
-  // targetLang: any
-
-  // languages = this.allMessages.pipe(map((v) => v.messages.map((x) => x.language)))
-
-  // readonly subscription = new Subscription()
-
-  constructor(
-    private fb: FormBuilder,
-    private service: TranslateClientService,
-    public dialog: MatDialog,
-    public router: Router
-  ) {}
-
-  // createService() {
-  //   this.dialog.open(CreateServiceComponent)
-  // }
-
-  // match(id: string, msg: Message) {
-  //   if (msg.id === id) {
-  //     return msg.message.slice(1, -1)
-  //   }
-  //   return
-  // }
-
-  // save(v: Event, msgId: string, language: string) {
-  //   const value = (v.target as HTMLTextAreaElement).value
-  //   const value1 = '{'.concat(value, '}')
-  //   this.filteredMessages.subscribe((res) => {
-  //     const filteredMsg = res.filter((x) => x.language === language)
-
-  //     filteredMsg.map((item) => {
-  //       item.messages.map((message) => {
-  //         if (message.id === msgId) {
-  //           message.message = value1
-  //         }
-  //         return message
-  //       })
-
-  //       return item
-  //     })
-  //   })
-  // }
-
-  // getTranslation(id: string, language: string) {
-  //   const message = this.messages.find((m) => m.language === language)
-  //   if (message) {
-  //     const translate = message.messages.find((m) => m.id === id)
-  //     if (translate) {
-  //       return translate.message
-  //     }
-  //   }
-
-  //   return ''
-  // }
 }

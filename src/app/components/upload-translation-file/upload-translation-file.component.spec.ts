@@ -8,7 +8,7 @@ describe('UploadTranslationFileComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [UploadTranslationFileComponent],
+      imports: [UploadTranslationFileComponent],
     }).compileComponents()
 
     fixture = TestBed.createComponent(UploadTranslationFileComponent)
