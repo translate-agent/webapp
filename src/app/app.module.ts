@@ -16,7 +16,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { CreateServiceComponent } from './components/create-service/create-service.component';
+import { ServiceComponent } from './components/service/service.component';
 import { ServicesComponent } from './components/services/services.component';
 import { UploadTranslationFileComponent } from './components/upload-translation-file/upload-translation-file.component';
 
@@ -25,6 +28,8 @@ import { UploadTranslationFileComponent } from './components/upload-translation-
     AppComponent,
     ServicesComponent,
     UploadTranslationFileComponent,
+    CreateServiceComponent,
+    ServiceComponent,
   ],
   imports: [
     BrowserModule,
@@ -42,6 +47,7 @@ import { UploadTranslationFileComponent } from './components/upload-translation-
     MatButtonModule,
     MatDialogModule,
     MatCheckboxModule,
+    MatSnackBarModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
