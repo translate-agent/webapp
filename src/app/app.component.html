@@ -1,6 +1,6 @@
-<router-outlet></router-outlet>
 <div style="padding: 30px; max-width: 1000px; margin: auto">
-  <div
+  <router-outlet></router-outlet>
+  <!-- <div
     style="display: flex; justify-content: space-between; align-items: baseline"
   >
     <form [formGroup]="form">
@@ -28,8 +28,23 @@
     <button mat-raised-button color="primary" (click)="openFileUploadModal()">
       Upload file
     </button>
-  </div>
-  <div
+  </div> -->
+  <!-- <p *ngIf="(serviceList | async)?.length === 0">No service found</p>
+  <button mat-raised-button color="primary" (click)="createService()">
+    Create service
+  </button> -->
+  <!-- <mat-selection-list
+    [multiple]="false"
+    *ngIf="serviceList | async as services"
+  >
+    <ng-container *ngFor="let service of services; index as i">
+      <mat-divider *ngIf="i > 0"></mat-divider>
+      <mat-list-option (click)="openService(service.id)">
+        <span>{{ service.name }}</span>
+      </mat-list-option>
+    </ng-container>
+  </mat-selection-list> -->
+  <!-- <div
     *ngIf="filteredMessages | async as data"
     style="border: 1px solid #cccccc"
   >
@@ -168,4 +183,5 @@
       </ng-template>
     </ng-container>
   </div>
+</div> -->
 </div>

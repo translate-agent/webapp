@@ -1,8 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import {
   Message,
+  Message_Status,
   Messages,
 } from '@buf/expectdigital_translate-agent.bufbuild_es/translate/v1/translate_pb';
 import {
@@ -13,7 +15,7 @@ import {
   startWith,
   switchMap,
 } from 'rxjs';
-import { UploadTranslationFileComponent } from './components/upload-translation-file/upload-translation-file.component';
+import { CreateServiceComponent } from './components/create-service/create-service.component';
 import { TranslateClientService } from './services/translate-client.service';
 
 @Component({
@@ -41,14 +43,14 @@ export class AppComponent implements OnInit, OnDestroy {
     shareReplay(1)
   );
 
-  messages!: Messages[];
+  messages: Messages[] = [];
 
   filteredMessages = combineLatest({
     messages: this.allMessages.pipe(
       map((v) => {
         return v.messages;
       }),
-      map((v) =>
+      map((v: Messages[]) =>
         v.sort((a, b) =>
           a.language === 'en' ? -1 : b.language === 'en' ? 1 : 0
         )
@@ -58,7 +60,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }).pipe(
     map(({ messages, fuzzy }) =>
       messages.filter((v) =>
-        v.messages.some((message) => message.fuzzy === fuzzy)
+        v.messages.some((message) => message.status === Message_Status.FUZZY)
       )
     )
   );
@@ -67,7 +69,7 @@ export class AppComponent implements OnInit, OnDestroy {
     map((v) => v.filter((x) => x.language.includes('en')))
   );
 
-  targetLang!: Messages[];
+  targetLang: any;
 
   languages = this.allMessages.pipe(
     map((v) => v.messages.map((x) => x.language))
@@ -78,7 +80,8 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private service: TranslateClientService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    public router: Router
   ) {}
 
   ngOnInit(): void {
@@ -95,6 +98,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
+  }
+
+  createService() {
+    this.dialog.open(CreateServiceComponent);
   }
 
   match(id: string, msg: Message) {
@@ -133,9 +140,5 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     return '';
-  }
-
-  openFileUploadModal() {
-    this.dialog.open(UploadTranslationFileComponent);
   }
 }

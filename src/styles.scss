@@ -23,3 +23,14 @@ body {
 .mat-mdc-form-field-subscript-wrapper {
   display: none;
 }
+
+.serviceList div.mdc-radio {
+  display: none;
+}
+
+.serviceList
+  .mdc-list-item__content
+  .mat-mdc-list-item-unscoped-content.mdc-list-item__primary-text {
+  display: flex;
+  justify-content: space-between;
+}
