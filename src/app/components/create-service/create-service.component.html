@@ -1,12 +1,28 @@
+<div
+  style="
+    display: flex;
+    padding-top: 8px;
+    padding-left: 24px;
+    padding-right: 8px;
+    justify-content: space-between;
+    align-items: center;
+  "
+>
+  <h3>Create service</h3>
+  <button type="button" class="grow" mat-icon-button mat-dialog-close>
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
 <mat-dialog-content>
   <form [formGroup]="form">
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="outline" style="width: 100%">
       <mat-label>Service name</mat-label>
       <input matInput formControlName="serviceName" />
+      <mat-error>Service name is <strong>required</strong> </mat-error>
     </mat-form-field>
   </form>
 </mat-dialog-content>
-<mat-dialog-actions align="end">
+<mat-dialog-actions align="end" style="padding: 16px 24px">
   <button type="button" mat-button mat-dialog-close>Cancel</button>
   <button type="button" color="primary" mat-raised-button cdkFocusInitial (click)="createService()">Create</button>
 </mat-dialog-actions>

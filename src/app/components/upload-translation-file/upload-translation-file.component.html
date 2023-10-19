@@ -1,39 +1,80 @@
+<div
+  style="
+    display: flex;
+    padding-top: 8px;
+    padding-left: 24px;
+    padding-right: 8px;
+    justify-content: space-between;
+    align-items: center;
+  "
+>
+  <h3>File import</h3>
+  <button class="grow" mat-icon-button mat-dialog-close>
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
 <mat-dialog-content>
-  <form [formGroup]="form" style="display: flex; flex-direction: column; gap: 20px; width: 100%">
-    <div style="display: flex; gap: 20px">
-      <mat-form-field appearance="outline">
-        <mat-label>Language</mat-label>
-        <input formControlName="language" matInput />
-      </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>Services</mat-label>
-        <mat-select formControlName="serviceId">
-          <mat-option *ngFor="let service of serviceList | async" [value]="service.id">{{ service.name }}</mat-option>
-        </mat-select>
-      </mat-form-field>
+  <ng-container *ngIf="show">
+    <form
+      [formGroup]="form"
+      style="display: flex; flex-direction: column; gap: 20px; width: 100%; padding-bottom: 16px"
+    >
+      <div style="display: flex; gap: 20px">
+        <mat-form-field appearance="outline">
+          <mat-label>Language</mat-label>
+          <input formControlName="language" matInput />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Schema</mat-label>
+          <mat-select formControlName="schema">
+            <mat-option *ngFor="let sch of schema | keyvalue" [value]="sch.value">{{ sch.key }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div style="display: flex; justify-content: space-between">
+        <section>
+          <mat-checkbox color="primary" formControlName="original">Original language</mat-checkbox>
+        </section>
+        <section>
+          <mat-checkbox color="primary" formControlName="populateTranslations">Populate translations</mat-checkbox>
+        </section>
+      </div>
+    </form>
+    <mat-divider></mat-divider>
+  </ng-container>
+  <div *ngIf="!show">
+    <div class="dropzone" ngClass="{{ dragAreaClass }}">
+      <div class="text-wrapper">
+        <div class="centered">
+          <mat-icon
+            class="hvr-wobble-vertical material-symbols-outlined"
+            style="font-size: 50px; width: 50px; height: auto; margin-bottom: 20px"
+            fontIcon="upload"
+          ></mat-icon>
+          <div>
+            <input type="file" name="file" id="file" (change)="onFileSelected($event)" />
+            <label for="file"><span class="textLink">Select a file</span> or drag and drop it here!</label>
+          </div>
+        </div>
+      </div>
     </div>
-    <!-- <mat-form-field appearance="outline">
-      <mat-label>Schema</mat-label>
-      <mat-select formControlName="schema">
-        <mat-option *ngFor="let sch of schema | keyvalue" [value]="sch.value">{{
-          sch.key
-        }}</mat-option>
-      </mat-select>
-    </mat-form-field> -->
-    <div style="display: flex; justify-content: space-between">
-      <section>
-        <mat-checkbox color="primary" formControlName="original">Original language</mat-checkbox>
-      </section>
-      <section>
-        <mat-checkbox color="primary" formControlName="populateTranslations">Populate translations</mat-checkbox>
-      </section>
+  </div>
+  <div *ngIf="file" style="padding-top: 16px; display: flex; justify-content: space-between">
+    <div style="display: flex; gap: 1rem">
+      <mat-icon inline class="material-symbols-outlined" fontIcon="note"></mat-icon>
+      <span>{{ file.name }}</span>
     </div>
-  </form>
-  <input #file type="file" (change)="onFileSelected($event)" id="upload" hidden />
-  <label for="upload">Choose file</label>
-  <div>{{ file.value }}</div>
+    <mat-icon
+      class="icon-delete"
+      inline
+      class="material-symbols-outlined"
+      style="cursor: pointer"
+      fontIcon="delete"
+      (click)="file = null; show = false"
+    ></mat-icon>
+  </div>
 </mat-dialog-content>
-<mat-dialog-actions align="end">
+<mat-dialog-actions align="end" style="padding: 0 24px 16px">
   <button mat-button mat-dialog-close>Cancel</button>
   <button color="primary" mat-raised-button mat-dialog-close cdkFocusInitial (click)="upload()">Upload</button>
 </mat-dialog-actions>

@@ -1,4 +1,6 @@
 import { Component } from '@angular/core'
+import { MatToolbarModule } from '@angular/material/toolbar'
+import { Title } from '@angular/platform-browser'
 import { RouterOutlet } from '@angular/router'
 
 @Component({
@@ -6,8 +8,8 @@ import { RouterOutlet } from '@angular/router'
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, MatToolbarModule],
 })
 export class AppComponent {
-  title = 'webapp'
+  constructor(public title: Title) {}
 }

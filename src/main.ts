@@ -19,6 +19,7 @@ bootstrapApplication(AppComponent, {
       {
         path: 'services',
         component: ServicesComponent,
+        title: 'Services',
       },
       {
         path: 'services/:id',

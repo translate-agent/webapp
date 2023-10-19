@@ -1,8 +1,10 @@
+import { CommonModule } from '@angular/common'
 import { Component } from '@angular/core'
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms'
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog'
 import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { TranslateClientService } from 'src/app/services/translate-client.service'
@@ -12,17 +14,27 @@ import { TranslateClientService } from 'src/app/services/translate-client.servic
   templateUrl: './create-service.component.html',
   styleUrls: ['./create-service.component.scss'],
   standalone: true,
-  imports: [MatDialogModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule],
+  imports: [
+    CommonModule,
+    MatDialogModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+    FormsModule,
+  ],
 })
 export class CreateServiceComponent {
   readonly form = this.fb.nonNullable.group({
     serviceName: ['', Validators.required],
   })
+
   constructor(
     public dialogRef: MatDialogRef<CreateServiceComponent>,
     private fb: FormBuilder,
     private service: TranslateClientService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
   ) {}
 
   createService(): void {
@@ -32,13 +44,13 @@ export class CreateServiceComponent {
       return
     }
 
+    this.form.updateValueAndValidity()
+
     const { serviceName } = this.form.getRawValue()
 
     this.service.createService(serviceName).subscribe({
       next: (v) => {
         this.snackBar.open('Service created!', undefined, {
-          horizontalPosition: 'center',
-          verticalPosition: 'top',
           duration: 5000,
         })
         console.log(v)
@@ -47,8 +59,6 @@ export class CreateServiceComponent {
 
       error: (err) =>
         this.snackBar.open(`Something went wrong. ${err}`, undefined, {
-          horizontalPosition: 'center',
-          verticalPosition: 'top',
           duration: 5000,
         }),
     })
