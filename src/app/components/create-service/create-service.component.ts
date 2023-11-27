@@ -12,7 +12,7 @@ import { TranslateClientService } from 'src/app/services/translate-client.servic
 @Component({
   selector: 'app-create-service',
   templateUrl: './create-service.component.html',
-  styleUrls: ['./create-service.component.scss'],
+  styleUrl: './create-service.component.scss',
   standalone: true,
   imports: [
     CommonModule,

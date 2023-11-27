@@ -27,7 +27,7 @@ type ServiceNew = {
 @Component({
   selector: 'app-services',
   templateUrl: './services.component.html',
-  styleUrls: ['./services.component.scss'],
+  styleUrl: './services.component.scss',
   standalone: true,
   imports: [
     CommonModule,
@@ -88,7 +88,7 @@ export class ServicesComponent implements OnInit {
       .afterClosed()
       .pipe(filter((v) => !!v))
       .subscribe(() => {
-        this.service.delete(service.id).subscribe({
+        this.service.deleteService(service.id).subscribe({
           next: () => {
             this.services.splice(i, 1)
             this.snackBar.open('Service deleted!', undefined, {

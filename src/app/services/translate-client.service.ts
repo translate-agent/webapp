@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core'
 import { TranslateService } from '@buf/expectdigital_translate-agent.bufbuild_connect-es/translate/v1/translate_connect'
 import {
   CreateServiceRequest,
+  DownloadTranslationFileRequest,
+  DownloadTranslationFileResponse,
   ListServicesResponse,
   ListTranslationsResponse,
   Schema,
@@ -66,7 +68,7 @@ export class TranslateClientService {
     return from(this.client.updateService({ service }))
   }
 
-  delete(serviceId: string): Observable<Empty> {
+  deleteService(serviceId: string): Observable<Empty> {
     return from(this.client.deleteService({ id: serviceId }))
   }
 
@@ -89,5 +91,11 @@ export class TranslateClientService {
         populateTranslations,
       }),
     )
+  }
+
+  downloadTranslationFile(language: string, schema: Schema, serviceId: string) {
+    DownloadTranslationFileRequest
+    DownloadTranslationFileResponse
+    return from(this.client.downloadTranslationFile({ language, schema, serviceId }))
   }
 }

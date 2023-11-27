@@ -1,68 +1,54 @@
 <mat-toolbar>
   <span style="margin-left: 30px; font-size: 1.2rem">{{ title.getTitle() }}</span>
 </mat-toolbar>
-<div>
-  <ng-container *ngIf="services.length > 0; else notFound">
-    <div style="max-width: 1000px; width: 100%; margin: 0 auto; padding-top: 3em">
-      <div style="text-align: right">
-        <button mat-raised-button color="primary" (click)="createService()">
-          <mat-icon>add</mat-icon> New service
+<div style="max-width: 1000px; width: 100%; margin: 0 auto; padding-top: 3em">
+  <div style="text-align: right">
+    <button mat-raised-button color="primary" (click)="createService()"><mat-icon>add</mat-icon> New service</button>
+  </div>
+  <mat-selection-list multiple="false" style="margin-top: 50px; display: flex; flex-direction: column; gap: 5px">
+    @for (service of services; track $index) {
+      @if ($index > 0) {
+        <mat-divider></mat-divider>
+      }
+      <mat-list-option class="serviceList">
+        <div [routerLink]="['/services', service.id]" style="width: 100%; display: flex; align-items: center; gap: 3em">
+          <span style="max-width: 150px; width: 100%">{{ service.name }}</span>
+          @if (service.source) {
+            <span style="max-width: 300px; width: 100%">Source language: {{ languageNames.of(service.source) }}</span>
+          }
+          @if (service.target && service.target.length > 0) {
+            <span style="max-width: 400px; width: 100%">
+              Target languages:
+              @for (target of service.target; track target) {
+                <span>{{ languageNames.of(target) }}</span
+                ><br />
+              }
+            </span>
+          }
+        </div>
+        <div>
+          <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu" style="padding-right: 20px">
+            <button mat-menu-item (click)="editService()">
+              <mat-icon class="material-symbols-outlined">edit</mat-icon>
+              <span>Edit</span>
+            </button>
+            <button mat-menu-item (click)="deleteService(service, $index)" style="padding-right: 25px">
+              <mat-icon class="material-symbols-outlined">delete</mat-icon>
+              <span>Delete</span>
+            </button>
+          </mat-menu>
+        </div>
+      </mat-list-option>
+    } @empty {
+      <div style="display: flex; flex-direction: column; align-items: center">
+        <p style="font-size: 1.5rem; padding: 0.5em">No service found. Create your first service.</p>
+        <button mat-stroked-button color="primary" (click)="createService()">
+          <mat-icon>add</mat-icon>Create service
         </button>
       </div>
-      <mat-selection-list multiple="false" style="margin-top: 50px; display: flex; flex-direction: column; gap: 5px">
-        <ng-container *ngFor="let service of services; index as i">
-          <mat-divider *ngIf="i > 0"></mat-divider>
-          <mat-list-option class="serviceList">
-            <div
-              [routerLink]="['/services', service.id]"
-              style="width: 100%; display: flex; align-items: center; gap: 3em"
-            >
-              <span style="max-width: 150px; width: 100%">{{ service.name }}</span>
-              <span style="max-width: 300px; width: 100%" *ngIf="service.source"
-                >Source language: {{ languageNames.of(service.source) }}</span
-              >
-              <span style="max-width: 400px; width: 100%" *ngIf="service.target && service.target?.length !== 0">
-                Target languages:
-                <span *ngFor="let target of service.target">{{ languageNames.of(target) + ' ' }}</span>
-              </span>
-            </div>
-            <div>
-              <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
-                <mat-icon>more_vert</mat-icon>
-              </button>
-              <mat-menu #menu="matMenu" style="padding-right: 20px">
-                <button mat-menu-item (click)="editService()">
-                  <mat-icon class="material-symbols-outlined">edit</mat-icon>
-                  <span>Edit</span>
-                </button>
-                <button mat-menu-item (click)="deleteService(service, i)" style="padding-right: 25px">
-                  <mat-icon class="material-symbols-outlined">delete</mat-icon>
-                  <span>Delete</span>
-                </button>
-              </mat-menu>
-            </div>
-          </mat-list-option>
-        </ng-container>
-      </mat-selection-list>
-    </div>
-  </ng-container>
-
-  <ng-template #notFound>
-    <div style="display: flex; flex-direction: column; align-items: center">
-      <p style="font-size: 1.5rem; padding: 0.5em">No service found. Create your first service.</p>
-      <button mat-stroked-button color="primary" (click)="createService()">
-        <mat-icon>add</mat-icon>Create service
-      </button>
-    </div>
-  </ng-template>
-</div>
-
-<!-- <div style="border: 2px solid red">
-  <mat-selection-list multiple="false" style="margin-top: 50px; display: flex; flex-direction: column; gap: 5px">
-    <ng-container *ngFor="let service of services1()">
-      <mat-list-option class="serviceList">
-        <span style="width: 90%; display: flex; align-self: center">{{ service.name }}</span>
-      </mat-list-option>
-    </ng-container>
+    }
   </mat-selection-list>
-</div> -->
+</div>

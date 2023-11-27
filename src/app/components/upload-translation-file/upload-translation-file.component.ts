@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { CommonModule } from '@angular/common'
-import { Component, HostListener, Inject, OnInit } from '@angular/core'
+import { Component, HostListener, Inject, Input, OnInit } from '@angular/core'
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCheckboxModule } from '@angular/material/checkbox'
@@ -12,12 +12,12 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
 import { MatSelectModule } from '@angular/material/select'
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar'
+import { MatToolbarModule } from '@angular/material/toolbar'
 import { Schema } from '@buf/expectdigital_translate-agent.bufbuild_es/translate/v1/translate_pb'
 import { Observable, map, shareReplay } from 'rxjs'
 import { TranslateClientService } from 'src/app/services/translate-client.service'
 
 const schemas = {
-  UNSPECIFIED: Schema.UNSPECIFIED,
   JSON_NG_LOCALIZE: Schema.JSON_NG_LOCALIZE,
   JSON_NGX_TRANSLATE: Schema.JSON_NGX_TRANSLATE,
   GO: Schema.GO,
@@ -30,7 +30,7 @@ const schemas = {
 @Component({
   selector: 'app-upload-translation-file',
   templateUrl: './upload-translation-file.component.html',
-  styleUrls: ['./upload-translation-file.component.scss'],
+  styleUrl: './upload-translation-file.component.scss',
   standalone: true,
   imports: [
     CommonModule,
@@ -45,12 +45,15 @@ const schemas = {
     MatIconModule,
     MatDividerModule,
     MatSnackBarModule,
+    MatToolbarModule,
   ],
 })
 export class UploadTranslationFileComponent implements OnInit {
+  @Input() download = false
+
   readonly form = this.fb.nonNullable.group({
     language: ['', Validators.required],
-    schema: [Schema.UNSPECIFIED, Validators.required],
+    schema: this.fb.nonNullable.control<Schema | undefined>(undefined, Validators.required),
     original: false,
     populateTranslations: false,
   })
@@ -69,6 +72,10 @@ export class UploadTranslationFileComponent implements OnInit {
   show = false
 
   serviceId: string | null = null
+
+  languages!: string[]
+
+  readonly languageNames = new Intl.DisplayNames(['en'], { type: 'language' })
 
   constructor(
     private fb: FormBuilder,
@@ -109,6 +116,11 @@ export class UploadTranslationFileComponent implements OnInit {
     this.dragAreaClass = 'dropzone'
 
     this.id.subscribe((id) => (this.serviceId = id))
+
+    this.service
+      .listTranslations(this.serviceId!)
+      .pipe(map((v) => v.translations.map((translation) => translation.language)))
+      .subscribe((v) => (this.languages = v))
   }
 
   onFileSelected(event: Event): void {
@@ -139,5 +151,65 @@ export class UploadTranslationFileComponent implements OnInit {
         },
         error: (err) => console.log(err),
       })
+  }
+
+  downloadFile() {
+    this.form.markAllAsTouched()
+
+    if (this.form.invalid) {
+      return
+    }
+
+    const { language, schema } = this.form.getRawValue()
+
+    this.service.downloadTranslationFile(language, schema!, this.serviceId!).subscribe({
+      next: (v) => {
+        const blob = new Blob([v.data], { type: 'application/octet-stream' })
+        const url = window.URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `${language}.${this.fileFormat(schema!)}`
+        document.body.appendChild(a)
+        a.click()
+        window.URL.revokeObjectURL(url)
+
+        this.dialogRef.close()
+
+        this.snackBar.open('Download completed', undefined, {
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom',
+          duration: 5000,
+        })
+      },
+      error: (err) => {
+        this.snackBar.open('An error occurred during the download process.', undefined, {
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom',
+          duration: 5000,
+        })
+        console.log(err)
+      },
+    })
+  }
+
+  fileFormat(schema: Schema): string | undefined {
+    switch (schema) {
+      case Schema.POT:
+        return 'po'
+      case Schema.JSON_NGX_TRANSLATE:
+        return 'json'
+      case Schema.JSON_NG_LOCALIZE:
+        return 'json'
+      case Schema.ARB:
+        return 'arb'
+      case Schema.GO:
+        return 'go'
+      case Schema.XLIFF_12:
+        return 'xlf'
+      case Schema.XLIFF_2:
+        return 'xlf'
+      default:
+        return
+    }
   }
 }

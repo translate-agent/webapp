@@ -10,7 +10,7 @@ import { Service } from '@buf/expectdigital_translate-agent.bufbuild_es/translat
   standalone: true,
   imports: [CommonModule, MatDialogModule, MatButtonModule, MatIconModule],
   templateUrl: './dialog-delete.component.html',
-  styleUrls: ['./dialog-delete.component.scss'],
+  styleUrl: './dialog-delete.component.scss',
 })
 export class DialogDeleteComponent {
   constructor(
