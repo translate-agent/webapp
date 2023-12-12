@@ -1,13 +1,4 @@
-<div
-  style="
-    display: flex;
-    padding-top: 8px;
-    padding-left: 24px;
-    padding-right: 8px;
-    justify-content: space-between;
-    align-items: center;
-  "
->
+<div class="container">
   <h3>{{ download ? 'File download' : 'File import' }}</h3>
   <button class="grow" mat-icon-button mat-dialog-close>
     <mat-icon>close</mat-icon>
@@ -16,11 +7,8 @@
 @if (!download) {
   <mat-dialog-content>
     @if (show) {
-      <form
-        [formGroup]="form"
-        style="display: flex; flex-direction: column; gap: 20px; width: 100%; padding-bottom: 16px"
-      >
-        <div style="display: flex; gap: 20px">
+      <form [formGroup]="form" class="form">
+        <div class="container-form-field">
           <mat-form-field appearance="outline">
             <mat-label>Language</mat-label>
             <input formControlName="language" matInput />
@@ -28,13 +16,13 @@
           <mat-form-field appearance="outline">
             <mat-label>Schema</mat-label>
             <mat-select formControlName="schema">
-              @for (sch of schema | keyvalue; track sch) {
-                <mat-option [value]="sch.value">{{ sch.key }}</mat-option>
+              @for (schema of schemas | keyvalue; track schema) {
+                <mat-option [value]="schema.value">{{ schema.key }}</mat-option>
               }
             </mat-select>
           </mat-form-field>
         </div>
-        <div style="display: flex; justify-content: space-between">
+        <div class="container-checbox">
           <section>
             <mat-checkbox color="primary" formControlName="original">Original language</mat-checkbox>
           </section>
@@ -48,11 +36,7 @@
       <div class="dropzone" ngClass="{{ dragAreaClass }}">
         <div class="text-wrapper">
           <div class="centered">
-            <mat-icon
-              class="hvr-wobble-vertical material-symbols-outlined"
-              style="font-size: 50px; width: 50px; height: auto; margin-bottom: 20px"
-              fontIcon="upload"
-            ></mat-icon>
+            <mat-icon class="hvr-wobble-vertical material-symbols-outlined icon-upload" fontIcon="upload"></mat-icon>
             <div>
               <input type="file" name="file" id="file" (change)="onFileSelected($event)" />
               <label for="file"><span class="textLink">Select a file</span> or drag and drop it here!</label>
@@ -62,8 +46,8 @@
       </div>
     }
     @if (file) {
-      <div style="padding-top: 16px; display: flex; justify-content: space-between">
-        <div style="display: flex; gap: 1rem">
+      <div class="container-file">
+        <div class="file">
           <mat-icon inline class="material-symbols-outlined" fontIcon="note"></mat-icon>
           <span>{{ file.name }}</span>
         </div>
@@ -80,10 +64,7 @@
   </mat-dialog-content>
 } @else {
   <mat-dialog-content>
-    <form
-      [formGroup]="form"
-      style="display: flex; flex-direction: column; min-width: 400px; width: 100%; padding-bottom: 16px"
-    >
+    <form [formGroup]="form" class="form" style="min-width: 400px">
       <mat-form-field appearance="outline">
         <mat-label>Language</mat-label>
         <mat-select formControlName="language">
@@ -95,15 +76,15 @@
       <mat-form-field appearance="outline">
         <mat-label>File format</mat-label>
         <mat-select formControlName="schema">
-          @for (sch of schema | keyvalue; track sch) {
-            <mat-option [value]="sch.value">{{ sch.key }}</mat-option>
+          @for (schema of schemas | keyvalue; track schema) {
+            <mat-option [value]="schema.value">{{ schema.key }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
     </form>
   </mat-dialog-content>
 }
-<mat-dialog-actions align="end" style="padding: 0 24px 16px">
+<mat-dialog-actions align="end" class="container-actions">
   <button mat-button mat-dialog-close>Cancel</button>
   <button color="primary" mat-raised-button cdkFocusInitial (click)="download ? downloadFile() : upload()">
     {{ download ? 'Download' : 'Upload' }}

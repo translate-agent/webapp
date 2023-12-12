@@ -14,7 +14,7 @@ import { MatSelectModule } from '@angular/material/select'
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar'
 import { MatToolbarModule } from '@angular/material/toolbar'
 import { Schema } from '@buf/expectdigital_translate-agent.bufbuild_es/translate/v1/translate_pb'
-import { Observable, map, shareReplay } from 'rxjs'
+import { Observable, map, switchMap } from 'rxjs'
 import { TranslateClientService } from 'src/app/services/translate-client.service'
 
 const schemas = {
@@ -58,20 +58,15 @@ export class UploadTranslationFileComponent implements OnInit {
     populateTranslations: false,
   })
 
-  readonly serviceList = this.service.listService().pipe(
-    map((v) => v.services),
-    shareReplay(1),
-  )
-
   file!: File | null
 
   dragAreaClass!: string
 
-  readonly schema = schemas
+  readonly schemas = schemas
 
   show = false
 
-  serviceId: string | null = null
+  serviceId!: string
 
   languages!: string[]
 
@@ -113,13 +108,15 @@ export class UploadTranslationFileComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.dragAreaClass = 'dropzone'
-
     this.id.subscribe((id) => (this.serviceId = id))
 
-    this.service
-      .listTranslations(this.serviceId!)
-      .pipe(map((v) => v.translations.map((translation) => translation.language)))
+    this.dragAreaClass = 'dropzone'
+
+    this.id
+      .pipe(
+        switchMap((id) => this.service.listTranslations(id)),
+        map((v) => v.translations.map((translation) => translation.language)),
+      )
       .subscribe((v) => (this.languages = v))
   }
 
@@ -162,7 +159,7 @@ export class UploadTranslationFileComponent implements OnInit {
 
     const { language, schema } = this.form.getRawValue()
 
-    this.service.downloadTranslationFile(language, schema!, this.serviceId!).subscribe({
+    this.service.downloadTranslationFile(language, schema!, this.serviceId).subscribe({
       next: (v) => {
         const blob = new Blob([v.data], { type: 'application/octet-stream' })
         const url = window.URL.createObjectURL(blob)

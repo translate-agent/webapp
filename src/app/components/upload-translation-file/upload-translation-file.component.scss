@@ -1,3 +1,52 @@
+.container {
+  display: flex;
+  padding-top: 8px;
+  padding-left: 24px;
+  padding-right: 8px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.container-form-field {
+  display: flex;
+  gap: 20px;
+}
+
+.container-checbox {
+  display: flex;
+  justify-content: space-between;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  padding-bottom: 16px;
+}
+
+.icon-upload {
+  font-size: 50px;
+  width: 50px;
+  height: auto;
+  margin-bottom: 20px;
+}
+
+.container-file {
+  padding-top: 16px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.file {
+  display: flex;
+  gap: 1rem;
+}
+
+.container-actions {
+  padding: 0 24px 16px;
+}
+
 .droparea {
   font-size: 1.5rem;
   border: 3px dashed #bbb;

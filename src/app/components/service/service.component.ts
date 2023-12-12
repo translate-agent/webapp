@@ -1,7 +1,7 @@
 import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling'
 import { TextFieldModule } from '@angular/cdk/text-field'
 import { CommonModule } from '@angular/common'
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
+import { Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChild } from '@angular/core'
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCheckboxModule } from '@angular/material/checkbox'
@@ -13,12 +13,14 @@ import { MatInputModule } from '@angular/material/input'
 import { MatSelectModule } from '@angular/material/select'
 import { MatSlideToggleModule } from '@angular/material/slide-toggle'
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar'
-import { MatToolbarModule } from '@angular/material/toolbar'
+import { MatToolbar, MatToolbarModule } from '@angular/material/toolbar'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { Title } from '@angular/platform-browser'
-import { ActivatedRoute, RouterModule } from '@angular/router'
+import { ActivatedRoute, Router, RouterModule } from '@angular/router'
 import { Message_Status, Translation } from '@buf/expectdigital_translate-agent.bufbuild_es/translate/v1/translate_pb'
-import { Subscription, filter, map, shareReplay, startWith, switchMap } from 'rxjs'
+import hljs from 'highlight.js'
+import { Subscription, map, shareReplay, startWith, switchMap } from 'rxjs'
+import { messageformat } from 'src/app/highlight'
 import { TranslateClientService } from 'src/app/services/translate-client.service'
 import { MessagesComponent } from '../messages/messages.component'
 import { NewLanguageDialogComponent } from '../new-language-dialog/new-language-dialog.component'
@@ -30,10 +32,19 @@ export interface StatusOption {
   value: Message_Status
 }
 
+export interface MapValue {
+  lang: string
+  original: boolean
+  message: string
+  status: Message_Status
+  id: string
+  position: string[]
+}
+
 @Component({
   selector: 'app-service',
   templateUrl: './service.component.html',
-  styleUrls: ['./service.component.scss'],
+  styleUrl: './service.component.scss',
   standalone: true,
   imports: [
     CommonModule,
@@ -60,17 +71,21 @@ export interface StatusOption {
 })
 export class ServiceComponent implements OnInit, OnDestroy {
   @ViewChild(CdkVirtualScrollViewport) virtualScroll!: CdkVirtualScrollViewport
-
-  readonly form = this.fb.nonNullable.group({
-    status: this.fb.nonNullable.control<undefined | StatusOption>(undefined),
-  })
+  @ViewChild(MatToolbar) toolbar!: MatToolbar
+  @ViewChild('messages') messagesList!: MessagesComponent
 
   readonly serviceid = this.route.paramMap.pipe(
     map((v) => v.get('id')!),
     shareReplay(1),
   )
 
-  id!: string
+  filtered = false
+
+  animationState = 'in'
+
+  readonly form = this.fb.nonNullable.group({
+    status: this.fb.nonNullable.control<undefined | StatusOption>(undefined),
+  })
 
   readonly statuses: StatusOption[] = [
     { title: 'Untranslated', value: Message_Status.UNTRANSLATED },
@@ -79,7 +94,7 @@ export class ServiceComponent implements OnInit, OnDestroy {
   ]
 
   translations = this.serviceid.pipe(
-    switchMap((id) => this.service.listTranslations(id)),
+    switchMap((id) => this.translateService.listTranslations(id)),
     map((v) => {
       return v.translations
     }),
@@ -90,6 +105,8 @@ export class ServiceComponent implements OnInit, OnDestroy {
     }),
     // shareReplay(1),
   )
+
+  translationsMap = new Map<string, MapValue[]>()
 
   readonly state = this.form.controls.status.valueChanges.pipe(startWith(undefined))
 
@@ -104,29 +121,44 @@ export class ServiceComponent implements OnInit, OnDestroy {
   constructor(
     public dialog: MatDialog,
     private fb: FormBuilder,
-    private service: TranslateClientService,
+    private translateService: TranslateClientService,
     private route: ActivatedRoute,
     public title: Title,
     private snackBar: MatSnackBar,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
     this.subscription.add(
-      this.route.paramMap.pipe(map((v) => v.get('id')!)).subscribe((v) => {
-        this.id = v
-        this.service.getService(v).subscribe((service) => this.title.setTitle(service.name))
+      this.serviceid.pipe(switchMap((id) => this.translateService.getService(id))).subscribe({
+        next: (service) => this.title.setTitle(service.name),
+        error: (err) => {
+          if (err.code === 5 || err.code === 3) {
+            this.router.navigate(['services'])
+          } else {
+            console.log(err)
+          }
+        },
       }),
     )
 
+    hljs.registerLanguage('messageformat2', () => messageformat)
+
     this.subscription.add(
       this.form.controls.status.valueChanges.pipe(startWith(undefined)).subscribe((state) => {
+        // console.log(state)
         this.translations.subscribe((v) => {
-          if (state?.value === undefined) {
+          if (!state) {
             this.filteredTranslations = v
+            // this.newMap(v)
             return
           }
 
           this.filteredTranslations = this.filterMessagesByStatus(v, state.value)
+          this.filtered = true
+
+          this.messagesList?.highlight()
+          // this.newMap(this.filteredTranslations)
         })
       }),
     )
@@ -145,7 +177,7 @@ export class ServiceComponent implements OnInit, OnDestroy {
     this.dialog
       .open(UploadTranslationFileComponent, { data: this.serviceid })
       .afterClosed()
-      .pipe(filter((v) => !!v))
+      .pipe()
       .subscribe(() => {
         this.translations.subscribe((v) => {
           this.filteredTranslations = v
@@ -153,14 +185,25 @@ export class ServiceComponent implements OnInit, OnDestroy {
       })
   }
 
+  openFileDownloadModal(): void {
+    const dialog = this.dialog.open(UploadTranslationFileComponent, { data: this.serviceid })
+
+    dialog.componentInstance.download = true
+  }
+
   addLanguage(): void {
     this.dialog
       .open(NewLanguageDialogComponent, { data: this.serviceid, width: '400px' })
       .afterClosed()
-      .pipe(filter((v) => !!v))
+      // .pipe(filter((v) => !!v))
       .subscribe(() => {
         this.translations.subscribe((v) => {
           this.filteredTranslations = v
+        })
+        this.snackBar.open('Added new translations', undefined, {
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom',
+          duration: 5000,
         })
       })
   }
@@ -169,14 +212,34 @@ export class ServiceComponent implements OnInit, OnDestroy {
     this.receivedData = data
   }
 
+  receive(data: { data: Translation; animate?: boolean; element: QueryList<ElementRef> }) {
+    this.translations.subscribe((v) => {
+      const x = v.map((translations) => {
+        if (translations.language === data.data.language) {
+          translations = data.data
+        }
+        return translations
+      })
+      if (this.form.controls.status.value) {
+        this.filteredTranslations = this.filterMessagesByStatus(x, this.form.controls.status.value.value)
+        // this.newMap(this.filteredTranslations)
+      }
+      this.filteredTranslations = x
+      // this.animationState = 'in'
+    })
+  }
+
   filterMessagesByStatus(data: Translation[], status: Message_Status) {
     const filteredKeys: string[] = []
-    data
-      .filter((v) => !v.original)
-      .map((v) =>
-        v.messages.filter((v) => {
+    const copy = data
+    // cloneDeep(data)
+    copy
+      .filter((translations) => !translations.original)
+      .map((translation) =>
+        translation.messages.filter((v) => {
           if (v.status === status) {
             filteredKeys.push(v.id)
+
             return v
           }
           return
@@ -185,17 +248,14 @@ export class ServiceComponent implements OnInit, OnDestroy {
 
     const uniqueKey = [...new Set(filteredKeys)]
 
-    const orginal = data.find((obj) => obj.original)
-
-    const result = data.map((v) => {
-      if (v.original) {
-        v.messages = orginal!.messages.filter((msg) => {
-          return uniqueKey.some((key) => key === msg.id)
-        })
-      }
+    const result = copy.map((v) => {
+      v.messages = v.messages.filter((msg) => {
+        return uniqueKey.some((key) => key === msg.id)
+      })
       return v
     })
-
+    console.log(result)
+    this.animationState = 'out'
     return result
   }
 }

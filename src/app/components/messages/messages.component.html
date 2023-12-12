@@ -1,43 +1,22 @@
-<div *ngFor="let x of findMessage(data!, id); let i = index; first as isFirst" style="display: flex; flex: 1">
-  <div
-    style="
-      border-bottom: 1px solid #cccccc;
-      display: flex;
-      width: 100%;
-      padding: 5px 10px;
-      justify-content: space-between;
-      gap: 2em;
-    "
-    [style.border-left]="isFirst ? '1px solid #cccccc' : 'none'"
-  >
-    <ng-container *ngIf="i !== 0; else edit">
-      <mat-form-field class="border" appearance="outline" style="width: 100%">
-        <textarea matInput cdkTextareaAutosize (focusout)="save($event, x?.id, i)">{{ x?.message }}</textarea>
-      </mat-form-field>
-      <div *ngIf="x?.status === 1" style="display: flex; align-items: center">
-        <mat-icon inline matTooltip="Fuzzy" style="max-width: 20px">g_translated</mat-icon>
+@for (x of findMessage(filteredTranslations!, id); track x?.id) {
+  <div class="container" [@slideInOut]="state">
+    <div class="container1" [style.border-left]="$first ? '1px solid #cccccc' : 'none'">
+      <span>{{ index + 1 }}</span>
+      <pre>
+        <code #pre  (focusout)="save($event, x?.id, $index)" [attr.contenteditable]="$index !== 0" class="code messageformat2" >{{x?.message}}</code> 
+      </pre>
+      <div class="container-icons">
+        <mat-icon
+          (click)="changeStatuss($index, x?.id!)"
+          inline
+          matTooltip="Mark as Translated"
+          class="icon"
+          [class.hidden]="x?.status === 0"
+          >spellcheck</mat-icon
+        >
+        <mat-icon inline [matTooltip]="tooltip(x?.status)" class="icon" [fontIcon]="icon(x?.status)"></mat-icon>
       </div>
-      <div *ngIf="x?.status === 2" style="display: flex; align-items: center">
-        <mat-icon inline matTooltip="Needs translation">translate</mat-icon>
-      </div>
-    </ng-container>
-    <ng-template #edit>
-      <span
-        style="
-          padding-left: 0.5em;
-          display: flex;
-          align-items: center;
-          min-height: 40px;
-          color: rgba(0, 0, 0, 0.87);
-          word-break: break-all;
-          white-space: normal;
-        "
-        >{{ x?.message }}</span
-      >
-      <div style="display: flex; align-items: center">
-        <mat-icon inline="true" style="max-width: 20px">check_small</mat-icon>
-      </div>
-    </ng-template>
+    </div>
+    <mat-divider [vertical]="true"></mat-divider>
   </div>
-  <mat-divider [vertical]="true"></mat-divider>
-</div>
+}

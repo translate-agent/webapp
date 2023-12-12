@@ -41,9 +41,8 @@ export class NewLanguageDialogComponent {
       return
     }
     const language = this.language.getRawValue()
-
-    this.data.subscribe((v) => {
-      this.service.createTranslation(v, language).subscribe({
+    this.data.subscribe((id) => {
+      this.service.createTranslation(id, language).subscribe({
         next: (v) => {
           this.dialogRef.close(v)
         },

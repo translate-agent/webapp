@@ -3,14 +3,11 @@ import { TranslateService } from '@buf/expectdigital_translate-agent.bufbuild_co
 import {
   CreateServiceRequest,
   DownloadTranslationFileRequest,
-  DownloadTranslationFileResponse,
   ListServicesResponse,
   ListTranslationsResponse,
   Schema,
   Service,
   Translation,
-  UpdateTranslationRequest,
-  UploadTranslationFileRequest,
 } from '@buf/expectdigital_translate-agent.bufbuild_es/translate/v1/translate_pb'
 import { PromiseClient, createPromiseClient } from '@bufbuild/connect'
 import { createGrpcWebTransport } from '@bufbuild/connect-web'
@@ -47,6 +44,14 @@ export class TranslateClientService {
     return from(this.client.createService(request))
   }
 
+  updateService(id: string, name: string): Observable<Service> {
+    return from(this.client.updateService({ service: new Service({ id, name }) }))
+  }
+
+  deleteService(serviceId: string): Observable<Empty> {
+    return from(this.client.deleteService({ id: serviceId }))
+  }
+
   listTranslations(serviceId: string): Observable<ListTranslationsResponse> {
     return from(
       this.client.listTranslations({
@@ -55,21 +60,12 @@ export class TranslateClientService {
     )
   }
 
-  updateTranslation(serviceId: string, translation: Translation, populateTranslations?: boolean) {
-    UpdateTranslationRequest
-    return from(this.client.updateTranslation({ serviceId, translation, populateTranslations }))
-  }
-
   createTranslation(serviceId: string, language?: string) {
     return from(this.client.createTranslation({ serviceId, translation: { language: language } }))
   }
 
-  updateService(service: Service): Observable<Service> {
-    return from(this.client.updateService({ service }))
-  }
-
-  deleteService(serviceId: string): Observable<Empty> {
-    return from(this.client.deleteService({ id: serviceId }))
+  updateTranslation(serviceId: string, translation: Translation, populateTranslations?: boolean) {
+    return from(this.client.updateTranslation({ serviceId, translation, populateTranslations }))
   }
 
   uploadTranslationFile(
@@ -80,7 +76,6 @@ export class TranslateClientService {
     serviceId: string,
     populateTranslations: boolean,
   ): Observable<Empty> {
-    UploadTranslationFileRequest
     return from(
       this.client.uploadTranslationFile({
         language,
@@ -94,8 +89,7 @@ export class TranslateClientService {
   }
 
   downloadTranslationFile(language: string, schema: Schema, serviceId: string) {
-    DownloadTranslationFileRequest
-    DownloadTranslationFileResponse
-    return from(this.client.downloadTranslationFile({ language, schema, serviceId }))
+    const request = new DownloadTranslationFileRequest({ language, schema: schema, serviceId })
+    return from(this.client.downloadTranslationFile(request))
   }
 }

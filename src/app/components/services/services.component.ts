@@ -16,6 +16,7 @@ import { filter } from 'rxjs'
 import { TranslateClientService } from 'src/app/services/translate-client.service'
 import { CreateServiceComponent } from '../create-service/create-service.component'
 import { DialogDeleteComponent } from '../dialog-delete/dialog-delete.component'
+import { UploadTranslationFileComponent } from '../upload-translation-file/upload-translation-file.component'
 
 type ServiceNew = {
   id: string
@@ -58,8 +59,6 @@ export class ServicesComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    console.log()
-
     this.service.listService().subscribe((v) => {
       this.services = structuredClone(v.services)
 
@@ -102,7 +101,25 @@ export class ServicesComponent implements OnInit {
       })
   }
 
-  editService() {
-    // this.service.updateService()
+  editService(service: ServiceNew) {
+    const dialog = this.dialog.open(CreateServiceComponent, { width: '500px', data: service })
+
+    dialog.componentInstance.edit = true
+
+    dialog
+      .afterClosed()
+      .pipe(filter((v) => !!v))
+      .subscribe((v) => {
+        this.services = this.services.map((service) => {
+          if (service.id === v.id) {
+            service.name = v.name
+          }
+          return service
+        })
+      })
+  }
+
+  openFileUploadModal(id: string) {
+    this.dialog.open(UploadTranslationFileComponent, { data: id }).afterClosed()
   }
 }

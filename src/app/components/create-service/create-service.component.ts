@@ -1,12 +1,13 @@
 import { CommonModule } from '@angular/common'
-import { Component } from '@angular/core'
+import { Component, Inject, Input } from '@angular/core'
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog'
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
 import { MatSnackBar } from '@angular/material/snack-bar'
+import { Service } from '@buf/expectdigital_translate-agent.bufbuild_es/translate/v1/translate_pb'
 import { TranslateClientService } from 'src/app/services/translate-client.service'
 
 @Component({
@@ -26,8 +27,10 @@ import { TranslateClientService } from 'src/app/services/translate-client.servic
   ],
 })
 export class CreateServiceComponent {
+  @Input() edit = false
+
   readonly form = this.fb.nonNullable.group({
-    serviceName: ['', Validators.required],
+    serviceName: [this.data ? this.data.name : '', Validators.required],
   })
 
   constructor(
@@ -35,6 +38,7 @@ export class CreateServiceComponent {
     private fb: FormBuilder,
     private service: TranslateClientService,
     private snackBar: MatSnackBar,
+    @Inject(MAT_DIALOG_DATA) public data: Service,
   ) {}
 
   createService(): void {
@@ -48,12 +52,29 @@ export class CreateServiceComponent {
 
     const { serviceName } = this.form.getRawValue()
 
+    if (this.edit) {
+      this.service.updateService(this.data.id, serviceName).subscribe({
+        next: (v) => {
+          this.snackBar.open('Service updated!', undefined, {
+            duration: 5000,
+          })
+          this.dialogRef.close(v)
+        },
+
+        error: (err) =>
+          this.snackBar.open(`Something went wrong. ${err}`, undefined, {
+            duration: 5000,
+          }),
+      })
+      return
+    }
+
     this.service.createService(serviceName).subscribe({
       next: (v) => {
         this.snackBar.open('Service created!', undefined, {
           duration: 5000,
         })
-        console.log(v)
+
         this.dialogRef.close(v)
       },
 
