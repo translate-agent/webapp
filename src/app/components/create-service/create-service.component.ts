@@ -52,7 +52,7 @@ export class CreateServiceComponent {
 
     const { serviceName } = this.form.getRawValue()
 
-    if (this.edit) {
+    if (this.edit && this.data.name !== serviceName) {
       this.service.updateService(this.data.id, serviceName).subscribe({
         next: (v) => {
           this.snackBar.open('Service updated!', undefined, {
@@ -61,27 +61,33 @@ export class CreateServiceComponent {
           this.dialogRef.close(v)
         },
 
-        error: (err) =>
+        error: (err) => {
           this.snackBar.open(`Something went wrong. ${err}`, undefined, {
             duration: 5000,
           }),
+            this.dialogRef.close()
+        },
       })
       return
     }
 
-    this.service.createService(serviceName).subscribe({
-      next: (v) => {
-        this.snackBar.open('Service created!', undefined, {
-          duration: 5000,
-        })
+    if (!this.edit) {
+      this.service.createService(serviceName).subscribe({
+        next: (v) => {
+          this.snackBar.open('Service created!', undefined, {
+            duration: 5000,
+          })
 
-        this.dialogRef.close(v)
-      },
+          this.dialogRef.close(v)
+        },
 
-      error: (err) =>
-        this.snackBar.open(`Something went wrong. ${err}`, undefined, {
-          duration: 5000,
-        }),
-    })
+        error: (err) => {
+          this.snackBar.open(`Something went wrong. ${err}`, undefined, {
+            duration: 5000,
+          })
+          this.dialogRef.close()
+        },
+      })
+    }
   }
 }

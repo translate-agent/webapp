@@ -1,9 +1,8 @@
-@for (x of findMessage(filteredTranslations!, id); track x?.id) {
+@for (x of findedMessages(); track x?.id) {
   <div class="container" [@slideInOut]="state">
-    <div class="container1" [style.border-left]="$first ? '1px solid #cccccc' : 'none'">
-      <span>{{ index + 1 }}</span>
+    <div class="container1">
       <pre>
-        <code #pre  (focusout)="save($event, x?.id, $index)" [attr.contenteditable]="$index !== 0" class="code messageformat2" >{{x?.message}}</code> 
+        <code #pre  (focusout)="save($event, x?.id, $index)" [attr.contenteditable]="$index !== 0" class="code messageformat2" >{{ x?.message }}</code> 
       </pre>
       <div class="container-icons">
         <mat-icon
@@ -17,6 +16,8 @@
         <mat-icon inline [matTooltip]="tooltip(x?.status)" class="icon" [fontIcon]="icon(x?.status)"></mat-icon>
       </div>
     </div>
-    <mat-divider [vertical]="true"></mat-divider>
+    @if ($index !== findedMessages().length - 1) {
+      <mat-divider [vertical]="true"></mat-divider>
+    }
   </div>
 }

@@ -13,6 +13,9 @@ import {
   Output,
   QueryList,
   ViewChildren,
+  WritableSignal,
+  computed,
+  signal,
 } from '@angular/core'
 import { ReactiveFormsModule } from '@angular/forms'
 import { MatDividerModule } from '@angular/material/divider'
@@ -27,7 +30,7 @@ import { MatButtonModule } from '@angular/material/button'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import hljs from 'highlight.js'
 import { slideInOut } from 'src/app/animation'
-import { messageformat } from 'src/app/highlight'
+import { messageformat2 } from 'src/app/highlight'
 import { TranslateClientService } from 'src/app/services/translate-client.service'
 import { StatusOption } from '../service/service.component'
 
@@ -52,8 +55,8 @@ import { StatusOption } from '../service/service.component'
 })
 export class MessagesComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() serviceid!: string | null
-  @Input() data!: Translation[] | null
-  @Input() filteredTranslations!: Translation[] | null
+  @Input() data!: Translation[]
+  @Input() filteredTranslations!: Translation[]
   @Input() id!: string
   @Input() index!: number
   @Input() status!: StatusOption | undefined
@@ -64,17 +67,17 @@ export class MessagesComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChildren('pre') messageElements!: QueryList<ElementRef>
 
   @Output() dataEmitted = new EventEmitter<number>()
-  @Output() translatonsemitted = new EventEmitter<{
-    data: Translation
-    animate?: boolean
-    element: QueryList<ElementRef>
-  }>()
+  @Output() translatonsemitted = new EventEmitter<Translation>()
 
   readonly subscription = new Subscription()
 
   state = 'in'
 
   changes = false
+
+  translationsSignal: WritableSignal<Translation[]> = signal([])
+
+  findedMessages = computed(() => this.translationsSignal().map((v) => v.messages.find((msg) => msg.id === this.id)))
 
   readonly languageNames = new Intl.DisplayNames(['en'], { type: 'language' })
 
@@ -85,8 +88,8 @@ export class MessagesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit(): void {
     this.subscription.add(this.scroll?.scrolledIndexChange.subscribe((v) => this.dataEmitted.emit(v)))
-
-    hljs.registerLanguage('messageformat2', () => messageformat)
+    this.translationsSignal.set(this.filteredTranslations ?? [])
+    hljs.registerLanguage('messageformat2', () => messageformat2)
   }
 
   ngAfterViewInit(): void {
@@ -139,15 +142,12 @@ export class MessagesComponent implements OnInit, OnDestroy, AfterViewInit {
         duration: 5000,
       })
 
-      setTimeout(() => {
-        this.translatonsemitted.emit({ data: d, element: this.messageElements })
-        this.state = this.animationState
-      }, 1000)
-    })
-  }
+      this.state = this.animationState
 
-  findMessage(data: Translation[], i: string) {
-    return data.map((v) => v.messages.find((msg) => msg.id === i))
+      setTimeout(() => {
+        this.translatonsemitted.emit(d)
+      }, 500)
+    })
   }
 
   tooltip(status: Message_Status | undefined) {

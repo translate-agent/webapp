@@ -112,12 +112,14 @@ export class UploadTranslationFileComponent implements OnInit {
 
     this.dragAreaClass = 'dropzone'
 
-    this.id
-      .pipe(
-        switchMap((id) => this.service.listTranslations(id)),
-        map((v) => v.translations.map((translation) => translation.language)),
-      )
-      .subscribe((v) => (this.languages = v))
+    if (this.download) {
+      this.id
+        .pipe(
+          switchMap((id) => this.service.listTranslations(id)),
+          map((v) => v.map((translation) => translation.language)),
+        )
+        .subscribe((v) => (this.languages = v))
+    }
   }
 
   onFileSelected(event: Event): void {

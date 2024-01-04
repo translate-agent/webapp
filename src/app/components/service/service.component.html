@@ -6,9 +6,10 @@
     ><span routerLink="/services" style="cursor: pointer">Services</span>&nbsp;&mdash;&nbsp;{{ title.getTitle() }}</span
   >
 </mat-toolbar>
-@if (translations | async; as translation) {
+
+@if (translations$(); as translations) {
   <div style="padding: 50px 60px 0px">
-    @if (filteredTranslations.length !== 0) {
+    @if (filteredTranslations$().length !== 0) {
       <div style="display: flex; gap: 20px; margin-bottom: 30px; align-items: baseline; justify-content: space-between">
         <form [formGroup]="form">
           <mat-form-field appearance="outline">
@@ -42,34 +43,40 @@
           </button>
         </div>
       </div>
-      <div style="margin-bottom: 2em">Displaying: {{ filteredTranslations[0].messages.length }} messages</div>
-      @if (filteredTranslations[0].messages.length !== 0) {
+      <div style="margin-bottom: 2em">Displaying: {{ filteredTranslations$()[0].messages.length }} messages</div>
+      @if (filteredTranslations$()[0].messages.length !== 0) {
         <div style="position: relative">
           <a class="button" [class.show]="receivedData !== 0" (click)="scrollToTop()" style="position: absolute"></a>
           <div>
             <div style="display: flex; flex: 1; width: 100%">
-              @for (lang of filteredTranslations; track lang) {
+              @for (lang of filteredTranslations$(); track lang) {
                 <div
                   style="
                     display: flex;
                     flex-direction: row;
                     padding: 10px 10px;
                     justify-content: center;
-                    border-bottom: 1px solid #cccccc;
+                    border-top: 1px solid #cccccc;
                     background-color: #eeeeee;
                     align-items: stretch;
                     width: 100%;
                   "
+                  [style.border-left]="$first ? '1px solid #cccccc' : 'none'"
+                  [style.border-right]="$last ? '1px solid #cccccc' : 'none'"
                   [class.bold]="lang.original"
                 >
                   {{ languageNames.of(lang.language) }}
                 </div>
+                <mat-divider [vertical]="true" *ngIf="$index !== filteredTranslations$.length - 1"></mat-divider>
               }
             </div>
-            <cdk-virtual-scroll-viewport itemSize="100" style="width: 100%; min-height: 90vh">
+            <cdk-virtual-scroll-viewport
+              itemSize="100"
+              style="width: 100%; min-height: 60vh; border: 1px solid #cccccc"
+            >
               <ng-container
                 *cdkVirtualFor="
-                  let message of filteredTranslations[0]?.messages;
+                  let message of filteredTranslations$()[0].messages;
                   let index = index;
                   templateCacheSize: 0
                 "
@@ -77,8 +84,8 @@
                 <app-messages
                   [serviceid]="serviceid | async"
                   [id]="message.id"
-                  [data]="translation"
-                  [filteredTranslations]="filteredTranslations"
+                  [data]="translations"
+                  [filteredTranslations]="filteredTranslations$()"
                   [index]="index"
                   [scroll]="virtualScroll"
                   [animationState]="animationState"
@@ -88,6 +95,7 @@
                   (translatonsemitted)="receive($event)"
                   #messagesList
                 ></app-messages>
+                <mat-divider></mat-divider>
               </ng-container>
             </cdk-virtual-scroll-viewport>
           </div>

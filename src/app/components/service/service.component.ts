@@ -1,7 +1,7 @@
 import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling'
 import { TextFieldModule } from '@angular/cdk/text-field'
 import { CommonModule } from '@angular/common'
-import { Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChild } from '@angular/core'
+import { Component, OnDestroy, OnInit, Signal, ViewChild, computed, signal } from '@angular/core'
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCheckboxModule } from '@angular/material/checkbox'
@@ -19,7 +19,7 @@ import { Title } from '@angular/platform-browser'
 import { ActivatedRoute, Router, RouterModule } from '@angular/router'
 import { Message_Status, Translation } from '@buf/expectdigital_translate-agent.bufbuild_es/translate/v1/translate_pb'
 import hljs from 'highlight.js'
-import { Subscription, map, shareReplay, startWith, switchMap } from 'rxjs'
+import { BehaviorSubject, Subscription, combineLatest, filter, map, shareReplay, startWith, switchMap } from 'rxjs'
 import { messageformat } from 'src/app/highlight'
 import { TranslateClientService } from 'src/app/services/translate-client.service'
 import { MessagesComponent } from '../messages/messages.component'
@@ -30,15 +30,6 @@ import { UploadTranslationFileComponent } from '../upload-translation-file/uploa
 export interface StatusOption {
   title: string
   value: Message_Status
-}
-
-export interface MapValue {
-  lang: string
-  original: boolean
-  message: string
-  status: Message_Status
-  id: string
-  position: string[]
 }
 
 @Component({
@@ -93,30 +84,27 @@ export class ServiceComponent implements OnInit, OnDestroy {
     { title: 'Fuzzy', value: Message_Status.FUZZY },
   ]
 
-  translations = this.serviceid.pipe(
-    switchMap((id) => this.translateService.listTranslations(id)),
-    map((v) => {
-      return v.translations
-    }),
-    map((v) => v.sort((a, b) => Number(b.original) - Number(a.original))),
-    map((v) => {
-      v.map((messages) => messages.messages.sort((a, b) => a.id.localeCompare(b.id)))
-      return v
-    }),
-    // shareReplay(1),
-  )
+  private refreshTranslationsSubject = new BehaviorSubject<void>(undefined)
 
-  translationsMap = new Map<string, MapValue[]>()
+  translations$ = signal<Translation[]>([])
 
   readonly state = this.form.controls.status.valueChanges.pipe(startWith(undefined))
 
-  filteredTranslations: Translation[] = []
+  filteredTranslations$: Signal<Translation[]> = signal([])
 
   readonly languageNames = new Intl.DisplayNames(['en'], { type: 'language' })
 
   readonly subscription = new Subscription()
 
   receivedData: number = 0
+
+  readonly translations = combineLatest({
+    service: this.serviceid,
+    subject: this.refreshTranslationsSubject,
+  }).pipe(
+    switchMap(({ service }) => this.translateService.listTranslations(service)),
+    shareReplay(1),
+  )
 
   constructor(
     public dialog: MatDialog,
@@ -129,6 +117,12 @@ export class ServiceComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.subscription.add(
+      this.translations.subscribe((v) => {
+        this.translations$.set(v)
+      }),
+    )
+
     this.subscription.add(
       this.serviceid.pipe(switchMap((id) => this.translateService.getService(id))).subscribe({
         next: (service) => this.title.setTitle(service.name),
@@ -146,19 +140,14 @@ export class ServiceComponent implements OnInit, OnDestroy {
 
     this.subscription.add(
       this.form.controls.status.valueChanges.pipe(startWith(undefined)).subscribe((state) => {
-        // console.log(state)
-        this.translations.subscribe((v) => {
+        this.filteredTranslations$ = computed(() => {
           if (!state) {
-            this.filteredTranslations = v
-            // this.newMap(v)
-            return
+            this.animationState = 'in'
+            return this.translations$()
           }
 
-          this.filteredTranslations = this.filterMessagesByStatus(v, state.value)
           this.filtered = true
-
-          this.messagesList?.highlight()
-          // this.newMap(this.filteredTranslations)
+          return this.filterMessagesByStatus(this.translations$(), state.value)
         })
       }),
     )
@@ -177,11 +166,9 @@ export class ServiceComponent implements OnInit, OnDestroy {
     this.dialog
       .open(UploadTranslationFileComponent, { data: this.serviceid })
       .afterClosed()
-      .pipe()
+      .pipe(filter((v) => !!v))
       .subscribe(() => {
-        this.translations.subscribe((v) => {
-          this.filteredTranslations = v
-        })
+        this.refreshTranslationsSubject.next()
       })
   }
 
@@ -197,9 +184,7 @@ export class ServiceComponent implements OnInit, OnDestroy {
       .afterClosed()
       // .pipe(filter((v) => !!v))
       .subscribe(() => {
-        this.translations.subscribe((v) => {
-          this.filteredTranslations = v
-        })
+        this.refreshTranslationsSubject.next()
         this.snackBar.open('Added new translations', undefined, {
           horizontalPosition: 'center',
           verticalPosition: 'bottom',
@@ -212,27 +197,15 @@ export class ServiceComponent implements OnInit, OnDestroy {
     this.receivedData = data
   }
 
-  receive(data: { data: Translation; animate?: boolean; element: QueryList<ElementRef> }) {
-    this.translations.subscribe((v) => {
-      const x = v.map((translations) => {
-        if (translations.language === data.data.language) {
-          translations = data.data
-        }
-        return translations
-      })
-      if (this.form.controls.status.value) {
-        this.filteredTranslations = this.filterMessagesByStatus(x, this.form.controls.status.value.value)
-        // this.newMap(this.filteredTranslations)
-      }
-      this.filteredTranslations = x
-      // this.animationState = 'in'
-    })
+  receive(data: Translation) {
+    console.log(data)
+    this.refreshTranslationsSubject.next()
   }
 
   filterMessagesByStatus(data: Translation[], status: Message_Status) {
     const filteredKeys: string[] = []
-    const copy = data
-    // cloneDeep(data)
+    const copy = structuredClone(data)
+
     copy
       .filter((translations) => !translations.original)
       .map((translation) =>
@@ -254,7 +227,7 @@ export class ServiceComponent implements OnInit, OnDestroy {
       })
       return v
     })
-    console.log(result)
+
     this.animationState = 'out'
     return result
   }

@@ -22,10 +22,10 @@
     "@angular/platform-browser-dynamic": "^17.0.6",
     "@angular/router": "^17.0.6",
     "@buf/expectdigital_translate-agent.bufbuild_connect-es": "^0.13.0-20231116100341-426e96e85cca.1",
-    "@buf/expectdigital_translate-agent.bufbuild_es": "^1.5.1-20231116100341-426e96e85cca.1",
+    "@buf/expectdigital_translate-agent.bufbuild_es": "^1.6.0-20231116100341-426e96e85cca.1",
     "@bufbuild/connect": "^0.13.0",
     "@bufbuild/connect-web": "^0.13.0",
-    "@bufbuild/protobuf": "^1.5.1",
+    "@bufbuild/protobuf": "^1.6.0",
     "highlight.js": "^11.9.0",
     "lodash": "^4.17.21",
     "prismjs": "^1.29.0",
@@ -34,13 +34,13 @@
     "zone.js": "~0.14.2"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^17.0.6",
+    "@angular-devkit/build-angular": "^17.0.7",
     "@angular-eslint/builder": "17.1.1",
     "@angular-eslint/eslint-plugin": "17.1.1",
     "@angular-eslint/eslint-plugin-template": "17.1.1",
     "@angular-eslint/schematics": "17.1.1",
     "@angular-eslint/template-parser": "17.1.1",
-    "@angular/cli": "~17.0.6",
+    "@angular/cli": "~17.0.7",
     "@angular/compiler-cli": "^17.0.6",
     "@types/jasmine": "~5.1.4",
     "@types/lodash": "^4.14.202",
@@ -60,6 +60,6 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "prettier": "^3.1.1",
-    "typescript": "~5.3.3"
+    "typescript": "~5.2.2"
   }
 }

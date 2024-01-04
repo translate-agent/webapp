@@ -4,7 +4,6 @@ import {
   CreateServiceRequest,
   DownloadTranslationFileRequest,
   ListServicesResponse,
-  ListTranslationsResponse,
   Schema,
   Service,
   Translation,
@@ -12,7 +11,7 @@ import {
 import { PromiseClient, createPromiseClient } from '@bufbuild/connect'
 import { createGrpcWebTransport } from '@bufbuild/connect-web'
 import { Empty } from '@bufbuild/protobuf'
-import { Observable, from } from 'rxjs'
+import { Observable, from, map } from 'rxjs'
 import { environment } from 'src/environments/environments'
 
 @Injectable({
@@ -52,10 +51,17 @@ export class TranslateClientService {
     return from(this.client.deleteService({ id: serviceId }))
   }
 
-  listTranslations(serviceId: string): Observable<ListTranslationsResponse> {
+  listTranslations(serviceId: string) {
     return from(
       this.client.listTranslations({
         serviceId,
+      }),
+    ).pipe(
+      map((v) => v.translations),
+      map((v) => v.sort((a, b) => Number(b.original) - Number(a.original))),
+      map((v) => {
+        v.map((messages) => messages.messages.sort((a, b) => a.id.localeCompare(b.id)))
+        return v
       }),
     )
   }
