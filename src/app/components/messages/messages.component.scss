@@ -38,6 +38,7 @@ pre {
 .code {
   display: block;
   padding: 15px;
+  width: 100%;
 }
 
 .container-icon {
@@ -45,12 +46,6 @@ pre {
   align-items: center;
 }
 
-// .fade-out {
-//   transition: opacity 0.5s ease;
-//   opacity: 0;
-// }
-
 .hljs {
   background: none;
-  color: #000000;
 }

@@ -21,7 +21,7 @@
   border-radius: 50%;
   position: fixed;
   outline: none;
-  inset: auto -3.2em 5em auto;
+  inset: 30em -3.2em 5em auto;
   transition:
     background-color 0.3s,
     opacity 0.7s,
@@ -45,4 +45,8 @@
 .button.show {
   opacity: 0.7;
   z-index: 1000;
+}
+
+.hidden {
+  display: none;
 }
