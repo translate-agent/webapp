@@ -1,5 +1,7 @@
 /* eslint-disable no-misleading-character-class */
 
+import hljs from 'highlight.js'
+
 /*
 name-start = ALPHA / "_"
            / %xC0-D6 / %xD8-F6 / %xF8-2FF
@@ -9,7 +11,9 @@ name-start = ALPHA / "_"
 name-char  = name-start / DIGIT / "-" / "."
            / %xB7 / %x300-36F / %x203F-2040
 */
+const regex = hljs.regex
 
+// TODO: rewrite as array with regex.either function
 const _NAME_START =
   /[a-zA-Z_\u00c0-\u00d6\u00d8-\u00f6\u00f8-\u02ff\u0370-\u037d\u037f-\u1fff\u200c-\u200d\u2070-\u218f\u2c00-\u2fef\u3001-\ud7ff\uf900-\ufdcf\ufdf0-\ufffc]/
 
@@ -38,15 +42,11 @@ const IDENTIFIER = new RegExp('(?:' + NAME.source + ':)?' + NAME.source)
 
 const LITERAL = new RegExp('(?:' + QUOTED.source + '|' + UNQUOTED.source + ')')
 
-// const name = /[a-zA-Z_][a-zA-Z0-9\-.]*/
-// const numberLiteral = /-?(0|[1-9]\d*)(\.\d+)?([eE][-+]{0,1}\d+)?/
-// const quoted = /\|/
-// const unquoted = new RegExp(name.source + '|' + numberLiteral.source)
-// const literal = new RegExp(quoted.source + '|' + unquoted.source)
+const KEY = new RegExp('(?:' + LITERAL.source + '|\\*)')
 
-// const identifier = new RegExp('(' + name.source + ':)?' + name.source)
+const TEXT_CHAR = new RegExp('(?:' + _CONTENT_CHAR.source + '|[\\s\\.@\\|]' + ')')
 
-// const msg2Function = new RegExp(':' + identifier.source)
+const TEXT_ESCAPE = /\x5c[\x5c\\{\\}]/
 
 const EQUALS = {
   scope: 'operator',
@@ -72,7 +72,7 @@ const ATTRIBUTE = {
 
 const OPTION = {
   scope: 'option',
-  begin: IDENTIFIER,
+  begin: regex.concat(IDENTIFIER, regex.lookahead(/\s*=\s*/)),
   beginScope: 'property',
   contains: [
     EQUALS,
@@ -87,6 +87,65 @@ const OPTION = {
   ],
 }
 
+const EXPRESSION = [
+  ATTRIBUTE,
+  OPTION,
+  {
+    scope: 'title',
+    match: new RegExp(':' + IDENTIFIER.source),
+  },
+  {
+    scope: 'literal',
+    match: LITERAL,
+  },
+  {
+    scope: 'variable',
+    match: VARIABLE,
+  },
+]
+
+const VARIABLE_EXPRESSION = [
+  ATTRIBUTE,
+  OPTION,
+  {
+    scope: 'title',
+    match: new RegExp(':' + IDENTIFIER.source),
+  },
+  {
+    scope: 'variable',
+    match: VARIABLE,
+  },
+]
+
+const VARIABLE_MODE = {
+  scope: 'variable',
+  match: VARIABLE,
+}
+
+// const PLACEHOLDER = {
+//   scope: 'expression',
+//   begin: '{',
+//   end: '}',
+//   beginScope: 'punctuation',
+//   endScope: 'punctuation',
+//   contains: [
+//     ATTRIBUTE,
+//     OPTION,
+//     {
+//       scope: 'title',
+//       match: new RegExp(':' + IDENTIFIER.source),
+//     },
+//     {
+//       scope: 'literal',
+//       match: LITERAL,
+//     },
+//     {
+//       scope: 'variable',
+//       match: VARIABLE,
+//     },
+//   ],
+// }
+
 export const messageformat2 = {
   name: 'messageformat2',
   contains: [
@@ -96,10 +155,7 @@ export const messageformat2 = {
       end: /$/,
       beginScope: 'keyword',
       contains: [
-        {
-          scope: 'variable',
-          match: VARIABLE,
-        },
+        VARIABLE_MODE,
         EQUALS,
         {
           scope: 'expression',
@@ -107,22 +163,7 @@ export const messageformat2 = {
           end: '}',
           beginScope: 'punctuation',
           endScope: 'punctuation',
-          contains: [
-            ATTRIBUTE,
-            OPTION,
-            {
-              scope: 'title',
-              match: new RegExp(':' + IDENTIFIER.source),
-            },
-            {
-              scope: 'literal',
-              match: LITERAL,
-            },
-            {
-              scope: 'variable',
-              match: VARIABLE,
-            },
-          ],
+          contains: EXPRESSION,
         },
       ],
     },
@@ -138,18 +179,29 @@ export const messageformat2 = {
           end: '}',
           beginScope: 'punctuation',
           endScope: 'punctuation',
-          contains: [
-            ATTRIBUTE,
-            OPTION,
-            {
-              scope: 'title',
-              match: new RegExp(':' + IDENTIFIER.source),
-            },
-            {
-              scope: 'variable',
-              match: VARIABLE,
-            },
-          ],
+          contains: VARIABLE_EXPRESSION,
+        },
+      ],
+    },
+    {
+      scope: 'matcher',
+      begin: /.match/,
+      end: /\$$/,
+      beginScope: 'keyword',
+      contains: [
+        {
+          scope: 'expression',
+          begin: '{',
+          end: '}',
+          beginScope: 'punctuation',
+          endScope: 'punctuation',
+          contains: EXPRESSION,
+        },
+        {
+          scope: 'variant',
+          begin: KEY,
+          beginScope: 'key',
+          end: /$/,
         },
       ],
     },
