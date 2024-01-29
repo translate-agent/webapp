@@ -79,13 +79,13 @@ name-char  = name-start / DIGIT / "-" / "."
 
   const KEY = regex.either(LITERAL, '\\*')
 
-  const TEXT_CHAR = regex.either(regex.concat(_CONTENT_CHAR, '|[\\s\\.@\\|]'))
+  const TEXT_CHAR = regex.either(_CONTENT_CHAR, '|[\\s\\.@\\|]')
 
   const TEXT_ESCAPE = /\x5c[\x5c\\{\\}]/
 
   const EQUALS = {
     scope: 'operator',
-    match: /=/,
+    match: /\s*=\s*/,
   }
 
   const VARIABLE_MODE = {
@@ -210,6 +210,45 @@ name-char  = name-start / DIGIT / "-" / "."
             end: /$/,
             contains: [QOUTED_PATTERN, { scope: 'literal', match: KEY }],
           },
+        ],
+      },
+      {
+        scope: 'simple_message',
+        begin: regex.concat(/^/, regex.either(_CONTENT_CHAR, /(?:\s|[^\n])/, '@', '|')),
+        end: regex.concat(/^/, regex.lookahead('\\.')),
+        returnEnd: true,
+        // returnBegin: true,
+        contains: [
+          {
+            scope: 'markup',
+            begin: regex.concat('{', regex.lookahead(/\s*[#/]/)),
+            beginScope: 'punctuation',
+            end: '/?}',
+            endScope: 'punctuation',
+            contains: [
+              ATTRIBUTE,
+              OPTION,
+              {
+                scope: 'title',
+                begin: regex.either('#', /\/(?!})/),
+                end: regex.either('\\s', '}'),
+                returnEnd: true,
+              },
+            ],
+          },
+          {
+            scope: 'expression',
+            begin: '{',
+            end: '}',
+            beginScope: 'punctuation',
+            endScope: 'punctuation',
+            contains: EXPRESSION,
+          },
+          // {
+          //   scope: 'text',
+          //   match: regex.concat(TEXT_CHAR, '+'),
+          // },
+          { scope: 'escape', match: TEXT_ESCAPE },
         ],
       },
     ],
