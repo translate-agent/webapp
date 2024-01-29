@@ -130,6 +130,22 @@ name-char  = name-start / DIGIT / "-" / "."
     contains: [ATTRIBUTE, OPTION, FUNCTION, LITERAL_MODE, VARIABLE_MODE],
   }
 
+  const QOUTED_PATTERN = {
+    scope: 'quoted_pattern',
+    begin: /{{/,
+    beginScope: 'punctuation',
+    end: regex.concat('}}', /(?!})/),
+    endScope: 'punctuation',
+    contains: [
+      PLACEHOLDER,
+      {
+        scope: 'text',
+        match: regex.concat(TEXT_CHAR, '+'),
+      },
+      { scope: 'escape', match: TEXT_ESCAPE },
+    ],
+  }
+
   return {
     name: 'messageformat2',
     contains: [
@@ -142,6 +158,7 @@ name-char  = name-start / DIGIT / "-" / "."
         contains: [
           VARIABLE_MODE,
           EQUALS,
+          QOUTED_PATTERN,
           {
             scope: 'expression',
             begin: '{',
@@ -159,6 +176,7 @@ name-char  = name-start / DIGIT / "-" / "."
         returnEnd: true,
         beginScope: 'keyword',
         contains: [
+          QOUTED_PATTERN,
           {
             scope: 'expression',
             begin: '{',
@@ -190,24 +208,7 @@ name-char  = name-start / DIGIT / "-" / "."
             returnBegin: true,
             // beginScope: 'key',
             end: /$/,
-            contains: [
-              {
-                scope: 'quoted_pattern',
-                begin: /{{/,
-                beginScope: 'punctuation',
-                end: regex.concat('}}', /(?!})/),
-                endScope: 'punctuation',
-                contains: [
-                  PLACEHOLDER,
-                  {
-                    scope: 'text',
-                    match: regex.concat(TEXT_CHAR, '+'),
-                  },
-                  { scope: 'escape', match: TEXT_ESCAPE },
-                ],
-              },
-              { scope: 'literal', match: KEY },
-            ],
+            contains: [QOUTED_PATTERN, { scope: 'literal', match: KEY }],
           },
         ],
       },
