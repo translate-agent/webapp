@@ -77,7 +77,7 @@ name-char  = name-start / DIGIT / "-" / "."
 
   // const LITERAL = new RegExp('(?:' + QUOTED.source + '|' + UNQUOTED.source + ')')
 
-  const KEY = regex.concat(LITERAL, '|\\*')
+  const KEY = regex.either(LITERAL, '\\*')
 
   const TEXT_CHAR = regex.either(regex.concat(_CONTENT_CHAR, '|[\\s\\.@\\|]'))
 
@@ -136,7 +136,8 @@ name-char  = name-start / DIGIT / "-" / "."
       {
         scope: 'local_declaration',
         begin: /.local/,
-        end: /$/,
+        end: regex.concat(/^/, regex.lookahead('\\.')),
+        returnEnd: true,
         beginScope: 'keyword',
         contains: [
           VARIABLE_MODE,
@@ -154,7 +155,8 @@ name-char  = name-start / DIGIT / "-" / "."
       {
         scope: 'input_declaration',
         begin: /.input/,
-        end: /$/,
+        end: regex.concat(/^/, regex.lookahead('\\.')),
+        returnEnd: true,
         beginScope: 'keyword',
         contains: [
           {
@@ -170,7 +172,8 @@ name-char  = name-start / DIGIT / "-" / "."
       {
         scope: 'matcher',
         begin: /.match/,
-        end: /$\$/,
+        end: regex.concat(/^/, regex.lookahead('\\.')),
+        returnEnd: true,
         beginScope: 'keyword',
         contains: [
           {
@@ -183,8 +186,9 @@ name-char  = name-start / DIGIT / "-" / "."
           },
           {
             scope: 'variant',
-            begin: regex.concat(regex.either(KEY), '(\\s', KEY, ')*'),
-            beginScope: 'key',
+            begin: regex.concat(KEY, '(\\s', KEY, ')*'),
+            returnBegin: true,
+            // beginScope: 'key',
             end: /$/,
             contains: [
               {
@@ -202,6 +206,7 @@ name-char  = name-start / DIGIT / "-" / "."
                   { scope: 'escape', match: TEXT_ESCAPE },
                 ],
               },
+              { scope: 'literal', match: KEY },
             ],
           },
         ],
