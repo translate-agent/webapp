@@ -1,8 +1,9 @@
 /* eslint-disable no-misleading-character-class */
+import { HLJSApi } from 'highlight.js'
 
-import hljs from 'highlight.js'
-
-/*
+function messageFormat2(hljs: HLJSApi) {
+  const regex = hljs.regex
+  /*
 name-start = ALPHA / "_"
            / %xC0-D6 / %xD8-F6 / %xF8-2FF
            / %x370-37D / %x37F-1FFF / %x200C-200D
@@ -11,199 +12,202 @@ name-start = ALPHA / "_"
 name-char  = name-start / DIGIT / "-" / "."
            / %xB7 / %x300-36F / %x203F-2040
 */
-const regex = hljs.regex
 
-// TODO: rewrite as array with regex.either function
-const _NAME_START =
-  /[a-zA-Z_\u00c0-\u00d6\u00d8-\u00f6\u00f8-\u02ff\u0370-\u037d\u037f-\u1fff\u200c-\u200d\u2070-\u218f\u2c00-\u2fef\u3001-\ud7ff\uf900-\ufdcf\ufdf0-\ufffc]/
+  // const _NAME_START_ARRAY = [
+  //   '[a-zA-Z]',
+  //   '_',
+  //   '\xC0-\xD6',
+  //   '\xD8-\xF6',
+  //   '\xF8-\u02ff',
+  //   '\u0370-\u037d',
+  //   '\u037f-\u1fff',
+  //   '\u200c-\u200d',
+  //   '\u2070-\u218f',
+  //   '\u2c00-\u2fef',
+  //   '\u3001-\ud7ff',
+  //   '\uf900-\ufdcf',
+  //   '\ufdf0-\ufffc',
+  // ]
 
-const _NAME_CHAR = new RegExp(
-  '(?:' + _NAME_START.source + '|' + /[0-9\-.\u00b7\u0300-\u036f\u203f-\u2040]/.source + ')',
-)
+  // const _NAME_CHAR_ARRAY = ['[0-9]', '-', '.', '\xB7', '\u0300-\u036f', '\u203f-\u2040']
 
-const NAME = new RegExp(_NAME_START.source + _NAME_CHAR.source + '*')
+  // TODO: rewrite as array with regex.either function
+  const _NAME_START =
+    /[a-zA-Z_\u00c0-\u00d6\u00d8-\u00f6\u00f8-\u02ff\u0370-\u037d\u037f-\u1fff\u200c-\u200d\u2070-\u218f\u2c00-\u2fef\u3001-\ud7ff\uf900-\ufdcf\ufdf0-\ufffc]/
 
-const VARIABLE = new RegExp('\\$' + NAME.source)
+  const _NAME_CHAR = regex.either(regex.concat(_NAME_START, '|', /[0-9\-.\u00b7\u0300-\u036f\u203f-\u2040]/))
 
-// eslint-disable-next-line no-control-regex
-const _CONTENT_CHAR = /[\x00-\x08\x0b-\x0c\x0e-\x19\x21-\x2d\x2f-\x3f\x41-\x5b\x5d-\x7a\x7e-\ud7ff\ue000-\uffff]/
+  // const _NAME_CHAR = new RegExp(
+  //   '(?:' + _NAME_START.source + '|' + /[0-9\-.\u00b7\u0300-\u036f\u203f-\u2040]/.source + ')',
+  // )
 
-const _QUOTED_CHAR = new RegExp('(?:' + _CONTENT_CHAR.source + '|[\\s\\.@\\{\\}]' + ')')
+  const NAME = regex.concat(_NAME_START, _NAME_CHAR, '*')
 
-const _QUOTED_ESCAPE = /\x5c[\x5c|]/
+  // const NAME = new RegExp(_NAME_START.source + _NAME_CHAR.source + '*')
 
-const QUOTED = new RegExp('\\|(' + _QUOTED_CHAR.source + '|' + _QUOTED_ESCAPE.source + ')*\\|')
+  const VARIABLE = regex.concat('\\$', NAME)
 
-const _NUMBER_LITERAL = /-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][-+]?[0-9]+)?/
+  // const VARIABLE = new RegExp('\\$' + NAME2)
 
-const UNQUOTED = new RegExp('(?:' + NAME.source + '|' + _NUMBER_LITERAL.source + ')')
+  // eslint-disable-next-line no-control-regex
+  const _CONTENT_CHAR = /[\x00-\x08\x0b-\x0c\x0e-\x19\x21-\x2d\x2f-\x3f\x41-\x5b\x5d-\x7a\x7e-\ud7ff\ue000-\uffff]/
 
-const IDENTIFIER = new RegExp('(?:' + NAME.source + ':)?' + NAME.source)
+  // const _QUOTED_CHAR = new RegExp('(?:' + _CONTENT_CHAR.source + '|[\\s\\.@\\{\\}]' + ')')
 
-const LITERAL = new RegExp('(?:' + QUOTED.source + '|' + UNQUOTED.source + ')')
+  const _QUOTED_CHAR2 = regex.either(regex.concat(_CONTENT_CHAR, '|[\\s\\.@\\{\\}]'))
 
-const KEY = new RegExp('(?:' + LITERAL.source + '|\\*)')
+  const _QUOTED_ESCAPE = /\x5c[\x5c|]/
 
-const TEXT_CHAR = new RegExp('(?:' + _CONTENT_CHAR.source + '|[\\s\\.@\\|]' + ')')
+  const QUOTED2 = regex.concat('\\|(', _QUOTED_CHAR2, '|', _QUOTED_ESCAPE.source, ')*\\|') //ok
 
-const TEXT_ESCAPE = /\x5c[\x5c\\{\\}]/
+  // const QUOTED = new RegExp('\\|(' + _QUOTED_CHAR.source + '|' + _QUOTED_ESCAPE.source + ')*\\|')
 
-const EQUALS = {
-  scope: 'operator',
-  match: /=/,
-}
+  const _NUMBER_LITERAL = /-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][-+]?[0-9]+)?/
 
-const ATTRIBUTE = {
-  scope: 'attribute',
-  match: new RegExp('@' + IDENTIFIER.source),
-  beginScope: 'property',
-  contains: [
-    EQUALS,
-    {
-      scope: 'literal',
-      match: LITERAL,
-    },
-    {
-      scope: 'variable',
-      match: VARIABLE,
-    },
-  ],
-}
+  const UNQUOTED2 = regex.either(regex.concat(NAME, '|', _NUMBER_LITERAL)) //ok
 
-const OPTION = {
-  scope: 'option',
-  begin: regex.concat(IDENTIFIER, regex.lookahead(/\s*=\s*/)),
-  beginScope: 'property',
-  contains: [
-    EQUALS,
-    {
-      scope: 'literal',
-      match: LITERAL,
-    },
-    {
-      scope: 'variable',
-      match: VARIABLE,
-    },
-  ],
-}
+  // const UNQUOTED = new RegExp('(?:' + NAME2 + '|' + _NUMBER_LITERAL.source + ')')
 
-const EXPRESSION = [
-  ATTRIBUTE,
-  OPTION,
-  {
+  const IDENTIFIER = regex.concat(regex.optional(NAME), NAME) //ok
+
+  // const IDENTIFIER = new RegExp('(?:' + NAME2 + ':)?' + NAME2)
+
+  const LITERAL = regex.either(regex.concat(QUOTED2, '|', UNQUOTED2)) //ok
+  // console.log(LITERAL)
+
+  // const LITERAL = new RegExp('(?:' + QUOTED.source + '|' + UNQUOTED.source + ')')
+
+  const KEY = regex.concat(LITERAL, '|\\*')
+
+  const TEXT_CHAR = regex.either(regex.concat(_CONTENT_CHAR, '|[\\s\\.@\\|]'))
+
+  const TEXT_ESCAPE = /\x5c[\x5c\\{\\}]/
+
+  const EQUALS = {
+    scope: 'operator',
+    match: /=/,
+  }
+
+  const VARIABLE_MODE = {
+    scope: 'variable',
+    match: VARIABLE,
+  }
+
+  const FUNCTION = {
     scope: 'title',
-    match: new RegExp(':' + IDENTIFIER.source),
-  },
-  {
+    match: regex.concat(':', IDENTIFIER),
+  }
+
+  const LITERAL_MODE = {
     scope: 'literal',
     match: LITERAL,
-  },
-  {
-    scope: 'variable',
-    match: VARIABLE,
-  },
-]
+  }
 
-const VARIABLE_EXPRESSION = [
-  ATTRIBUTE,
-  OPTION,
-  {
-    scope: 'title',
-    match: new RegExp(':' + IDENTIFIER.source),
-  },
-  {
-    scope: 'variable',
-    match: VARIABLE,
-  },
-]
+  const ATTRIBUTE = {
+    scope: 'attribute',
+    match: regex.concat('@', IDENTIFIER),
+    beginScope: 'property',
+    contains: [EQUALS, LITERAL_MODE, VARIABLE_MODE],
+  }
 
-const VARIABLE_MODE = {
-  scope: 'variable',
-  match: VARIABLE,
+  const OPTION = {
+    scope: 'option',
+    begin: regex.concat(IDENTIFIER, regex.lookahead(/\s*=\s*/)),
+    beginScope: 'property',
+    contains: [EQUALS, LITERAL_MODE, VARIABLE_MODE],
+  }
+
+  const EXPRESSION = [ATTRIBUTE, OPTION, FUNCTION, LITERAL_MODE, VARIABLE_MODE]
+
+  const VARIABLE_EXPRESSION = [ATTRIBUTE, OPTION, FUNCTION, VARIABLE_MODE]
+
+  const PLACEHOLDER = {
+    scope: 'expression',
+    begin: '{',
+    end: '}',
+    beginScope: 'punctuation',
+    endScope: 'punctuation',
+    contains: [ATTRIBUTE, OPTION, FUNCTION, LITERAL_MODE, VARIABLE_MODE],
+  }
+
+  return {
+    name: 'messageformat2',
+    contains: [
+      {
+        scope: 'local_declaration',
+        begin: /.local/,
+        end: /$/,
+        beginScope: 'keyword',
+        contains: [
+          VARIABLE_MODE,
+          EQUALS,
+          {
+            scope: 'expression',
+            begin: '{',
+            end: '}',
+            beginScope: 'punctuation',
+            endScope: 'punctuation',
+            contains: EXPRESSION,
+          },
+        ],
+      },
+      {
+        scope: 'input_declaration',
+        begin: /.input/,
+        end: /$/,
+        beginScope: 'keyword',
+        contains: [
+          {
+            scope: 'expression',
+            begin: '{',
+            end: '}',
+            beginScope: 'punctuation',
+            endScope: 'punctuation',
+            contains: VARIABLE_EXPRESSION,
+          },
+        ],
+      },
+      {
+        scope: 'matcher',
+        begin: /.match/,
+        end: /$\$/,
+        beginScope: 'keyword',
+        contains: [
+          {
+            scope: 'expression',
+            begin: '{',
+            end: '}',
+            beginScope: 'punctuation',
+            endScope: 'punctuation',
+            contains: EXPRESSION,
+          },
+          {
+            scope: 'variant',
+            begin: regex.concat(regex.either(KEY), '(\\s', KEY, ')*'),
+            beginScope: 'key',
+            end: /$/,
+            contains: [
+              {
+                scope: 'quoted_pattern',
+                begin: /{{/,
+                beginScope: 'punctuation',
+                end: regex.concat('}}', /(?!})/),
+                endScope: 'punctuation',
+                contains: [
+                  PLACEHOLDER,
+                  {
+                    scope: 'text',
+                    match: regex.concat(TEXT_CHAR, '+'),
+                  },
+                  { scope: 'escape', match: TEXT_ESCAPE },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  }
 }
 
-// const PLACEHOLDER = {
-//   scope: 'expression',
-//   begin: '{',
-//   end: '}',
-//   beginScope: 'punctuation',
-//   endScope: 'punctuation',
-//   contains: [
-//     ATTRIBUTE,
-//     OPTION,
-//     {
-//       scope: 'title',
-//       match: new RegExp(':' + IDENTIFIER.source),
-//     },
-//     {
-//       scope: 'literal',
-//       match: LITERAL,
-//     },
-//     {
-//       scope: 'variable',
-//       match: VARIABLE,
-//     },
-//   ],
-// }
-
-export const messageformat2 = {
-  name: 'messageformat2',
-  contains: [
-    {
-      scope: 'local_declaration',
-      begin: /.local/,
-      end: /$/,
-      beginScope: 'keyword',
-      contains: [
-        VARIABLE_MODE,
-        EQUALS,
-        {
-          scope: 'expression',
-          begin: '{',
-          end: '}',
-          beginScope: 'punctuation',
-          endScope: 'punctuation',
-          contains: EXPRESSION,
-        },
-      ],
-    },
-    {
-      scope: 'input_declaration',
-      begin: /.input/,
-      end: /$/,
-      beginScope: 'keyword',
-      contains: [
-        {
-          scope: 'expression',
-          begin: '{',
-          end: '}',
-          beginScope: 'punctuation',
-          endScope: 'punctuation',
-          contains: VARIABLE_EXPRESSION,
-        },
-      ],
-    },
-    {
-      scope: 'matcher',
-      begin: /.match/,
-      end: /\$$/,
-      beginScope: 'keyword',
-      contains: [
-        {
-          scope: 'expression',
-          begin: '{',
-          end: '}',
-          beginScope: 'punctuation',
-          endScope: 'punctuation',
-          contains: EXPRESSION,
-        },
-        {
-          scope: 'variant',
-          begin: KEY,
-          beginScope: 'key',
-          end: /$/,
-        },
-      ],
-    },
-  ],
-}
+export { messageFormat2 as default }
