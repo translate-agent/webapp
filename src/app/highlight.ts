@@ -58,21 +58,21 @@ name-char  = name-start / DIGIT / "-" / "."
 
   const _QUOTED_ESCAPE = /\x5c[\x5c|]/
 
-  const QUOTED2 = regex.concat('\\|(', _QUOTED_CHAR2, '|', _QUOTED_ESCAPE.source, ')*\\|') //ok
+  const QUOTED2 = regex.concat('\\|(', _QUOTED_CHAR2, '|', _QUOTED_ESCAPE.source, ')*\\|')
 
   // const QUOTED = new RegExp('\\|(' + _QUOTED_CHAR.source + '|' + _QUOTED_ESCAPE.source + ')*\\|')
 
   const _NUMBER_LITERAL = /-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][-+]?[0-9]+)?/
 
-  const UNQUOTED2 = regex.either(regex.concat(NAME, '|', _NUMBER_LITERAL)) //ok
+  const UNQUOTED2 = regex.either(regex.concat(NAME, '|', _NUMBER_LITERAL))
 
   // const UNQUOTED = new RegExp('(?:' + NAME2 + '|' + _NUMBER_LITERAL.source + ')')
 
-  const IDENTIFIER = regex.concat(regex.optional(NAME), NAME) //ok
+  const IDENTIFIER = regex.concat(regex.optional(NAME), NAME)
 
   // const IDENTIFIER = new RegExp('(?:' + NAME2 + ':)?' + NAME2)
 
-  const LITERAL = regex.either(regex.concat(QUOTED2, '|', UNQUOTED2)) //ok
+  const LITERAL = regex.either(regex.concat(QUOTED2, '|', UNQUOTED2))
   // console.log(LITERAL)
 
   // const LITERAL = new RegExp('(?:' + QUOTED.source + '|' + UNQUOTED.source + ')')
