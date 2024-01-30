@@ -1,5 +1,6 @@
-/* eslint-disable no-misleading-character-class */
 import { HLJSApi } from 'highlight.js'
+
+// https://github.com/unicode-org/message-format-wg/blob/main/spec/message.abnf#L36
 
 function messageFormat2(hljs: HLJSApi) {
   const regex = hljs.regex
@@ -13,73 +14,52 @@ name-char  = name-start / DIGIT / "-" / "."
            / %xB7 / %x300-36F / %x203F-2040
 */
 
-  // const _NAME_START_ARRAY = [
-  //   '[a-zA-Z]',
-  //   '_',
-  //   '\xC0-\xD6',
-  //   '\xD8-\xF6',
-  //   '\xF8-\u02ff',
-  //   '\u0370-\u037d',
-  //   '\u037f-\u1fff',
-  //   '\u200c-\u200d',
-  //   '\u2070-\u218f',
-  //   '\u2c00-\u2fef',
-  //   '\u3001-\ud7ff',
-  //   '\uf900-\ufdcf',
-  //   '\ufdf0-\ufffc',
-  // ]
+  // NOTE: char range %x10000-EFFFF *IS NOT* included. Hopefully no one uses it :fingerscrossed:
 
-  // const _NAME_CHAR_ARRAY = ['[0-9]', '-', '.', '\xB7', '\u0300-\u036f', '\u203f-\u2040']
-
-  // TODO: rewrite as array with regex.either function
   const _NAME_START =
     /[a-zA-Z_\u00c0-\u00d6\u00d8-\u00f6\u00f8-\u02ff\u0370-\u037d\u037f-\u1fff\u200c-\u200d\u2070-\u218f\u2c00-\u2fef\u3001-\ud7ff\uf900-\ufdcf\ufdf0-\ufffc]/
 
-  const _NAME_CHAR = regex.either(regex.concat(_NAME_START, '|', /[0-9\-.\u00b7\u0300-\u036f\u203f-\u2040]/))
-
-  // const _NAME_CHAR = new RegExp(
-  //   '(?:' + _NAME_START.source + '|' + /[0-9\-.\u00b7\u0300-\u036f\u203f-\u2040]/.source + ')',
-  // )
+  // eslint-disable-next-line no-misleading-character-class
+  const _NAME_CHAR = regex.either(_NAME_START, /[0-9\-.\u00b7\u0300-\u036F\u203f-\u2040]/)
 
   const NAME = regex.concat(_NAME_START, _NAME_CHAR, '*')
 
-  // const NAME = new RegExp(_NAME_START.source + _NAME_CHAR.source + '*')
-
   const VARIABLE = regex.concat('\\$', NAME)
 
-  // const VARIABLE = new RegExp('\\$' + NAME2)
+  /*
+  content-char      = %x00-08        ; omit HTAB (%x09) and LF (%x0A)
+                  / %x0B-0C        ; omit CR (%x0D)
+                  / %x0E-19        ; omit SP (%x20)
+                  / %x21-2D        ; omit . (%x2E)
+                  / %x2F-3F        ; omit @ (%x40)
+                  / %x41-5B        ; omit \ (%x5C)
+                  / %x5D-7A        ; omit { | } (%x7B-7D)
+                  / %x7E-D7FF      ; omit surrogates
+                  / %xE000-10FFFF
+  */
 
   // eslint-disable-next-line no-control-regex
   const _CONTENT_CHAR = /[\x00-\x08\x0b-\x0c\x0e-\x19\x21-\x2d\x2f-\x3f\x41-\x5b\x5d-\x7a\x7e-\ud7ff\ue000-\uffff]/
 
-  // const _QUOTED_CHAR = new RegExp('(?:' + _CONTENT_CHAR.source + '|[\\s\\.@\\{\\}]' + ')')
-
-  const _QUOTED_CHAR2 = regex.either(regex.concat(_CONTENT_CHAR, '|[\\s\\.@\\{\\}]'))
+  const _QUOTED_CHAR = regex.either(_CONTENT_CHAR, '[\\s\\.@\\{\\}]')
 
   const _QUOTED_ESCAPE = /\x5c[\x5c|]/
 
-  const QUOTED2 = regex.concat('\\|(', _QUOTED_CHAR2, '|', _QUOTED_ESCAPE.source, ')*\\|')
+  const QUOTED = regex.concat('\\|(', _QUOTED_CHAR, '|', _QUOTED_ESCAPE.source, ')*\\|')
 
-  // const QUOTED = new RegExp('\\|(' + _QUOTED_CHAR.source + '|' + _QUOTED_ESCAPE.source + ')*\\|')
+  // number-literal = ["-"] (%x30 / (%x31-39 *DIGIT)) ["." 1*DIGIT] [%i"e" ["-" / "+"] 1*DIGIT]
 
   const _NUMBER_LITERAL = /-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][-+]?[0-9]+)?/
 
-  const UNQUOTED2 = regex.either(regex.concat(NAME, '|', _NUMBER_LITERAL))
-
-  // const UNQUOTED = new RegExp('(?:' + NAME2 + '|' + _NUMBER_LITERAL.source + ')')
+  const UNQUOTED = regex.either(NAME, _NUMBER_LITERAL)
 
   const IDENTIFIER = regex.concat(regex.optional(NAME), NAME)
 
-  // const IDENTIFIER = new RegExp('(?:' + NAME2 + ':)?' + NAME2)
-
-  const LITERAL = regex.either(regex.concat(QUOTED2, '|', UNQUOTED2))
-  // console.log(LITERAL)
-
-  // const LITERAL = new RegExp('(?:' + QUOTED.source + '|' + UNQUOTED.source + ')')
+  const LITERAL = regex.either(QUOTED, UNQUOTED)
 
   const KEY = regex.either(LITERAL, '\\*')
 
-  const TEXT_CHAR = regex.either(_CONTENT_CHAR, '|[\\s\\.@\\|]')
+  const TEXT_CHAR = regex.either(_CONTENT_CHAR, '[\\s\\.@\\|]')
 
   const TEXT_ESCAPE = /\x5c[\x5c\\{\\}]/
 
@@ -206,9 +186,8 @@ name-char  = name-start / DIGIT / "-" / "."
             scope: 'variant',
             begin: regex.concat(KEY, '(\\s', KEY, ')*'),
             returnBegin: true,
-            // beginScope: 'key',
             end: /$/,
-            contains: [QOUTED_PATTERN, { scope: 'literal', match: KEY }],
+            contains: [QOUTED_PATTERN, { scope: 'key', match: KEY }],
           },
         ],
       },
@@ -217,7 +196,6 @@ name-char  = name-start / DIGIT / "-" / "."
         begin: regex.concat(/^/, regex.either(_CONTENT_CHAR, /(?:\s|[^\n])/, '@', '|')),
         end: regex.concat(/^/, regex.lookahead('\\.')),
         returnEnd: true,
-        // returnBegin: true,
         contains: [
           {
             scope: 'markup',

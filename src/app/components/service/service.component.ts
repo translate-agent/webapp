@@ -18,9 +18,7 @@ import { MatTooltipModule } from '@angular/material/tooltip'
 import { Title } from '@angular/platform-browser'
 import { ActivatedRoute, Router, RouterModule } from '@angular/router'
 import { Message_Status, Translation } from '@buf/expectdigital_translate-agent.bufbuild_es/translate/v1/translate_pb'
-import hljs from 'highlight.js'
 import { BehaviorSubject, Subscription, combineLatest, filter, map, shareReplay, startWith, switchMap } from 'rxjs'
-import { messageformat2 } from 'src/app/highlight'
 import { TranslateClientService } from 'src/app/services/translate-client.service'
 import { MessagesComponent } from '../messages/messages.component'
 import { NewLanguageDialogComponent } from '../new-language-dialog/new-language-dialog.component'
@@ -136,8 +134,6 @@ export class ServiceComponent implements OnInit, OnDestroy {
         },
       }),
     )
-
-    hljs.registerLanguage('messageformat2', () => messageformat2)
 
     this.subscription.add(
       this.form.controls.status.valueChanges.pipe(startWith(undefined)).subscribe((state) => {

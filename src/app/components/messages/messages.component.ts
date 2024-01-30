@@ -30,7 +30,7 @@ import { MatButtonModule } from '@angular/material/button'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import hljs from 'highlight.js'
 import { slideInOut } from 'src/app/animation'
-import { messageformat2 } from 'src/app/highlight'
+import messageFormat2 from 'src/app/highlight'
 import { TranslateClientService } from 'src/app/services/translate-client.service'
 import { StatusOption } from '../service/service.component'
 
@@ -89,7 +89,7 @@ export class MessagesComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit(): void {
     this.subscription.add(this.scroll?.scrolledIndexChange.subscribe((v) => this.dataEmitted.emit(v)))
     this.translationsSignal.set(this.filteredTranslations ?? [])
-    hljs.registerLanguage('messageformat2', () => messageformat2)
+    hljs.registerLanguage('messageformat2', messageFormat2)
   }
 
   ngAfterViewInit(): void {
