@@ -2,7 +2,7 @@
   <div class="container" [@slideInOut]="state">
     <div class="container1">
       <pre>
-        <code #pre  (focusout)="save($event, x?.id, $index)" [attr.contenteditable]="$index !== 0" class="code messageformat2" >{{ x?.message }}</code> 
+        <code #pre  (focusout)="save($event, x?.id, $index)" [attr.contenteditable]="x?.status !== 0" class="code messageformat2" >{{ x?.message }}</code> 
       </pre>
       <div class="container-icons">
         <mat-icon

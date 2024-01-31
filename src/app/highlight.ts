@@ -4,6 +4,7 @@ import { HLJSApi } from 'highlight.js'
 
 function messageFormat2(hljs: HLJSApi) {
   const regex = hljs.regex
+
   /*
 name-start = ALPHA / "_"
            / %xC0-D6 / %xD8-F6 / %xF8-2FF
