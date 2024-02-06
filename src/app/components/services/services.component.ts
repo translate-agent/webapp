@@ -6,19 +6,18 @@ import { MatDividerModule } from '@angular/material/divider'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
-import { MatListModule } from '@angular/material/list'
-import { MatMenuModule } from '@angular/material/menu'
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar'
 import { MatToolbarModule } from '@angular/material/toolbar'
 import { Title } from '@angular/platform-browser'
-import { Router, RouterLink } from '@angular/router'
+import { Router } from '@angular/router'
 import { Subscription, filter } from 'rxjs'
 import { TranslateClientService } from 'src/app/services/translate-client.service'
 import { CreateServiceComponent } from '../create-service/create-service.component'
 import { DialogDeleteComponent } from '../dialog-delete/dialog-delete.component'
+import { ServicesListComponent } from '../services-list/services-list.component'
 import { UploadTranslationFileComponent } from '../upload-translation-file/upload-translation-file.component'
 
-type ServiceNew = {
+export type ServiceNew = {
   id: string
   name: string
   source?: string
@@ -33,22 +32,18 @@ type ServiceNew = {
   imports: [
     CommonModule,
     MatButtonModule,
-    MatListModule,
     MatDividerModule,
-    RouterLink,
     MatIconModule,
     MatDialogModule,
     MatSnackBarModule,
     MatToolbarModule,
     MatFormFieldModule,
     MatInputModule,
-    MatMenuModule,
+    ServicesListComponent,
   ],
 })
 export class ServicesComponent implements OnInit, OnDestroy {
   services$ = signal<ServiceNew[]>([])
-
-  readonly languageNames = new Intl.DisplayNames(['en'], { type: 'language' })
 
   readonly subscription = new Subscription()
 
@@ -62,7 +57,7 @@ export class ServicesComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subscription.add(
-      this.service.listService().subscribe((v) => {
+      this.service.listServices().subscribe((v) => {
         this.services$.set(structuredClone(v.services))
         this.services$.update((services) => {
           services.forEach((service) => {

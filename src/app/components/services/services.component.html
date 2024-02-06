@@ -1,5 +1,5 @@
 <mat-toolbar>
-  <span class="title">{{ title.getTitle() }}</span>
+  <h1 class="title">{{ title.getTitle() }}</h1>
 </mat-toolbar>
 <div class="container">
   <div style="margin: 10px 60px">
@@ -8,51 +8,11 @@
         <mat-icon>add</mat-icon> New service
       </button>
     </div>
-    @for (item of services$(); track item.id) {
-      <mat-selection-list multiple="false" class="service-list">
-        @if ($index > 0) {
-          <mat-divider></mat-divider>
-        }
-        <mat-list-option class="serviceList">
-          <div routerLink="/services/{{ item.id }}" class="service-list-option">
-            <span class="option-name">{{ item.name }}</span>
-            @if (item.source) {
-              <span class="option-source">Source language: {{ languageNames.of(item.source) }}</span>
-            }
-            @if (item.target && item.target.length > 0) {
-              <span class="option-target"
-                >Target languages:
-                @for (target of item.target; track target) {
-                  <span>{{ languageNames.of(target) + ' ' }}</span>
-                }
-              </span>
-            }
-          </div>
-          <div>
-            <button type="button" mat-icon-button [matMenuTriggerFor]="menu">
-              <mat-icon>more_vert</mat-icon>
-            </button>
-            <mat-menu #menu="matMenu" style="padding-right: 20px">
-              <button type="button" mat-menu-item (click)="editService(item)">
-                <mat-icon style="max-width: 16px" inline class="material-symbols-outlined">edit</mat-icon>
-                <span>Edit</span>
-              </button>
-              <button type="button" mat-menu-item (click)="deleteService(item)" style="padding-right: 25px">
-                <mat-icon inline class="material-symbols-outlined">delete</mat-icon>
-                <span>Delete</span>
-              </button>
-            </mat-menu>
-          </div>
-        </mat-list-option>
-      </mat-selection-list>
-    } @empty {
-      <div style="display: flex; flex-direction: column; align-items: center; margin-top: 3rem">
-        <span style="font-size: 1.5rem; padding: 0.5em"> No service found.</span>
-        <span style="font-size: 2rem; padding-bottom: 2rem; margin-top: 1rem">Create your first service</span>
-        <button type="button" class="shakeit" mat-stroked-button color="primary" (click)="createService()">
-          <mat-icon>add</mat-icon>Get started
-        </button>
-      </div>
-    }
+    <app-services-list
+      [services]="services$()"
+      (delete)="deleteService($event)"
+      (edit)="editService($event)"
+      (create)="createService()"
+    ></app-services-list>
   </div>
 </div>

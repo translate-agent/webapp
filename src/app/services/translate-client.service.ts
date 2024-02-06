@@ -28,7 +28,7 @@ export class TranslateClientService {
     this.client = createPromiseClient(TranslateService, this.transport)
   }
 
-  listService(): Observable<ListServicesResponse> {
+  listServices(): Observable<ListServicesResponse> {
     return from(this.client.listServices({}))
   }
 
@@ -59,10 +59,6 @@ export class TranslateClientService {
     ).pipe(
       map((v) => v.translations),
       map((v) => v.sort((a, b) => Number(b.original) - Number(a.original))),
-      map((v) => {
-        v.map((messages) => messages.messages.sort((a, b) => a.id.localeCompare(b.id)))
-        return v
-      }),
     )
   }
 
