@@ -106,36 +106,42 @@ export class MessagesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   save(v: Event, msgId: string | undefined, index: number) {
     const value = (v.target as HTMLTextAreaElement).innerText
+    const translation = structuredClone(this.data[index])
 
-    this.data![index].messages.map((message) => {
-      if (message.id === msgId && message.message !== value) {
+    translation.messages = this.data[index].messages.filter((message) => {
+      if (message.id === msgId) {
         this.changes = true
         message.message = value
+        return message
       }
-      return message
+      return
     })
-
     if (this.changes) {
-      this.service.updateTranslation(this.serviceid!, this.data![index]).subscribe(() => {
+      this.service.updateTranslation(this.serviceid!, translation, ['messages']).subscribe(() => {
         this.snackBar.open('Message updated!', undefined, {
           horizontalPosition: 'center',
           verticalPosition: 'bottom',
           duration: 5000,
         })
+
         this.changes = false
       })
     }
   }
 
   changeStatuss(index: number, id: string) {
-    this.data?.[index].messages.map((message) => {
+    const translation = structuredClone(this.data[index])
+
+    translation.messages = this.data[index].messages.filter((message) => {
       if (message.id === id) {
+        this.changes = true
         message.status = Message_Status.TRANSLATED
+        return message
       }
-      return message
+      return
     })
 
-    this.service.updateTranslation(this.serviceid!, this.data![index]).subscribe((d) => {
+    this.service.updateTranslation(this.serviceid!, translation, ['messages']).subscribe((d) => {
       this.snackBar.open('Status changed!', undefined, {
         horizontalPosition: 'center',
         verticalPosition: 'bottom',
