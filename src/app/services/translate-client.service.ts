@@ -1,14 +1,13 @@
 import { Injectable } from '@angular/core'
 import { TranslateService } from '@buf/expectdigital_translate-agent.bufbuild_connect-es/translate/v1/translate_connect'
 import {
-  CreateServiceRequest,
-  DownloadTranslationFileRequest,
+  DownloadTranslationFileResponse,
   ListServicesResponse,
   Schema,
   Service,
   Translation,
 } from '@buf/expectdigital_translate-agent.bufbuild_es/translate/v1/translate_pb'
-import { PromiseClient, createPromiseClient } from '@bufbuild/connect'
+import { createPromiseClient } from '@bufbuild/connect'
 import { createGrpcWebTransport } from '@bufbuild/connect-web'
 import { Empty } from '@bufbuild/protobuf'
 import { Observable, from, map } from 'rxjs'
@@ -22,25 +21,24 @@ export class TranslateClientService {
     baseUrl: environment.backendUrl,
   })
 
-  private client: PromiseClient<typeof TranslateService>
+  readonly client = createPromiseClient(TranslateService, this.transport)
 
-  constructor() {
-    this.client = createPromiseClient(TranslateService, this.transport)
-  }
+  constructor() {}
 
   listServices(): Observable<ListServicesResponse> {
     return from(this.client.listServices({}))
   }
 
-  getService(serviceId: string) {
+  getService(serviceId: string): Observable<Service> {
     return from(this.client.getService({ id: serviceId }))
   }
 
   createService(serviceName: string): Observable<Service> {
-    const request = new CreateServiceRequest({
-      service: new Service({ name: serviceName }),
-    })
-    return from(this.client.createService(request))
+    return from(
+      this.client.createService({
+        service: new Service({ name: serviceName }),
+      }),
+    )
   }
 
   updateService(id: string, name: string): Observable<Service> {
@@ -51,7 +49,7 @@ export class TranslateClientService {
     return from(this.client.deleteService({ id: serviceId }))
   }
 
-  listTranslations(serviceId: string) {
+  listTranslations(serviceId: string): Observable<Translation[]> {
     return from(
       this.client.listTranslations({
         serviceId,
@@ -62,12 +60,24 @@ export class TranslateClientService {
     )
   }
 
-  createTranslation(serviceId: string, language?: string) {
+  createTranslation(serviceId: string, language?: string): Observable<Translation> {
     return from(this.client.createTranslation({ serviceId, translation: { language: language } }))
   }
 
-  updateTranslation(serviceId: string, translation: Translation, populateTranslations?: boolean) {
-    return from(this.client.updateTranslation({ serviceId, translation, populateTranslations }))
+  updateTranslation(
+    serviceId: string,
+    translation: Translation,
+    paths: string[],
+    populateTranslations?: boolean,
+  ): Observable<Translation> {
+    return from(
+      this.client.updateTranslation({
+        serviceId,
+        translation,
+        updateMask: { paths },
+        populateTranslations,
+      }),
+    )
   }
 
   uploadTranslationFile(
@@ -90,8 +100,11 @@ export class TranslateClientService {
     )
   }
 
-  downloadTranslationFile(language: string, schema: Schema, serviceId: string) {
-    const request = new DownloadTranslationFileRequest({ language, schema: schema, serviceId })
-    return from(this.client.downloadTranslationFile(request))
+  downloadTranslationFile(
+    language: string,
+    schema: Schema,
+    serviceId: string,
+  ): Observable<DownloadTranslationFileResponse> {
+    return from(this.client.downloadTranslationFile({ language, schema: schema, serviceId }))
   }
 }

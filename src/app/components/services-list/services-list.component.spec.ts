@@ -12,15 +12,15 @@ import { RouterTestingModule } from '@angular/router/testing'
 import { ServiceNew } from '../services/services.component'
 import { ServicesListComponent } from './services-list.component'
 
+const testData: ServiceNew[] = [
+  { id: '1', name: 'test' },
+  { id: '2', name: 'test2' },
+]
+
 describe('ServicesListComponent', () => {
   let component: ServicesListComponent
   let fixture: ComponentFixture<ServicesListComponent>
   let loader: HarnessLoader
-
-  const testData: ServiceNew[] = [
-    { id: '1', name: 'test' },
-    { id: '2', name: 'test2' },
-  ]
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -60,15 +60,14 @@ describe('ServicesListComponent', () => {
       expect(services.length).toBe(testData.length)
     })
 
-    it('should not render empty if there are services', () => {
+    it('should not render empty message if there are services', () => {
       const emptyMessage = fixture.debugElement.query(By.css('.empty'))
 
       expect(emptyMessage).toBeFalsy()
     })
 
     it('should render empty message if there are no services', () => {
-      const testData: ServiceNew[] = []
-      component.services = testData
+      component.services = []
 
       fixture.detectChanges()
 
@@ -86,27 +85,38 @@ describe('ServicesListComponent', () => {
     })
 
     it('should emit service item to be deleted', async () => {
-      const serviceToDelete: ServiceNew = { id: '1', name: 'test' }
-
       spyOn(component.delete, 'emit').and.callThrough()
 
       const deleteButton = await menu.getHarness(MatMenuItemHarness.with({ selector: '#delete' }))
       await deleteButton.click()
 
-      expect(component.delete.emit).toHaveBeenCalledWith(serviceToDelete)
+      expect(component.delete.emit).toHaveBeenCalledWith(testData[0])
       expect(component.delete.emit).toHaveBeenCalledTimes(1)
     })
 
     it('should emit service item to be edited', async () => {
-      const serviceToEdited: ServiceNew = { id: '1', name: 'test' }
-
       spyOn(component.edit, 'emit').and.callThrough()
 
       const editButton = await menu.getHarness(MatMenuItemHarness.with({ selector: '#edit' }))
       await editButton.click()
 
-      expect(component.edit.emit).toHaveBeenCalledWith(serviceToEdited)
+      expect(component.edit.emit).toHaveBeenCalledWith(testData[0])
       expect(component.edit.emit).toHaveBeenCalledTimes(1)
+    })
+
+    it('should emit when create button is clicked', () => {
+      component.services = []
+
+      fixture.detectChanges()
+
+      spyOn(component.create, 'emit').and.callThrough()
+
+      const createButton = fixture.debugElement.query(By.css('#create')).nativeElement
+
+      createButton.click()
+
+      expect(component.create.emit).toHaveBeenCalled()
+      expect(component.create.emit).toHaveBeenCalledTimes(1)
     })
   })
 })
