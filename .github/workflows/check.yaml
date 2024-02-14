@@ -11,6 +11,6 @@ jobs:
         with:
           node-version: 20
       - name: Dependencies
-        run: npm install
+        run: yarn install
       - name: Lint
-        run: npm run lint
+        run: yarn lint
