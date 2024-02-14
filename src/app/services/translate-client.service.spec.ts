@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing'
-import { TranslateService } from '@buf/expectdigital_translate-agent.bufbuild_connect-es/translate/v1/translate_connect'
+import { TranslateService } from '@buf/expectdigital_translate-agent.bufbuild_connect-es/translate/v1/translate_connect.js'
 import {
   DownloadTranslationFileResponse,
   ListServicesResponse,
@@ -8,7 +8,7 @@ import {
   Schema,
   Service,
   Translation,
-} from '@buf/expectdigital_translate-agent.bufbuild_es/translate/v1/translate_pb'
+} from '@buf/expectdigital_translate-agent.bufbuild_es/translate/v1/translate_pb.js'
 import { Empty } from '@bufbuild/protobuf'
 import { of } from 'rxjs'
 import { TranslateClientService } from './translate-client.service'
@@ -311,6 +311,7 @@ describe('TranslateClientService', () => {
       expect(response).toBeDefined()
       expect(response).toEqual(new DownloadTranslationFileResponse({ data: new Uint8Array() }))
     })
+
     expect(downloadTranslationFileSpy).toHaveBeenCalledTimes(1)
     expect(downloadTranslationFileSpy).toHaveBeenCalledWith({
       language: 'en',
