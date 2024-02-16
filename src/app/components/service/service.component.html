@@ -11,7 +11,7 @@
   <div style="padding: 50px 60px 0px">
     @if (filteredTranslations$().length !== 0) {
       <div style="display: flex; gap: 20px; margin-bottom: 30px; align-items: baseline; justify-content: space-between">
-        <form [formGroup]="form" style="display: flex; gap: 20px;">
+        <form [formGroup]="form" style="display: flex; gap: 20px">
           <mat-form-field appearance="outline">
             <mat-label>Filter by Status</mat-label>
             <mat-select formControlName="status">
@@ -33,7 +33,7 @@
           <mat-form-field appearance="outline">
             <mat-icon matPrefix inline>search</mat-icon>
             <mat-label>Search</mat-label>
-            <input matInput formControlName="search">
+            <input matInput formControlName="search" />
           </mat-form-field>
         </form>
         <div>
