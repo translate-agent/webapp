@@ -11,7 +11,7 @@
   <div style="padding: 50px 60px 0px">
     @if (filteredTranslations$().length !== 0) {
       <div style="display: flex; gap: 20px; margin-bottom: 30px; align-items: baseline; justify-content: space-between">
-        <form [formGroup]="form">
+        <form [formGroup]="form" style="display: flex; gap: 20px;">
           <mat-form-field appearance="outline">
             <mat-label>Filter by Status</mat-label>
             <mat-select formControlName="status">
@@ -29,6 +29,11 @@
                 <mat-option [value]="status">{{ status.title }}</mat-option>
               }
             </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-icon matPrefix inline>search</mat-icon>
+            <mat-label>Search</mat-label>
+            <input matInput formControlName="search">
           </mat-form-field>
         </form>
         <div>
@@ -89,10 +94,9 @@
                   [index]="index"
                   [scroll]="virtualScroll"
                   [animationState]="animationState"
-                  [filtered]="filtered"
                   style="display: flex"
                   (dataEmitted)="receiveDataFromChild($event)"
-                  (translatonsemitted)="receive($event)"
+                  (translatonsemitted)="receive()"
                   #messagesList
                 ></app-messages>
                 <mat-divider></mat-divider>

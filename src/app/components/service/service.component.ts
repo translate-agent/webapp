@@ -74,6 +74,7 @@ export class ServiceComponent implements OnInit, OnDestroy {
 
   readonly form = this.fb.nonNullable.group({
     status: this.fb.nonNullable.control<undefined | StatusOption>(undefined),
+    search: this.fb.nonNullable.control(''),
   })
 
   readonly statuses: StatusOption[] = [
@@ -85,8 +86,6 @@ export class ServiceComponent implements OnInit, OnDestroy {
   private refreshTranslationsSubject = new BehaviorSubject<void>(undefined)
 
   translations$ = signal<Translation[]>([])
-
-  readonly state = this.form.controls.status.valueChanges.pipe(startWith(undefined))
 
   filteredTranslations$: Signal<Translation[]> = signal([])
 
@@ -115,12 +114,7 @@ export class ServiceComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.subscription.add(
-      this.translations.subscribe((v) => {
-        console.log(v)
-        this.translations$.set(v)
-      }),
-    )
+    this.subscription.add(this.translations.subscribe((v) => this.translations$.set(v)))
 
     this.subscription.add(
       this.serviceid.pipe(switchMap((id) => this.translateService.getService(id))).subscribe({
@@ -136,15 +130,25 @@ export class ServiceComponent implements OnInit, OnDestroy {
     )
 
     this.subscription.add(
-      this.form.controls.status.valueChanges.pipe(startWith(undefined)).subscribe((state) => {
+      combineLatest([
+        this.form.controls.status.valueChanges.pipe(startWith(undefined)),
+        this.form.controls.search.valueChanges.pipe(
+          startWith(''),
+          map((v) => v.toLowerCase()),
+        ),
+      ]).subscribe(([status, search]) => {
         this.filteredTranslations$ = computed(() => {
-          if (!state) {
-            this.animationState = 'in'
-            return this.translations$()
+          let filtered = !status ? this.translations$() : this.filterMessages(this.translations$(), status.value)
+
+          this.animationState = !status ? 'in' : 'out'
+
+          this.filtered = status ? true : false
+
+          if (search.length > 0) {
+            filtered = this.filterMessages(filtered, undefined, search)
           }
 
-          this.filtered = true
-          return this.filterMessagesByStatus(this.translations$(), state.value)
+          return filtered
         })
       }),
     )
@@ -194,20 +198,24 @@ export class ServiceComponent implements OnInit, OnDestroy {
     this.receivedData = data
   }
 
-  receive(data: Translation) {
-    console.log(data)
+  receive() {
     this.refreshTranslationsSubject.next()
   }
 
-  filterMessagesByStatus(data: Translation[], status: Message_Status) {
+  filterMessages(data: Translation[], status?: Message_Status, searchText?: string): Translation[] {
     const filteredKeys: string[] = []
     const copy = structuredClone(data)
 
     copy
-      .filter((translations) => !translations.original)
+      .filter((translations) => (status ? !translations.original : translations))
       .map((translation) =>
         translation.messages.filter((v) => {
-          if (v.status === status) {
+          if (status && v.status === status) {
+            filteredKeys.push(v.id)
+            return v
+          }
+
+          if (searchText && v.message.toLowerCase().includes(searchText)) {
             filteredKeys.push(v.id)
 
             return v

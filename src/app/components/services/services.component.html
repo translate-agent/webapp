@@ -3,10 +3,9 @@
 </mat-toolbar>
 <div class="container">
   <div style="margin: 10px 60px">
-    <div class="button-add" [class.hidden]="services$().length < 1">
+    <div class="button-add" [class.hidden]="services$().length === 0">
       <button type="button" mat-raised-button color="primary" (click)="createService()">
-        <mat-icon>add</mat-icon> New service
-      </button>
+        <mat-icon fontIcon="add"></mat-icon>New service</button>
     </div>
     <app-services-list
       [services]="services$()"

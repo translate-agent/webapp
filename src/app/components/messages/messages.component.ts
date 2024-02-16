@@ -32,7 +32,6 @@ import hljs from 'highlight.js'
 import { slideInOut } from 'src/app/animation'
 import messageFormat2 from 'src/app/highlight'
 import { TranslateClientService } from 'src/app/services/translate-client.service'
-import { StatusOption } from '../service/service.component'
 
 @Component({
   selector: 'app-messages',
@@ -59,9 +58,7 @@ export class MessagesComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() filteredTranslations!: Translation[]
   @Input() id!: string
   @Input() index!: number
-  @Input() status!: StatusOption | undefined
   @Input() scroll!: CdkVirtualScrollViewport
-  @Input() filtered!: boolean
   @Input() animationState!: string
 
   @ViewChildren('pre') messageElements!: QueryList<ElementRef>
@@ -88,20 +85,18 @@ export class MessagesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit(): void {
     this.subscription.add(this.scroll?.scrolledIndexChange.subscribe((v) => this.dataEmitted.emit(v)))
+
     this.translationsSignal.set(this.filteredTranslations ?? [])
+
     hljs.registerLanguage('messageformat2', messageFormat2)
   }
 
   ngAfterViewInit(): void {
-    this.highlight()
+    this.messageElements.forEach((element) => hljs.highlightElement(element.nativeElement))
   }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe()
-  }
-
-  highlight() {
-    this.messageElements.forEach((element) => hljs.highlightElement(element.nativeElement))
   }
 
   save(v: Event, msgId: string | undefined, index: number) {
@@ -110,7 +105,7 @@ export class MessagesComponent implements OnInit, OnDestroy, AfterViewInit {
 
     translation.messages = this.data[index].messages.filter((message) => {
       if (message.id === msgId) {
-        this.changes = true
+        this.changes = message.message !== value ? true : false
         message.message = value
         return message
       }
@@ -141,7 +136,7 @@ export class MessagesComponent implements OnInit, OnDestroy, AfterViewInit {
       return
     })
 
-    this.service.updateTranslation(this.serviceid!, translation, ['messages']).subscribe((d) => {
+    this.service.updateTranslation(this.serviceid!, translation, ['messages']).subscribe(() => {
       this.snackBar.open('Status changed!', undefined, {
         horizontalPosition: 'center',
         verticalPosition: 'bottom',
@@ -151,7 +146,7 @@ export class MessagesComponent implements OnInit, OnDestroy, AfterViewInit {
       this.state = this.animationState
 
       setTimeout(() => {
-        this.translatonsemitted.emit(d)
+        this.translatonsemitted.emit()
       }, 500)
     })
   }
