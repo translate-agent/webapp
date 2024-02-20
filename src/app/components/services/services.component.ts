@@ -76,17 +76,31 @@ export class ServicesComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe()
   }
 
-  createService() {
+  createService(): void {
     this.dialog
       .open(CreateServiceComponent, { width: '500px' })
       .afterClosed()
       .pipe(filter((v) => !!v))
       .subscribe((v) => {
-        this.services$.update((services) => [...services, v])
+        console.log(v)
+        this.service.createService(v).subscribe({
+          next: (service) => {
+            this.snackBar.open('Service created!', undefined, {
+              duration: 5000,
+            })
+            this.services$.update((services) => [...services, service])
+          },
+
+          error: (err) => {
+            this.snackBar.open(`Something went wrong. ${err}`, undefined, {
+              duration: 5000,
+            })
+          },
+        })
       })
   }
 
-  deleteService(service: ServiceNew) {
+  deleteService(service: ServiceNew): void {
     this.dialog
       .open(DialogDeleteComponent, { data: service, width: '500px' })
       .afterClosed()
@@ -96,9 +110,7 @@ export class ServicesComponent implements OnInit, OnDestroy {
           next: () => {
             this.services$.update((services) => services.filter((v) => v.id !== service.id))
 
-            this.snackBar.open('Service deleted!', undefined, {
-              horizontalPosition: 'right',
-              verticalPosition: 'top',
+            this.snackBar.open(`Service ${service.name} deleted!`, undefined, {
               duration: 5000,
             })
           },
@@ -107,7 +119,7 @@ export class ServicesComponent implements OnInit, OnDestroy {
       })
   }
 
-  editService(service: ServiceNew) {
+  editService(service: ServiceNew): void {
     const dialog = this.dialog.open(CreateServiceComponent, { width: '500px', data: service })
 
     dialog.componentInstance.edit = true
@@ -116,18 +128,32 @@ export class ServicesComponent implements OnInit, OnDestroy {
       .afterClosed()
       .pipe(filter((v) => !!v))
       .subscribe((v) => {
-        this.services$.update((services) =>
-          services.map((service) => {
-            if (service.id === v.id) {
-              service.name = v.name
-            }
-            return service
-          }),
-        )
+        this.service.updateService(service.id, v).subscribe({
+          next: (v) => {
+            this.snackBar.open('Service updated!', undefined, {
+              duration: 5000,
+            })
+
+            this.services$.update((services) =>
+              services.map((service) => {
+                if (service.id === v.id) {
+                  service.name = v.name
+                }
+                return service
+              }),
+            )
+          },
+
+          error: (err) => {
+            this.snackBar.open(`Something went wrong. ${err}`, undefined, {
+              duration: 5000,
+            })
+          },
+        })
       })
   }
 
-  openFileUploadModal(id: string) {
+  openFileUploadModal(id: string): void {
     this.dialog.open(UploadTranslationFileComponent, { data: id })
   }
 }

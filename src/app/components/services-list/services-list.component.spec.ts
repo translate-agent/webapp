@@ -9,6 +9,7 @@ import { MatMenuHarness, MatMenuItemHarness } from '@angular/material/menu/testi
 import { By } from '@angular/platform-browser'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { RouterTestingModule } from '@angular/router/testing'
+import { first } from 'rxjs'
 import { ServiceNew } from '../services/services.component'
 import { ServicesListComponent } from './services-list.component'
 
@@ -85,22 +86,30 @@ describe('ServicesListComponent', () => {
     })
 
     it('should emit service item to be deleted', async () => {
+      let emitedData: ServiceNew | undefined
       spyOn(component.delete, 'emit').and.callThrough()
 
       const deleteButton = await menu.getHarness(MatMenuItemHarness.with({ selector: '#delete' }))
-      await deleteButton.click()
 
-      expect(component.delete.emit).toHaveBeenCalledWith(testData[0])
+      component.delete.pipe(first()).subscribe((service: ServiceNew) => (emitedData = service))
+
+      await deleteButton.click()
+      expect(emitedData).toEqual(testData[0])
+      // expect(component.delete.emit).toHaveBeenCalledWith(testData[0])
       expect(component.delete.emit).toHaveBeenCalledTimes(1)
     })
 
     it('should emit service item to be edited', async () => {
+      let emitedData: ServiceNew | undefined
+
       spyOn(component.edit, 'emit').and.callThrough()
 
       const editButton = await menu.getHarness(MatMenuItemHarness.with({ selector: '#edit' }))
-      await editButton.click()
+      component.edit.pipe(first()).subscribe((service: ServiceNew) => (emitedData = service))
 
-      expect(component.edit.emit).toHaveBeenCalledWith(testData[0])
+      await editButton.click()
+      expect(emitedData).toEqual(testData[0])
+      // expect(component.edit.emit).toHaveBeenCalledWith(testData[0])
       expect(component.edit.emit).toHaveBeenCalledTimes(1)
     })
 
@@ -112,6 +121,8 @@ describe('ServicesListComponent', () => {
       spyOn(component.create, 'emit').and.callThrough()
 
       const createButton = fixture.debugElement.query(By.css('#create')).nativeElement
+
+      component.create.subscribe()
 
       createButton.click()
 

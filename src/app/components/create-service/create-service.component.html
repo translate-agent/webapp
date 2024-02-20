@@ -1,7 +1,7 @@
 <div class="container">
   <h3>{{ edit ? 'Edit service:' + ' ' + data.name : 'Create service' }}</h3>
   <button type="button" class="grow" mat-icon-button mat-dialog-close>
-    <mat-icon>close</mat-icon>
+    <mat-icon fontIcon="close"></mat-icon>
   </button>
 </div>
 <mat-dialog-content>
@@ -15,7 +15,7 @@
 </mat-dialog-content>
 <mat-dialog-actions align="end" class="container-actions">
   <button type="button" mat-button mat-dialog-close>Cancel</button>
-  <button type="button" color="primary" mat-raised-button cdkFocusInitial (click)="createService()">
+  <button type="button" color="primary" mat-raised-button cdkFocusInitial (click)="confirm()">
     {{ edit ? 'Edit' : 'Create' }}
   </button>
 </mat-dialog-actions>

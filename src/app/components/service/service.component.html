@@ -1,6 +1,6 @@
 <mat-toolbar #toolbar>
   <button mat-icon-button routerLink="/services">
-    <mat-icon>home</mat-icon>
+    <mat-icon fontIcon="home"></mat-icon>
   </button>
   <span style="font-size: 1.2rem"
     ><span routerLink="/services" style="cursor: pointer">Services</span>&nbsp;&mdash;&nbsp;{{ title.getTitle() }}</span
@@ -22,8 +22,8 @@
                   inline
                   (click)="form.controls.status.reset(); $event.stopPropagation()"
                   class="icon"
-                  >close</mat-icon
-                >
+                  fontIcon="close"
+                ></mat-icon>
               </mat-select-trigger>
               @for (status of statuses; track status) {
                 <mat-option [value]="status">{{ status.title }}</mat-option>
@@ -31,20 +31,20 @@
             </mat-select>
           </mat-form-field>
           <mat-form-field appearance="outline">
-            <mat-icon matPrefix inline>search</mat-icon>
+            <mat-icon matPrefix inline fontIcon="search"></mat-icon>
             <mat-label>Search</mat-label>
             <input matInput formControlName="search" />
           </mat-form-field>
         </form>
         <div>
           <button mat-raised-button color="primary" (click)="openFileUploadModal()" style="margin-right: 1em">
-            <mat-icon matTooltip="upload">upload</mat-icon>Upload file
+            <mat-icon matTooltip="upload" fontIcon="upload"></mat-icon>Upload file
           </button>
           <button mat-raised-button color="primary" (click)="openFileDownloadModal()" style="margin-right: 1em">
-            <mat-icon>download</mat-icon>Download file
+            <mat-icon fontIcon="download"></mat-icon>Download file
           </button>
           <button mat-raised-button color="primary" (click)="addLanguage()">
-            <mat-icon>add</mat-icon>Add language
+            <mat-icon fontIcon="add"></mat-icon>Add language
           </button>
         </div>
       </div>
@@ -111,7 +111,7 @@
       <div style="max-width: 500px; margin: 0 auto; text-align: center; padding-top: 50px">
         <p style="font-size: 1.5rem">No language files found. Upload language files.</p>
         <button mat-stroked-button color="primary" (click)="openFileUploadModal()" class="mat-elevation-z3">
-          <mat-icon>upload</mat-icon> Upload file
+          <mat-icon fontIcon="upload"></mat-icon> Upload file
         </button>
       </div>
     }
