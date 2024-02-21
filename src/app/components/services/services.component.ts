@@ -15,7 +15,6 @@ import { TranslateClientService } from 'src/app/services/translate-client.servic
 import { CreateServiceComponent } from '../create-service/create-service.component'
 import { DialogDeleteComponent } from '../dialog-delete/dialog-delete.component'
 import { ServicesListComponent } from '../services-list/services-list.component'
-import { UploadTranslationFileComponent } from '../upload-translation-file/upload-translation-file.component'
 
 export type ServiceNew = {
   id: string
@@ -51,7 +50,7 @@ export class ServicesComponent implements OnInit, OnDestroy {
     public dialog: MatDialog,
     private service: TranslateClientService,
     public router: Router,
-    private snackBar: MatSnackBar,
+    public snackBar: MatSnackBar,
     public title: Title,
   ) {}
 
@@ -82,7 +81,6 @@ export class ServicesComponent implements OnInit, OnDestroy {
       .afterClosed()
       .pipe(filter((v) => !!v))
       .subscribe((v) => {
-        console.log(v)
         this.service.createService(v).subscribe({
           next: (service) => {
             this.snackBar.open('Service created!', undefined, {
@@ -151,9 +149,5 @@ export class ServicesComponent implements OnInit, OnDestroy {
           },
         })
       })
-  }
-
-  openFileUploadModal(id: string): void {
-    this.dialog.open(UploadTranslationFileComponent, { data: id })
   }
 }

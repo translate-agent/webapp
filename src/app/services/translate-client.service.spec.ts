@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing'
 import { TranslateService } from '@buf/expectdigital_translate-agent.bufbuild_connect-es/translate/v1/translate_connect.js'
 import {
   DownloadTranslationFileResponse,
+  ListServicesResponse,
   ListTranslationsResponse,
   Message_Status,
   Schema,
@@ -9,7 +10,6 @@ import {
   Translation,
 } from '@buf/expectdigital_translate-agent.bufbuild_es/translate/v1/translate_pb.js'
 import { Empty } from '@bufbuild/protobuf'
-import { of } from 'rxjs'
 import { TranslateClientService } from './translate-client.service'
 
 describe('TranslateClientService', () => {
@@ -31,14 +31,6 @@ describe('TranslateClientService', () => {
       providers: [{ provide: TranslateService, useValue: mockTranslateClientService }],
     })
     service = TestBed.inject(TranslateClientService)
-
-    // mockTranslateClientService.listServices.and.returnValue(
-    //   of(
-    //     new ListServicesResponse({
-    //       services: [{ id: 'service-id', name: 'Test Service' }],
-    //     }),
-    //   ),
-    // )
   })
 
   it('should be created', () => {
@@ -46,25 +38,24 @@ describe('TranslateClientService', () => {
   })
 
   it('should list services', async () => {
-    // const mockService = new ListServicesResponse({
-    //   services: [{ id: 'service-id', name: 'Test Service' }],
-    // })
-    mockTranslateClientService.listServices()
-    // const listServicesSpy = spyOn(service.client, 'listServices').and.returnValue(Promise.resolve(mockService))
+    const mockService = new ListServicesResponse({
+      services: [{ id: 'service-id', name: 'Test Service' }],
+    })
+    const listServicesSpy = spyOn(service.client, 'listServices').and.returnValue(Promise.resolve(mockService))
 
-    // service.listServices().subscribe((response) => {
-    //   expect(response).toBeDefined()
-    //   expect(response.services.length).toBe(1)
-    //   expect(response).toEqual(mockService)
-    // })
+    service.listServices().subscribe((response) => {
+      expect(response).toBeDefined()
+      expect(response.services.length).toBe(1)
+      expect(response).toEqual(mockService)
+    })
 
-    expect(mockTranslateClientService.listServices).toHaveBeenCalledTimes(1)
-    // expect(listServicesSpy).toHaveBeenCalledWith({})
+    expect(listServicesSpy).toHaveBeenCalledTimes(1)
+    expect(listServicesSpy).toHaveBeenCalledWith({})
   })
 
   it('should get service', async () => {
     const mockService = new Service({ id: 'service-id', name: 'Test Service' })
-    const getServiceSpy = spyOn(service, 'getService').and.returnValue(of(mockService))
+    const getServiceSpy = spyOn(service.client, 'getService').and.returnValue(Promise.resolve(mockService))
 
     service.getService('service-id').subscribe((response) => {
       expect(response).toBeDefined()
@@ -72,7 +63,7 @@ describe('TranslateClientService', () => {
     })
 
     expect(getServiceSpy).toHaveBeenCalledTimes(1)
-    expect(getServiceSpy).toHaveBeenCalledWith('service-id')
+    expect(getServiceSpy).toHaveBeenCalledWith({ id: 'service-id' })
   })
 
   it('should create service', async () => {

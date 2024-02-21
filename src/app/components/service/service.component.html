@@ -2,9 +2,8 @@
   <button mat-icon-button routerLink="/services">
     <mat-icon fontIcon="home"></mat-icon>
   </button>
-  <span style="font-size: 1.2rem"
-    ><span routerLink="/services" style="cursor: pointer">Services</span>&nbsp;&mdash;&nbsp;{{ title.getTitle() }}</span
-  >
+  <span class="title" routerLink="/services" style="cursor: pointer">Services</span>&nbsp;&mdash;&nbsp;
+  <h1 class="title">{{ title.getTitle() }}</h1>
 </mat-toolbar>
 
 @if (translations$(); as translations) {

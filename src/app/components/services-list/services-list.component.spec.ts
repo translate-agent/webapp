@@ -95,7 +95,7 @@ describe('ServicesListComponent', () => {
 
       await deleteButton.click()
       expect(emitedData).toEqual(testData[0])
-      // expect(component.delete.emit).toHaveBeenCalledWith(testData[0])
+
       expect(component.delete.emit).toHaveBeenCalledTimes(1)
     })
 
@@ -109,7 +109,6 @@ describe('ServicesListComponent', () => {
 
       await editButton.click()
       expect(emitedData).toEqual(testData[0])
-      // expect(component.edit.emit).toHaveBeenCalledWith(testData[0])
       expect(component.edit.emit).toHaveBeenCalledTimes(1)
     })
 
