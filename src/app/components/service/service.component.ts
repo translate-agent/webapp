@@ -158,7 +158,7 @@ export class ServiceComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe()
   }
 
-  scrollToTop() {
+  scrollToTop(): void {
     window.scrollTo({ top: 0, behavior: 'smooth' })
     this.virtualScroll.scrollToIndex(0)
   }
@@ -194,11 +194,11 @@ export class ServiceComponent implements OnInit, OnDestroy {
       })
   }
 
-  receiveDataFromChild(data: number) {
+  receiveDataFromChild(data: number): void {
     this.receivedData = data
   }
 
-  receive() {
+  receive(): void {
     this.refreshTranslationsSubject.next()
   }
 

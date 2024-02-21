@@ -34,7 +34,7 @@ export class NewLanguageDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: Observable<string>,
   ) {}
 
-  add() {
+  add(): void {
     this.language.markAllAsTouched()
 
     if (this.language.invalid) {

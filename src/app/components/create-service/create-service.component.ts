@@ -37,7 +37,7 @@ export class CreateServiceComponent {
     @Inject(MAT_DIALOG_DATA) public data: Service,
   ) {}
 
-  confirm() {
+  confirm(): void {
     this.form.markAllAsTouched()
 
     if (this.form.invalid) {

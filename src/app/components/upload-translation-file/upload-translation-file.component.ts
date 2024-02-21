@@ -152,7 +152,7 @@ export class UploadTranslationFileComponent implements OnInit {
       })
   }
 
-  downloadFile() {
+  downloadFile(): void {
     this.form.markAllAsTouched()
 
     if (this.form.invalid) {

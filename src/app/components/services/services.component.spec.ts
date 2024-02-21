@@ -27,7 +27,7 @@ describe('ServicesComponent', () => {
   let fixture: ComponentFixture<ServicesComponent>
   let title: Title
   let translateClientServiceSpy: jasmine.SpyObj<TranslateClientService>
-  let matDialogRefSpy: jasmine.SpyObj<MatDialogRef<DialogDeleteComponent>>
+  let matDialogRefSpy: jasmine.SpyObj<MatDialogRef<CreateServiceComponent>>
 
   const testData: ServiceNew[] = [
     { id: '1', name: 'test' },
@@ -67,7 +67,7 @@ describe('ServicesComponent', () => {
     ],
   })
 
-  const translateClientServiceMock = jasmine.createSpyObj('TranslateClientService', [
+  translateClientServiceSpy = jasmine.createSpyObj('TranslateClientService', [
     'listServices',
     'deleteService',
     'updateService',
@@ -76,8 +76,6 @@ describe('ServicesComponent', () => {
   ])
 
   beforeEach(async () => {
-    matDialogRefSpy = jasmine.createSpyObj('MatDialogRef', ['close'])
-
     await TestBed.configureTestingModule({
       imports: [
         ServicesComponent,
@@ -89,12 +87,13 @@ describe('ServicesComponent', () => {
         MatDialogModule,
         NoopAnimationsModule,
         MatSnackBarModule,
+        CreateServiceComponent,
       ],
       providers: [
         Title,
         {
           provide: TranslateClientService,
-          useValue: translateClientServiceMock,
+          useValue: translateClientServiceSpy,
         },
         { provide: MatDialogRef, useValue: matDialogRefSpy },
       ],
@@ -234,24 +233,64 @@ describe('ServicesComponent', () => {
     })
   })
 
-  xdescribe('editService function', () => {
+  describe('editService function', () => {
     let serviceListComponent: DebugElement[]
+
+    const mockEditInputValue = 'New Service'
 
     beforeEach(async () => {
       serviceListComponent = fixture.debugElement.queryAll(By.directive(ServicesListComponent))
-    })
-    it('open dialog', () => {
       serviceListComponent[0].componentInstance.edit.emit(testData[0])
 
-      spyOn(component.dialog, 'open').and.returnValue({
-        afterClosed: () => of('New service name'),
-      } as MatDialogRef<CreateServiceComponent, string>)
+      const matDialogRefInstSpy = jasmine.createSpyObj('matDialogRefInstSpy', ['afterClosed', 'close'])
+      matDialogRefInstSpy.componentInstance = jasmine.createSpyObj('componentInstance', ['edit'])
+      matDialogRefInstSpy.componentInstance.edit.and.returnValue(of(true))
+
+      matDialogRefSpy = jasmine.createSpyObj('matDialogRefSpy', ['afterClosed'])
+      matDialogRefSpy.afterClosed.and.returnValue(of(mockEditInputValue))
+      matDialogRefSpy.componentInstance = matDialogRefInstSpy
+
+      spyOn(component.dialog, 'open').and.returnValue(matDialogRefSpy)
+
+      spyOn(component, 'editService')
+      fixture.detectChanges()
+    })
+    it('should open edit dialog', () => {
+      // const matDialogRefInstSpy = jasmine.createSpyObj('matDialogRefInstSpy', ['afterClosed', 'close'])
+      // matDialogRefInstSpy.componentInstance = jasmine.createSpyObj('componentInstance', ['edit'])
+      // matDialogRefInstSpy.componentInstance.edit.and.returnValue(of(true))
+
+      // matDialogRefSpy = jasmine.createSpyObj('matDialogRefSpy', ['afterClosed'])
+      // matDialogRefSpy.afterClosed.and.returnValue(of(mockEditInputValue))
+      // matDialogRefSpy.componentInstance = matDialogRefInstSpy
+
+      // spyOn(component.dialog, 'open').and.returnValue(matDialogRefSpy)
+
+      // spyOn(component, 'editService')
 
       component.editService(testData[0])
       component.dialog.open(CreateServiceComponent, { data: testData[0], width: '500px' })
+      matDialogRefSpy.afterClosed()
 
-      expect(component.dialog.open).toHaveBeenCalled()
+      expect(component.dialog.open).toHaveBeenCalledWith(CreateServiceComponent, { data: testData[0], width: '500px' })
+
       expect(component.editService).toHaveBeenCalled()
+      expect(matDialogRefSpy.afterClosed).toHaveBeenCalled()
+    })
+
+    it('should call translateClientService.updateService', () => {
+      component.editService(testData[0])
+      component.dialog.open(CreateServiceComponent, { data: testData[0], width: '500px' })
+      matDialogRefSpy.afterClosed()
+
+      translateClientServiceSpy.updateService.and.returnValue(
+        of(new Service({ id: testData[0].id, name: mockEditInputValue })),
+      )
+
+      translateClientServiceSpy.updateService(testData[0].id, mockEditInputValue)
+
+      expect(translateClientServiceSpy.updateService).toHaveBeenCalled()
+      expect(translateClientServiceSpy.updateService).toHaveBeenCalledOnceWith(testData[0].id, mockEditInputValue)
     })
   })
 

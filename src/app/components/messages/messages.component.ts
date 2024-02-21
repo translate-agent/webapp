@@ -99,7 +99,7 @@ export class MessagesComponent implements OnInit, OnDestroy, AfterViewInit {
     this.subscription.unsubscribe()
   }
 
-  save(v: Event, msgId: string | undefined, index: number) {
+  save(v: Event, msgId: string | undefined, index: number): void {
     const value = (v.target as HTMLTextAreaElement).innerText
     const translation = structuredClone(this.data[index])
 
@@ -124,7 +124,7 @@ export class MessagesComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  changeStatuss(index: number, id: string) {
+  changeStatuss(index: number, id: string): void {
     const translation = structuredClone(this.data[index])
 
     translation.messages = this.data[index].messages.filter((message) => {
@@ -151,7 +151,7 @@ export class MessagesComponent implements OnInit, OnDestroy, AfterViewInit {
     })
   }
 
-  tooltip(status: Message_Status | undefined) {
+  tooltip(status: Message_Status | undefined): string {
     switch (status) {
       case Message_Status.UNTRANSLATED:
         return 'Needs translation'
@@ -162,7 +162,7 @@ export class MessagesComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  icon(status: Message_Status | undefined) {
+  icon(status: Message_Status | undefined): string {
     switch (status) {
       case Message_Status.UNTRANSLATED:
         return 'translate'
