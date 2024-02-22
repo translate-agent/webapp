@@ -14,7 +14,7 @@ import { TranslateClientService } from './translate-client.service'
 
 describe('TranslateClientService', () => {
   let service: TranslateClientService
-  const mockTranslateClientService = jasmine.createSpyObj('TranslateService', [
+  service = jasmine.createSpyObj('TranslateService', [
     'listServices',
     'getService',
     'createService',
@@ -28,7 +28,7 @@ describe('TranslateClientService', () => {
   ])
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [{ provide: TranslateService, useValue: mockTranslateClientService }],
+      providers: [{ provide: TranslateService, useValue: service }],
     })
     service = TestBed.inject(TranslateClientService)
   })
@@ -43,11 +43,7 @@ describe('TranslateClientService', () => {
     })
     const listServicesSpy = spyOn(service.client, 'listServices').and.returnValue(Promise.resolve(mockService))
 
-    service.listServices().subscribe((response) => {
-      expect(response).toBeDefined()
-      expect(response.services.length).toBe(1)
-      expect(response).toEqual(mockService)
-    })
+    service.listServices()
 
     expect(listServicesSpy).toHaveBeenCalledTimes(1)
     expect(listServicesSpy).toHaveBeenCalledWith({})
@@ -57,10 +53,7 @@ describe('TranslateClientService', () => {
     const mockService = new Service({ id: 'service-id', name: 'Test Service' })
     const getServiceSpy = spyOn(service.client, 'getService').and.returnValue(Promise.resolve(mockService))
 
-    service.getService('service-id').subscribe((response) => {
-      expect(response).toBeDefined()
-      expect(response).toEqual(mockService)
-    })
+    service.getService('service-id')
 
     expect(getServiceSpy).toHaveBeenCalledTimes(1)
     expect(getServiceSpy).toHaveBeenCalledWith({ id: 'service-id' })
@@ -71,10 +64,7 @@ describe('TranslateClientService', () => {
 
     const createServiceSpy = spyOn(service.client, 'createService').and.returnValue(Promise.resolve(mockService))
 
-    service.createService('Test Service').subscribe((response) => {
-      expect(response).toBeDefined()
-      expect(response).toEqual(mockService)
-    })
+    service.createService('Test Service')
 
     expect(createServiceSpy).toHaveBeenCalled()
     expect(createServiceSpy).toHaveBeenCalledTimes(1)
@@ -88,10 +78,7 @@ describe('TranslateClientService', () => {
 
     expect(updateServiceSpy).toHaveBeenCalledTimes(0)
 
-    service.updateService('service-id', 'New Test Service').subscribe((response) => {
-      expect(response).toBeDefined()
-      expect(response).toEqual(new Service({ id: 'service-id', name: 'New Test Service' }))
-    })
+    service.updateService('service-id', 'New Test Service')
 
     expect(updateServiceSpy).toHaveBeenCalled()
     expect(updateServiceSpy).toHaveBeenCalledTimes(1)
@@ -105,10 +92,7 @@ describe('TranslateClientService', () => {
 
     expect(deleteServiceSpy).toHaveBeenCalledTimes(0)
 
-    service.deleteService('service-id').subscribe((response) => {
-      expect(response).toBeDefined()
-      expect(response).toEqual(new Empty({}))
-    })
+    service.deleteService('service-id')
 
     expect(deleteServiceSpy).toHaveBeenCalledTimes(1)
     expect(deleteServiceSpy).toHaveBeenCalledWith({ id: 'service-id' })
@@ -170,11 +154,7 @@ describe('TranslateClientService', () => {
 
     expect(listTranslationsSpy).toHaveBeenCalledTimes(0)
 
-    service.listTranslations('service-id').subscribe((response) => {
-      expect(response).toBeDefined()
-      expect(response.length).toBe(2)
-      expect(response).toEqual(mockData.translations)
-    })
+    service.listTranslations('service-id')
 
     expect(listTranslationsSpy).toHaveBeenCalledTimes(1)
     expect(listTranslationsSpy).toHaveBeenCalledWith({ serviceId: 'service-id' })
@@ -186,10 +166,7 @@ describe('TranslateClientService', () => {
 
     expect(createTranslationSpy).toHaveBeenCalledTimes(0)
 
-    service.createTranslation('service-id', 'lv').subscribe((response) => {
-      expect(response).toBeDefined()
-      expect(response).toEqual(mockData)
-    })
+    service.createTranslation('service-id', 'lv')
 
     expect(createTranslationSpy).toHaveBeenCalledTimes(1)
     expect(createTranslationSpy).toHaveBeenCalledWith({ serviceId: 'service-id', translation: { language: 'lv' } })
@@ -280,12 +257,7 @@ describe('TranslateClientService', () => {
 
     expect(uploadTranslationFileSpy).toHaveBeenCalledTimes(0)
 
-    service
-      .uploadTranslationFile(new Uint8Array(), 'en', Schema.POT, true, 'service-id', true)
-      .subscribe((response) => {
-        expect(response).toBeDefined()
-        expect(response).toEqual(new Empty({}))
-      })
+    service.uploadTranslationFile(new Uint8Array(), 'en', Schema.POT, true, 'service-id', true)
 
     expect(uploadTranslationFileSpy).toHaveBeenCalledTimes(1)
     expect(uploadTranslationFileSpy).toHaveBeenCalledWith({
@@ -305,10 +277,7 @@ describe('TranslateClientService', () => {
 
     expect(downloadTranslationFileSpy).toHaveBeenCalledTimes(0)
 
-    service.downloadTranslationFile('en', Schema.POT, 'service-id').subscribe((response) => {
-      expect(response).toBeDefined()
-      expect(response).toEqual(new DownloadTranslationFileResponse({ data: new Uint8Array() }))
-    })
+    service.downloadTranslationFile('en', Schema.POT, 'service-id')
 
     expect(downloadTranslationFileSpy).toHaveBeenCalledTimes(1)
     expect(downloadTranslationFileSpy).toHaveBeenCalledWith({

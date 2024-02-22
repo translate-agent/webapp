@@ -256,18 +256,6 @@ describe('ServicesComponent', () => {
       fixture.detectChanges()
     })
     it('should open edit dialog', () => {
-      // const matDialogRefInstSpy = jasmine.createSpyObj('matDialogRefInstSpy', ['afterClosed', 'close'])
-      // matDialogRefInstSpy.componentInstance = jasmine.createSpyObj('componentInstance', ['edit'])
-      // matDialogRefInstSpy.componentInstance.edit.and.returnValue(of(true))
-
-      // matDialogRefSpy = jasmine.createSpyObj('matDialogRefSpy', ['afterClosed'])
-      // matDialogRefSpy.afterClosed.and.returnValue(of(mockEditInputValue))
-      // matDialogRefSpy.componentInstance = matDialogRefInstSpy
-
-      // spyOn(component.dialog, 'open').and.returnValue(matDialogRefSpy)
-
-      // spyOn(component, 'editService')
-
       component.editService(testData[0])
       component.dialog.open(CreateServiceComponent, { data: testData[0], width: '500px' })
       matDialogRefSpy.afterClosed()
