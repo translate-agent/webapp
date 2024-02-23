@@ -1,5 +1,4 @@
 import { TestBed } from '@angular/core/testing'
-import { TranslateService } from '@buf/expectdigital_translate-agent.bufbuild_connect-es/translate/v1/translate_connect.js'
 import {
   DownloadTranslationFileResponse,
   ListServicesResponse,
@@ -9,6 +8,7 @@ import {
   Service,
   Translation,
 } from '@buf/expectdigital_translate-agent.bufbuild_es/translate/v1/translate_pb.js'
+import { TranslateService } from '@buf/expectdigital_translate-agent.connectrpc_es/translate/v1/translate_connect'
 import { Empty } from '@bufbuild/protobuf'
 import { TranslateClientService } from './translate-client.service'
 
