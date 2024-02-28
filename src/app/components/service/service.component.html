@@ -11,13 +11,7 @@
     @if (filteredTranslations$().length !== 0) {
       <div style="display: flex; gap: 20px; margin-bottom: 30px; align-items: baseline; justify-content: space-between">
         <form [formGroup]="form">
-          <mat-button-toggle-group
-            formControlName="status"
-            name="status"
-            aria-label="status"
-            multiple
-            style="margin-right: 10px"
-          >
+          <mat-button-toggle-group formControlName="status" multiple class="toggle-button-group">
             @for (status of statuses; track status) {
               <mat-button-toggle class="custom-toggle" [value]="status"
                 ><mat-icon class="icon-status" inline [fontIcon]="icon(status.value)"></mat-icon
