@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common'
 import { Component, OnDestroy, OnInit, Signal, ViewChild, computed, signal } from '@angular/core'
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
+import { MatButtonToggleModule } from '@angular/material/button-toggle'
 import { MatCheckboxModule } from '@angular/material/checkbox'
 import { MatDialog, MatDialogModule } from '@angular/material/dialog'
 import { MatDividerModule } from '@angular/material/divider'
@@ -12,7 +13,7 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
 import { MatSelectModule } from '@angular/material/select'
 import { MatSlideToggleModule } from '@angular/material/slide-toggle'
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar'
+import { MatSnackBarModule } from '@angular/material/snack-bar'
 import { MatToolbar, MatToolbarModule } from '@angular/material/toolbar'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { Title } from '@angular/platform-browser'
@@ -56,6 +57,7 @@ export interface StatusOption {
     UploadTranslationFileComponent,
     ServicesComponent,
     MatSnackBarModule,
+    MatButtonToggleModule,
   ],
 })
 export class ServiceComponent implements OnInit, OnDestroy {
@@ -73,7 +75,7 @@ export class ServiceComponent implements OnInit, OnDestroy {
   animationState = 'in'
 
   readonly form = this.fb.nonNullable.group({
-    status: this.fb.nonNullable.control<undefined | StatusOption>(undefined),
+    status: this.fb.nonNullable.control<StatusOption[]>([]),
     search: this.fb.nonNullable.control(''),
   })
 
@@ -109,7 +111,6 @@ export class ServiceComponent implements OnInit, OnDestroy {
     private translateService: TranslateClientService,
     private route: ActivatedRoute,
     public title: Title,
-    private snackBar: MatSnackBar,
     private router: Router,
   ) {}
 
@@ -131,26 +132,28 @@ export class ServiceComponent implements OnInit, OnDestroy {
 
     this.subscription.add(
       combineLatest([
-        this.form.controls.status.valueChanges.pipe(startWith(undefined)),
+        this.form.controls.status.valueChanges.pipe(startWith([])),
         this.form.controls.search.valueChanges.pipe(
           startWith(''),
           map((v) => v.toLowerCase()),
         ),
-      ]).subscribe(([status, search]) => {
-        this.filteredTranslations$ = computed(() => {
-          let filtered = !status ? this.translations$() : this.filterMessages(this.translations$(), status.value)
+      ]).subscribe(
+        ([status, search]) =>
+          (this.filteredTranslations$ = computed(() => {
+            let filtered =
+              status?.length === 0 ? this.translations$() : this.filterMessages(this.translations$(), status)
 
-          this.animationState = !status ? 'in' : 'out'
+            this.animationState = status?.length === 0 ? 'in' : 'out'
 
-          this.filtered = status ? true : false
+            this.filtered = status?.length !== 0 ? true : false
 
-          if (search.length > 0) {
-            filtered = this.filterMessages(filtered, undefined, search)
-          }
+            if (search.length > 0) {
+              filtered = this.filterMessages(filtered, undefined, search)
+            }
 
-          return filtered
-        })
-      }),
+            return filtered
+          })),
+      ),
     )
   }
 
@@ -168,9 +171,7 @@ export class ServiceComponent implements OnInit, OnDestroy {
       .open(UploadTranslationFileComponent, { data: this.serviceid })
       .afterClosed()
       .pipe(filter((v) => !!v))
-      .subscribe(() => {
-        this.refreshTranslationsSubject.next()
-      })
+      .subscribe(() => this.refreshTranslationsSubject.next())
   }
 
   openFileDownloadModal(): void {
@@ -183,15 +184,8 @@ export class ServiceComponent implements OnInit, OnDestroy {
     this.dialog
       .open(NewLanguageDialogComponent, { data: this.serviceid, width: '400px' })
       .afterClosed()
-      // .pipe(filter((v) => !!v))
-      .subscribe(() => {
-        this.refreshTranslationsSubject.next()
-        this.snackBar.open('Added new translations', undefined, {
-          horizontalPosition: 'center',
-          verticalPosition: 'bottom',
-          duration: 5000,
-        })
-      })
+      .pipe(filter((v) => !!v))
+      .subscribe(() => this.refreshTranslationsSubject.next())
   }
 
   receiveDataFromChild(data: number): void {
@@ -202,17 +196,20 @@ export class ServiceComponent implements OnInit, OnDestroy {
     this.refreshTranslationsSubject.next()
   }
 
-  filterMessages(data: Translation[], status?: Message_Status, searchText?: string): Translation[] {
+  filterMessages(data: Translation[], status?: StatusOption[], searchText?: string): Translation[] {
     const filteredKeys: string[] = []
     const copy = structuredClone(data)
 
     copy
-      .filter((translations) => (status ? !translations.original : translations))
+      .filter((translations) => (status?.length !== 0 ? !translations.original : translations))
       .map((translation) =>
         translation.messages.filter((v) => {
-          if (status && v.status === status) {
-            filteredKeys.push(v.id)
-            return v
+          if (status?.length !== 0) {
+            status?.forEach((s) => {
+              if (v.status === s.value) {
+                filteredKeys.push(v.id)
+              }
+            })
           }
 
           if (searchText && v.message.toLowerCase().includes(searchText)) {
@@ -224,16 +221,24 @@ export class ServiceComponent implements OnInit, OnDestroy {
         }),
       )
 
-    const uniqueKey = [...new Set(filteredKeys)]
+    this.animationState = 'out'
 
-    const result = copy.map((v) => {
+    return copy.map((v) => {
       v.messages = v.messages.filter((msg) => {
-        return uniqueKey.some((key) => key === msg.id)
+        return [...new Set(filteredKeys)].some((key) => key === msg.id)
       })
       return v
     })
+  }
 
-    this.animationState = 'out'
-    return result
+  icon(status: Message_Status | undefined): string {
+    switch (status) {
+      case Message_Status.UNTRANSLATED:
+        return 'translate'
+      case Message_Status.TRANSLATED:
+        return 'check_small'
+      default:
+        return 'g_translated'
+    }
   }
 }
