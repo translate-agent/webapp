@@ -89,11 +89,10 @@ export class ServicesComponent implements OnInit, OnDestroy {
             this.services$.update((services) => [...services, service])
           },
 
-          error: (err) => {
+          error: (err) =>
             this.snackBar.open(`Something went wrong. ${err}`, undefined, {
               duration: 5000,
-            })
-          },
+            }),
         })
       })
   }
@@ -112,7 +111,10 @@ export class ServicesComponent implements OnInit, OnDestroy {
               duration: 5000,
             })
           },
-          error: (err) => console.log(err),
+          error: (err) =>
+            this.snackBar.open(`Something went wrong. ${err}`, undefined, {
+              duration: 5000,
+            }),
         })
       })
   }
@@ -142,11 +144,10 @@ export class ServicesComponent implements OnInit, OnDestroy {
             )
           },
 
-          error: (err) => {
+          error: (err) =>
             this.snackBar.open(`Something went wrong. ${err}`, undefined, {
               duration: 5000,
-            })
-          },
+            }),
         })
       })
   }

@@ -8,28 +8,65 @@ import {
   Service,
   Translation,
 } from '@buf/expectdigital_translate-agent.bufbuild_es/translate/v1/translate_pb.js'
-import { TranslateService } from '@buf/expectdigital_translate-agent.connectrpc_es/translate/v1/translate_connect'
 import { Empty } from '@bufbuild/protobuf'
+import { of } from 'rxjs'
 import { TranslateClientService } from './translate-client.service'
+
+export const mockListTranslationsResponse = new ListTranslationsResponse({
+  translations: [
+    {
+      language: 'en',
+      original: true,
+      messages: [
+        {
+          id: '\n\\n\n            Error: %(text)s\\n\n            ',
+          pluralId: '',
+          message:
+            '.local $format = { python-format }\n.local $text = { |%(text)s| }\n{{\n\\\\n\n            Error: { $text }\\\\n\n            }}',
+          description: '',
+          status: Message_Status.TRANSLATED,
+          positions: ['superset/reports/notifications/email.py:89'],
+        },
+        {
+          id: ' (excluded)',
+          pluralId: '',
+          message: ' (excluded)',
+          description: '',
+          status: Message_Status.TRANSLATED,
+          positions: ['superset-frontend/src/filters/components/Select/SelectFilterPlugin.tsx:130'],
+        },
+      ],
+    },
+    {
+      language: 'de',
+      original: false,
+      messages: [
+        {
+          id: '\n\\n\n            Error: %(text)s\\n\n            ',
+          pluralId: '',
+          message:
+            '.local $format = { python-format }\n.local $text = { |%(text)s| }\n{{\n\\\\n\n            Error: { $text }\\\\n\n            }}',
+          description: '',
+          status: Message_Status.UNTRANSLATED,
+          positions: ['superset/reports/notifications/email.py:89'],
+        },
+        {
+          id: ' (excluded)',
+          pluralId: '',
+          message: ' (excluded)',
+          description: '',
+          status: Message_Status.UNTRANSLATED,
+          positions: ['superset-frontend/src/filters/components/Select/SelectFilterPlugin.tsx:130'],
+        },
+      ],
+    },
+  ],
+})
 
 describe('TranslateClientService', () => {
   let service: TranslateClientService
-  service = jasmine.createSpyObj('TranslateService', [
-    'listServices',
-    'getService',
-    'createService',
-    'updateService',
-    'deleteService',
-    'listTranslations',
-    'createTranslation',
-    'updateTranslation',
-    'uploadTranslationFile',
-    'downloadTranslationFile',
-  ])
+
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [{ provide: TranslateService, useValue: service }],
-    })
     service = TestBed.inject(TranslateClientService)
   })
 
@@ -37,143 +74,103 @@ describe('TranslateClientService', () => {
     expect(service).toBeTruthy()
   })
 
-  it('should list services', async () => {
+  it('should list services', () => {
     const mockService = new ListServicesResponse({
       services: [{ id: 'service-id', name: 'Test Service' }],
     })
-    const listServicesSpy = spyOn(service.client, 'listServices').and.returnValue(Promise.resolve(mockService))
 
-    service.listServices()
+    spyOn(service, 'listServices').and.returnValue(of(mockService)).and.callThrough()
+    spyOn(service.client, 'listServices').and.returnValue(Promise.resolve(mockService))
 
-    expect(listServicesSpy).toHaveBeenCalledTimes(1)
-    expect(listServicesSpy).toHaveBeenCalledWith({})
+    service.listServices().subscribe((services) => {
+      expect(services).toBe(mockService)
+    })
+
+    expect(service.listServices).toHaveBeenCalled()
+    expect(service.client.listServices).toHaveBeenCalled()
   })
 
-  it('should get service', async () => {
+  it('should get service', () => {
     const mockService = new Service({ id: 'service-id', name: 'Test Service' })
-    const getServiceSpy = spyOn(service.client, 'getService').and.returnValue(Promise.resolve(mockService))
+
+    spyOn(service, 'getService').and.returnValue(of(mockService)).and.callThrough()
+    spyOn(service.client, 'getService').and.returnValue(Promise.resolve(mockService))
+
+    expect(service.client.getService).toHaveBeenCalledTimes(0)
 
     service.getService('service-id')
 
-    expect(getServiceSpy).toHaveBeenCalledTimes(1)
-    expect(getServiceSpy).toHaveBeenCalledWith({ id: 'service-id' })
+    expect(service.getService).toHaveBeenCalledWith('service-id')
+    expect(service.client.getService).toHaveBeenCalledWith({ id: 'service-id' })
   })
 
-  it('should create service', async () => {
+  it('should create service', () => {
     const mockService = new Service({ id: 'service-id', name: 'Test Service' })
 
-    const createServiceSpy = spyOn(service.client, 'createService').and.returnValue(Promise.resolve(mockService))
+    spyOn(service, 'createService').and.returnValue(of(mockService)).and.callThrough()
+    spyOn(service.client, 'createService').and.returnValue(Promise.resolve(mockService))
 
     service.createService('Test Service')
 
-    expect(createServiceSpy).toHaveBeenCalled()
-    expect(createServiceSpy).toHaveBeenCalledTimes(1)
-    expect(createServiceSpy).toHaveBeenCalledWith({ service: new Service({ name: 'Test Service', id: '' }) })
+    expect(service.createService).toHaveBeenCalledWith('Test Service')
+    expect(service.client.createService).toHaveBeenCalledWith({
+      service: new Service({ name: 'Test Service', id: '' }),
+    })
   })
 
-  it('should update service', async () => {
-    const updateServiceSpy = spyOn(service.client, 'updateService').and.returnValue(
-      Promise.resolve(new Service({ id: 'service-id', name: 'New Test Service' })),
-    )
+  it('should update service', () => {
+    const mockResponse = new Service({ id: 'service-id', name: 'Test Service' })
 
-    expect(updateServiceSpy).toHaveBeenCalledTimes(0)
+    spyOn(service, 'updateService').and.returnValue(of(mockResponse)).and.callThrough()
+    spyOn(service.client, 'updateService').and.returnValue(Promise.resolve(mockResponse))
 
     service.updateService('service-id', 'New Test Service')
 
-    expect(updateServiceSpy).toHaveBeenCalled()
-    expect(updateServiceSpy).toHaveBeenCalledTimes(1)
-    expect(updateServiceSpy).toHaveBeenCalledWith({
+    expect(service.updateService).toHaveBeenCalledWith('service-id', 'New Test Service')
+    expect(service.client.updateService).toHaveBeenCalledWith({
       service: new Service({ id: 'service-id', name: 'New Test Service' }),
     })
   })
 
-  it('should delete service', async () => {
-    const deleteServiceSpy = spyOn(service.client, 'deleteService').and.returnValue(Promise.resolve(new Empty({})))
-
-    expect(deleteServiceSpy).toHaveBeenCalledTimes(0)
+  it('should delete service', () => {
+    spyOn(service, 'deleteService')
+      .and.returnValue(of(new Empty({})))
+      .and.callThrough()
+    spyOn(service.client, 'deleteService').and.returnValue(Promise.resolve(new Empty({})))
 
     service.deleteService('service-id')
 
-    expect(deleteServiceSpy).toHaveBeenCalledTimes(1)
-    expect(deleteServiceSpy).toHaveBeenCalledWith({ id: 'service-id' })
+    expect(service.deleteService).toHaveBeenCalledWith('service-id')
+    expect(service.client.deleteService).toHaveBeenCalledWith({ id: 'service-id' })
   })
 
-  it('should list translations', async () => {
-    const mockData = new ListTranslationsResponse({
-      translations: [
-        {
-          language: 'en',
-          original: true,
-          messages: [
-            {
-              id: '\n\\n\n            Error: %(text)s\\n\n            ',
-              pluralId: '',
-              message:
-                '.local $format = { python-format }\n.local $text = { |%(text)s| }\n{{\n\\\\n\n            Error: { $text }\\\\n\n            }}',
-              description: '',
-              status: Message_Status.TRANSLATED,
-              positions: ['superset/reports/notifications/email.py:89'],
-            },
-            {
-              id: ' (excluded)',
-              pluralId: '',
-              message: ' (excluded)',
-              description: '',
-              status: Message_Status.TRANSLATED,
-              positions: ['superset-frontend/src/filters/components/Select/SelectFilterPlugin.tsx:130'],
-            },
-          ],
-        },
-        {
-          language: 'de',
-          original: false,
-          messages: [
-            {
-              id: '\n\\n\n            Error: %(text)s\\n\n            ',
-              pluralId: '',
-              message:
-                '.local $format = { python-format }\n.local $text = { |%(text)s| }\n{{\n\\\\n\n            Error: { $text }\\\\n\n            }}',
-              description: '',
-              status: Message_Status.UNTRANSLATED,
-              positions: ['superset/reports/notifications/email.py:89'],
-            },
-            {
-              id: ' (excluded)',
-              pluralId: '',
-              message: ' (excluded)',
-              description: '',
-              status: Message_Status.UNTRANSLATED,
-              positions: ['superset-frontend/src/filters/components/Select/SelectFilterPlugin.tsx:130'],
-            },
-          ],
-        },
-      ],
-    })
-
-    const listTranslationsSpy = spyOn(service.client, 'listTranslations').and.returnValue(Promise.resolve(mockData))
-
-    expect(listTranslationsSpy).toHaveBeenCalledTimes(0)
+  it('should list translations', () => {
+    spyOn(service, 'listTranslations').and.returnValue(of(mockListTranslationsResponse.translations)).and.callThrough()
+    spyOn(service.client, 'listTranslations').and.returnValue(Promise.resolve(mockListTranslationsResponse))
 
     service.listTranslations('service-id')
 
-    expect(listTranslationsSpy).toHaveBeenCalledTimes(1)
-    expect(listTranslationsSpy).toHaveBeenCalledWith({ serviceId: 'service-id' })
+    expect(service.listTranslations).toHaveBeenCalledWith('service-id')
+    expect(service.client.listTranslations).toHaveBeenCalledWith({ serviceId: 'service-id' })
   })
 
-  it('should create translation', async () => {
-    const mockData = new Translation({ language: 'lv', original: false, messages: [] })
-    const createTranslationSpy = spyOn(service.client, 'createTranslation').and.returnValue(Promise.resolve(mockData))
+  it('should create translation', () => {
+    const mockResponse = new Translation({ language: 'lv', original: false, messages: [] })
 
-    expect(createTranslationSpy).toHaveBeenCalledTimes(0)
+    spyOn(service, 'createTranslation').and.returnValue(of(mockResponse)).and.callThrough()
+    spyOn(service.client, 'createTranslation').and.returnValue(Promise.resolve(mockResponse))
 
     service.createTranslation('service-id', 'lv')
 
-    expect(createTranslationSpy).toHaveBeenCalledTimes(1)
-    expect(createTranslationSpy).toHaveBeenCalledWith({ serviceId: 'service-id', translation: { language: 'lv' } })
+    expect(service.createTranslation).toHaveBeenCalledWith('service-id', 'lv')
+    expect(service.client.createTranslation).toHaveBeenCalledWith({
+      serviceId: 'service-id',
+      translation: { language: 'lv' },
+    })
   })
 
-  it('should update translation', async () => {
-    const mockReturnedTranslation = new Translation({
+  it('should update translation', () => {
+    const mockResponse = new Translation({
       language: 'de',
       original: false,
       messages: [
@@ -196,38 +193,48 @@ describe('TranslateClientService', () => {
         },
       ],
     })
-    const updateTranslationSpy = spyOn(service.client, 'updateTranslation').and.returnValue(
-      Promise.resolve(mockReturnedTranslation),
+
+    spyOn(service, 'updateTranslation').and.returnValue(of(mockResponse)).and.callThrough()
+    spyOn(service.client, 'updateTranslation').and.returnValue(Promise.resolve(mockResponse))
+
+    service.updateTranslation(
+      'service-id',
+      new Translation({
+        language: 'de',
+        original: false,
+        messages: [
+          {
+            id: ' (excluded)',
+            pluralId: '',
+            message: ' (ausgeschlossen test)',
+            description: '',
+            status: Message_Status.UNTRANSLATED,
+            positions: ['superset-frontend/src/filters/components/Select/SelectFilterPlugin.tsx:130'],
+          },
+        ],
+      }),
+      ['messages'],
     )
 
-    expect(updateTranslationSpy).toHaveBeenCalledTimes(0)
-
-    service
-      .updateTranslation(
-        'service-id',
-        new Translation({
-          language: 'de',
-          original: false,
-          messages: [
-            {
-              id: ' (excluded)',
-              pluralId: '',
-              message: ' (ausgeschlossen test)',
-              description: '',
-              status: Message_Status.UNTRANSLATED,
-              positions: ['superset-frontend/src/filters/components/Select/SelectFilterPlugin.tsx:130'],
-            },
-          ],
-        }),
-        ['messages'],
-      )
-      .subscribe((response) => {
-        expect(response).toBeDefined()
-        expect(response).toEqual(mockReturnedTranslation)
-      })
-
-    expect(updateTranslationSpy).toHaveBeenCalledTimes(1)
-    expect(updateTranslationSpy).toHaveBeenCalledWith({
+    expect(service.updateTranslation).toHaveBeenCalledWith(
+      'service-id',
+      new Translation({
+        language: 'de',
+        original: false,
+        messages: [
+          {
+            id: ' (excluded)',
+            pluralId: '',
+            message: ' (ausgeschlossen test)',
+            description: '',
+            status: Message_Status.UNTRANSLATED,
+            positions: ['superset-frontend/src/filters/components/Select/SelectFilterPlugin.tsx:130'],
+          },
+        ],
+      }),
+      ['messages'],
+    )
+    expect(service.client.updateTranslation).toHaveBeenCalledWith({
       serviceId: 'service-id',
       translation: new Translation({
         language: 'de',
@@ -250,17 +257,23 @@ describe('TranslateClientService', () => {
     })
   })
 
-  it('should upload translation file', async () => {
-    const uploadTranslationFileSpy = spyOn(service.client, 'uploadTranslationFile').and.returnValue(
-      Promise.resolve(new Empty({})),
-    )
-
-    expect(uploadTranslationFileSpy).toHaveBeenCalledTimes(0)
+  it('should upload translation file', () => {
+    spyOn(service, 'uploadTranslationFile')
+      .and.returnValue(of(new Empty({})))
+      .and.callThrough()
+    spyOn(service.client, 'uploadTranslationFile').and.returnValue(Promise.resolve(new Empty({})))
 
     service.uploadTranslationFile(new Uint8Array(), 'en', Schema.POT, true, 'service-id', true)
 
-    expect(uploadTranslationFileSpy).toHaveBeenCalledTimes(1)
-    expect(uploadTranslationFileSpy).toHaveBeenCalledWith({
+    expect(service.uploadTranslationFile).toHaveBeenCalledWith(
+      new Uint8Array(),
+      'en',
+      Schema.POT,
+      true,
+      'service-id',
+      true,
+    )
+    expect(service.client.uploadTranslationFile).toHaveBeenCalledWith({
       data: new Uint8Array(),
       language: 'en',
       schema: Schema.POT,
@@ -270,17 +283,19 @@ describe('TranslateClientService', () => {
     })
   })
 
-  it('should download translation file', async () => {
-    const downloadTranslationFileSpy = spyOn(service.client, 'downloadTranslationFile').and.returnValue(
+  it('should download translation file', () => {
+    spyOn(service, 'downloadTranslationFile')
+      .and.returnValue(of(new DownloadTranslationFileResponse({ data: new Uint8Array() })))
+      .and.callThrough()
+
+    spyOn(service.client, 'downloadTranslationFile').and.returnValue(
       Promise.resolve(new DownloadTranslationFileResponse({ data: new Uint8Array() })),
     )
 
-    expect(downloadTranslationFileSpy).toHaveBeenCalledTimes(0)
-
     service.downloadTranslationFile('en', Schema.POT, 'service-id')
 
-    expect(downloadTranslationFileSpy).toHaveBeenCalledTimes(1)
-    expect(downloadTranslationFileSpy).toHaveBeenCalledWith({
+    expect(service.downloadTranslationFile).toHaveBeenCalledWith('en', Schema.POT, 'service-id')
+    expect(service.client.downloadTranslationFile).toHaveBeenCalledWith({
       language: 'en',
       schema: Schema.POT,
       serviceId: 'service-id',

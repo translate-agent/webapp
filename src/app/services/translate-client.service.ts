@@ -23,8 +23,6 @@ export class TranslateClientService {
 
   readonly client = createPromiseClient(TranslateService, this.transport)
 
-  constructor() {}
-
   listServices(): Observable<ListServicesResponse> {
     return from(this.client.listServices({}))
   }

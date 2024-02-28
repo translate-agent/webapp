@@ -86,7 +86,7 @@ export class MessagesComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit(): void {
     this.subscription.add(this.scroll?.scrolledIndexChange.subscribe((v) => this.dataEmitted.emit(v)))
 
-    this.translationsSignal.set(this.filteredTranslations ?? [])
+    this.translationsSignal.set(this.filteredTranslations)
 
     hljs.registerLanguage('messageformat2', messageFormat2)
   }

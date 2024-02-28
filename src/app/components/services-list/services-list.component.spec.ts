@@ -1,7 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing'
-
 import { HarnessLoader } from '@angular/cdk/testing'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
+import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
 import { MatMenuModule } from '@angular/material/menu'
@@ -11,12 +10,8 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { RouterTestingModule } from '@angular/router/testing'
 import { first } from 'rxjs'
 import { ServiceNew } from '../services/services.component'
+import { mockServices } from '../services/services.component.spec'
 import { ServicesListComponent } from './services-list.component'
-
-const testData: ServiceNew[] = [
-  { id: '1', name: 'test' },
-  { id: '2', name: 'test2' },
-]
 
 describe('ServicesListComponent', () => {
   let component: ServicesListComponent
@@ -38,7 +33,7 @@ describe('ServicesListComponent', () => {
     fixture = TestBed.createComponent(ServicesListComponent)
     component = fixture.componentInstance
     loader = TestbedHarnessEnvironment.loader(fixture)
-    component.services = testData
+    component.services = mockServices
 
     fixture.detectChanges()
   })
@@ -58,7 +53,7 @@ describe('ServicesListComponent', () => {
     it('should display the list of services', () => {
       const services = fixture.debugElement.queryAll(By.css('.serviceList'))
 
-      expect(services.length).toBe(testData.length)
+      expect(services.length).toBe(mockServices.length)
     })
 
     it('should not render empty message if there are services', () => {
@@ -94,7 +89,7 @@ describe('ServicesListComponent', () => {
       component.delete.pipe(first()).subscribe((service: ServiceNew) => (emitedData = service))
 
       await deleteButton.click()
-      expect(emitedData).toEqual(testData[0])
+      expect(emitedData).toEqual(mockServices[0])
 
       expect(component.delete.emit).toHaveBeenCalledTimes(1)
     })
@@ -108,7 +103,7 @@ describe('ServicesListComponent', () => {
       component.edit.pipe(first()).subscribe((service: ServiceNew) => (emitedData = service))
 
       await editButton.click()
-      expect(emitedData).toEqual(testData[0])
+      expect(emitedData).toEqual(mockServices[0])
       expect(component.edit.emit).toHaveBeenCalledTimes(1)
     })
 

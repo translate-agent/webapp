@@ -68,7 +68,7 @@
       <mat-form-field appearance="outline">
         <mat-label>Language</mat-label>
         <mat-select formControlName="language">
-          @for (language of languages; track language) {
+          @for (language of lang | async; track language) {
             <mat-option [value]="language">{{ languageNames.of(language) }}</mat-option>
           }
         </mat-select>

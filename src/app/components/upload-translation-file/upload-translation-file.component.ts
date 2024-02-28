@@ -60,7 +60,7 @@ export class UploadTranslationFileComponent implements OnInit {
 
   file!: File | null
 
-  dragAreaClass!: string
+  dragAreaClass = 'dropzone'
 
   readonly schemas = schemas
 
@@ -69,6 +69,11 @@ export class UploadTranslationFileComponent implements OnInit {
   serviceId!: string
 
   languages!: string[]
+
+  lang = this.id.pipe(
+    switchMap((id) => this.service.listTranslations(id)),
+    map((v) => v.map((translation) => translation.language)),
+  )
 
   readonly languageNames = new Intl.DisplayNames(['en'], { type: 'language' })
 
@@ -109,17 +114,6 @@ export class UploadTranslationFileComponent implements OnInit {
 
   ngOnInit(): void {
     this.id.subscribe((id) => (this.serviceId = id))
-
-    this.dragAreaClass = 'dropzone'
-
-    if (this.download) {
-      this.id
-        .pipe(
-          switchMap((id) => this.service.listTranslations(id)),
-          map((v) => v.map((translation) => translation.language)),
-        )
-        .subscribe((v) => (this.languages = v))
-    }
   }
 
   onFileSelected(event: Event): void {
@@ -131,6 +125,12 @@ export class UploadTranslationFileComponent implements OnInit {
   }
 
   async upload() {
+    this.form.markAllAsTouched()
+
+    if (this.form.invalid) {
+      return
+    }
+
     const { language, original, populateTranslations, schema } = this.form.getRawValue()
 
     const buffer = await this.file!.arrayBuffer()
@@ -143,12 +143,15 @@ export class UploadTranslationFileComponent implements OnInit {
         next: (v) => {
           this.dialogRef.close(v)
           this.snackBar.open('File succesful uploaded', undefined, {
-            horizontalPosition: 'center',
-            verticalPosition: 'bottom',
             duration: 5000,
           })
         },
-        error: (err) => console.log(err),
+        error: (err) => {
+          this.dialogRef.close()
+          this.snackBar.open(`An error occurred during the upload process. ${err.message}`, undefined, {
+            duration: 5000,
+          })
+        },
       })
   }
 
@@ -164,29 +167,23 @@ export class UploadTranslationFileComponent implements OnInit {
     this.service.downloadTranslationFile(language, schema!, this.serviceId).subscribe({
       next: (v) => {
         const blob = new Blob([v.data], { type: 'application/octet-stream' })
-        const url = window.URL.createObjectURL(blob)
-        const a = document.createElement('a')
-        a.href = url
-        a.download = `${language}.${this.fileFormat(schema!)}`
-        document.body.appendChild(a)
-        a.click()
-        window.URL.revokeObjectURL(url)
+
+        const link = document.createElement('a')
+        link.href = URL.createObjectURL(blob)
+        link.download = `${language}.${this.fileFormat(schema!)}`
+        link.click()
+        URL.revokeObjectURL(link.href)
 
         this.dialogRef.close()
 
         this.snackBar.open('Download completed', undefined, {
-          horizontalPosition: 'center',
-          verticalPosition: 'bottom',
           duration: 5000,
         })
       },
       error: (err) => {
-        this.snackBar.open('An error occurred during the download process.', undefined, {
-          horizontalPosition: 'center',
-          verticalPosition: 'bottom',
+        this.snackBar.open(`An error occurred during the download process. ${err.message}`, undefined, {
           duration: 5000,
         })
-        console.log(err)
       },
     })
   }

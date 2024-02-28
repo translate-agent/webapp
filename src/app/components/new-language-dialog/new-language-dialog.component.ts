@@ -6,6 +6,7 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { Observable } from 'rxjs'
 import { TranslateClientService } from 'src/app/services/translate-client.service'
 
@@ -31,6 +32,7 @@ export class NewLanguageDialogComponent {
     private fb: FormBuilder,
     private service: TranslateClientService,
     private dialogRef: MatDialogRef<NewLanguageDialogComponent>,
+    private snackBar: MatSnackBar,
     @Inject(MAT_DIALOG_DATA) public data: Observable<string>,
   ) {}
 
@@ -41,14 +43,20 @@ export class NewLanguageDialogComponent {
       return
     }
     const language = this.language.getRawValue()
+
     this.data.subscribe((id) => {
       this.service.createTranslation(id, language).subscribe({
         next: (v) => {
           this.dialogRef.close(v)
+          this.snackBar.open('Successfully added new language', undefined, {
+            duration: 5000,
+          })
         },
         error: (err) => {
-          console.log(err)
           this.dialogRef.close()
+          this.snackBar.open(`Something went wrong. ${err}`, undefined, {
+            duration: 5000,
+          })
         },
       })
     })

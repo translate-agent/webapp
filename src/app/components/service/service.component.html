@@ -36,13 +36,13 @@
           </mat-form-field>
         </form>
         <div>
-          <button mat-raised-button color="primary" (click)="openFileUploadModal()" style="margin-right: 1em">
+          <button id="fileUploadButton" mat-raised-button color="primary" (click)="openFileUploadModal()" style="margin-right: 1em">
             <mat-icon matTooltip="upload" fontIcon="upload"></mat-icon>Upload file
           </button>
-          <button mat-raised-button color="primary" (click)="openFileDownloadModal()" style="margin-right: 1em">
+          <button id="fileDownloadButton" mat-raised-button color="primary" (click)="openFileDownloadModal()" style="margin-right: 1em">
             <mat-icon fontIcon="download"></mat-icon>Download file
           </button>
-          <button mat-raised-button color="primary" (click)="addLanguage()">
+          <button id="addLanguageButton" mat-raised-button color="primary" (click)="addLanguage()">
             <mat-icon fontIcon="add"></mat-icon>Add language
           </button>
         </div>
@@ -76,7 +76,7 @@
             </div>
             <cdk-virtual-scroll-viewport
               itemSize="100"
-              style="width: 100%; min-height: 60vh; border: 1px solid #cccccc"
+              style=" min-height: 70vh; border: 1px solid #cccccc"
             >
               <ng-container
                 *cdkVirtualFor="
