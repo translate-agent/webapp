@@ -36,10 +36,22 @@
           </mat-form-field>
         </form>
         <div>
-          <button id="fileUploadButton" mat-raised-button color="primary" (click)="openFileUploadModal()" style="margin-right: 1em">
+          <button
+            id="fileUploadButton"
+            mat-raised-button
+            color="primary"
+            (click)="openFileUploadModal()"
+            style="margin-right: 1em"
+          >
             <mat-icon matTooltip="upload" fontIcon="upload"></mat-icon>Upload file
           </button>
-          <button id="fileDownloadButton" mat-raised-button color="primary" (click)="openFileDownloadModal()" style="margin-right: 1em">
+          <button
+            id="fileDownloadButton"
+            mat-raised-button
+            color="primary"
+            (click)="openFileDownloadModal()"
+            style="margin-right: 1em"
+          >
             <mat-icon fontIcon="download"></mat-icon>Download file
           </button>
           <button id="addLanguageButton" mat-raised-button color="primary" (click)="addLanguage()">
@@ -74,10 +86,7 @@
                 <mat-divider [vertical]="true" *ngIf="$index !== filteredTranslations$.length - 1"></mat-divider>
               }
             </div>
-            <cdk-virtual-scroll-viewport
-              itemSize="100"
-              style=" min-height: 70vh; border: 1px solid #cccccc"
-            >
+            <cdk-virtual-scroll-viewport itemSize="100" style="min-height: 70vh; border: 1px solid #cccccc">
               <ng-container
                 *cdkVirtualFor="
                   let message of filteredTranslations$()[0].messages;
