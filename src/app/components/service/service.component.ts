@@ -138,16 +138,9 @@ export class ServiceComponent implements OnInit, OnDestroy {
       ]).subscribe(
         ([status, search]) =>
           (this.filteredTranslations$ = computed(() => {
-            let filtered =
-              status?.length === 0 ? this.translations$() : this.filterMessages(this.translations$(), status)
-
             this.animationState = status?.length === 0 ? 'in' : 'out'
 
-            if (search.length > 0) {
-              filtered = this.filterMessages(filtered, undefined, search)
-            }
-
-            return filtered
+            return this.filterMessages(this.translations$(), status, search)
           })),
       ),
     )
@@ -192,37 +185,26 @@ export class ServiceComponent implements OnInit, OnDestroy {
     this.refreshTranslationsSubject.next()
   }
 
-  filterMessages(data: Translation[], status?: StatusOption[], searchText?: string): Translation[] {
-    const filteredKeys: string[] = []
-    const copy = structuredClone(data)
+  filterMessages(translations: Translation[], statusOptions: StatusOption[], searchText: string): Translation[] {
+    if (statusOptions.length === 0 && searchText.length === 0) {
+      return translations
+    }
 
-    copy
-      .filter((translations) => (status?.length !== 0 ? !translations.original : translations))
-      .map((translation) =>
-        translation.messages.filter((v) => {
-          if (status?.length !== 0) {
-            status?.forEach((s) => {
-              if (v.status === s.value) {
-                filteredKeys.push(v.id)
-              }
-            })
-          }
+    const status = statusOptions.map((v) => v.value)
 
-          if (searchText && v.message.toLowerCase().includes(searchText)) {
-            filteredKeys.push(v.id)
+    const ids = translations.reduce((keys, translation) => {
+      translation.messages
+        .filter((v) => !translation.original && (status.length === 0 || status.includes(v.status)))
+        .filter(
+          (v) => (status.length === 0 || status.includes(v.status)) && v.message.toLowerCase().includes(searchText),
+        )
+        .forEach((v) => keys.add(v.id))
+      return keys
+    }, new Set<string>())
 
-            return v
-          }
-          return
-        }),
-      )
-
-    this.animationState = 'out'
-
-    return copy.map((v) => {
-      v.messages = v.messages.filter((msg) => {
-        return [...new Set(filteredKeys)].some((key) => key === msg.id)
-      })
+    return translations.map((v) => {
+      v = v.clone()
+      v.messages = v.messages.filter((msg) => ids.has(msg.id))
       return v
     })
   }
