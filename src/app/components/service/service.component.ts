@@ -70,8 +70,6 @@ export class ServiceComponent implements OnInit, OnDestroy {
     shareReplay(1),
   )
 
-  filtered = false
-
   animationState = 'in'
 
   readonly form = this.fb.nonNullable.group({
@@ -144,8 +142,6 @@ export class ServiceComponent implements OnInit, OnDestroy {
               status?.length === 0 ? this.translations$() : this.filterMessages(this.translations$(), status)
 
             this.animationState = status?.length === 0 ? 'in' : 'out'
-
-            this.filtered = status?.length !== 0 ? true : false
 
             if (search.length > 0) {
               filtered = this.filterMessages(filtered, undefined, search)
