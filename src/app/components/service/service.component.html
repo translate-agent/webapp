@@ -10,27 +10,17 @@
   <div style="padding: 50px 60px 0px">
     @if (filteredTranslations$().length !== 0) {
       <div style="display: flex; gap: 20px; margin-bottom: 30px; align-items: baseline; justify-content: space-between">
-        <form [formGroup]="form" style="display: flex; gap: 20px">
+        <form [formGroup]="form">
+          <mat-button-toggle-group formControlName="status" multiple class="toggle-button-group">
+            @for (status of statuses; track status) {
+              <mat-button-toggle class="custom-toggle" [value]="status"
+                ><mat-icon class="icon-status" inline [fontIcon]="icon(status.value)"></mat-icon
+                >{{ status.title }}</mat-button-toggle
+              >
+            }
+          </mat-button-toggle-group>
           <mat-form-field appearance="outline">
-            <mat-label>Filter by Status</mat-label>
-            <mat-select formControlName="status">
-              <mat-select-trigger style="display: flex; justify-content: space-between">
-                <span>{{ form.controls.status.value?.title }}</span>
-                <mat-icon
-                  style="padding-right: 15px"
-                  inline
-                  (click)="form.controls.status.reset(); $event.stopPropagation()"
-                  class="icon"
-                  fontIcon="close"
-                ></mat-icon>
-              </mat-select-trigger>
-              @for (status of statuses; track status) {
-                <mat-option [value]="status">{{ status.title }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-icon matPrefix inline fontIcon="search"></mat-icon>
+            <mat-icon matPrefix fontIcon="search"></mat-icon>
             <mat-label>Search</mat-label>
             <input matInput formControlName="search" />
           </mat-form-field>

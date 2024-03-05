@@ -54,3 +54,22 @@
 .hidden {
   display: none;
 }
+
+.icon-status {
+  max-width: 20px;
+  margin-right: 5px;
+}
+
+.toggle-button-group {
+  margin-right: 16px;
+}
+
+.custom-toggle.mat-button-toggle-checked {
+  background-color: #3f51b5;
+  color: #ffffff;
+}
+
+.custom-toggle.mat-button-toggle:hover {
+  background-color: #7280ce;
+  color: #ffffff;
+}
