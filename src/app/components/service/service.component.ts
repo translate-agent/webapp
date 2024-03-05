@@ -137,12 +137,14 @@ export class ServiceComponent implements OnInit, OnDestroy {
         ),
       ]).subscribe(
         ([status, search]) =>
-          (this.filteredTranslations$ = computed(() => {
-            this.animationState = status?.length === 0 ? 'in' : 'out'
-
-            return this.filterMessages(this.translations$(), status, search)
-          })),
+          (this.filteredTranslations$ = computed(() => this.filterMessages(this.translations$(), status, search))),
       ),
+    )
+
+    this.subscription.add(
+      this.form.controls.status.valueChanges
+        .pipe(startWith([]))
+        .subscribe((status) => (this.animationState = status.length > 0 ? 'out' : 'in')),
     )
   }
 
