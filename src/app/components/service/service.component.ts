@@ -14,11 +14,15 @@ import { MatInputModule } from '@angular/material/input'
 import { MatSelectModule } from '@angular/material/select'
 import { MatSlideToggleModule } from '@angular/material/slide-toggle'
 import { MatSnackBarModule } from '@angular/material/snack-bar'
-import { MatToolbar, MatToolbarModule } from '@angular/material/toolbar'
+import { MatToolbarModule } from '@angular/material/toolbar'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { Title } from '@angular/platform-browser'
 import { ActivatedRoute, Router, RouterModule } from '@angular/router'
-import { Message_Status, Translation } from '@buf/expectdigital_translate-agent.bufbuild_es/translate/v1/translate_pb'
+import {
+  Message,
+  Message_Status,
+  Translation,
+} from '@buf/expectdigital_translate-agent.bufbuild_es/translate/v1/translate_pb'
 import { BehaviorSubject, Subscription, combineLatest, filter, map, shareReplay, startWith, switchMap } from 'rxjs'
 import { TranslateClientService } from 'src/app/services/translate-client.service'
 import { MessagesComponent } from '../messages/messages.component'
@@ -62,8 +66,6 @@ export interface StatusOption {
 })
 export class ServiceComponent implements OnInit, OnDestroy {
   @ViewChild(CdkVirtualScrollViewport) virtualScroll!: CdkVirtualScrollViewport
-  @ViewChild(MatToolbar) toolbar!: MatToolbar
-  @ViewChild('messages') messagesList!: MessagesComponent
 
   readonly serviceid = this.route.paramMap.pipe(
     map((v) => v.get('id')!),
@@ -87,7 +89,7 @@ export class ServiceComponent implements OnInit, OnDestroy {
 
   translations$ = signal<Translation[]>([])
 
-  filteredTranslations$: Signal<Translation[]> = signal([])
+  filteredTranslations$!: Signal<Map<string, Message[]>>
 
   readonly languageNames = new Intl.DisplayNames(['en'], { type: 'language' })
 
@@ -137,7 +139,23 @@ export class ServiceComponent implements OnInit, OnDestroy {
         ),
       ]).subscribe(
         ([status, search]) =>
-          (this.filteredTranslations$ = computed(() => this.filterMessages(this.translations$(), status, search))),
+          (this.filteredTranslations$ = computed(() => {
+            const x = this.filterMessages(this.translations$(), status, search)
+
+            const filtered = new Map<string, Message[]>()
+
+            x.forEach((item) => {
+              item.messages.forEach((message) => {
+                if (filtered.has(message.id)) {
+                  filtered.get(message.id)?.push(message)
+                } else {
+                  filtered.set(message.id, [message])
+                }
+              })
+            })
+
+            return filtered
+          })),
       ),
     )
 
@@ -220,5 +238,13 @@ export class ServiceComponent implements OnInit, OnDestroy {
       default:
         return 'g_translated'
     }
+  }
+
+  updateMessage(event: Event) {
+    console.log(event.target)
+  }
+
+  changeStatus(event: { index: number; id: string }) {
+    console.log(event)
   }
 }

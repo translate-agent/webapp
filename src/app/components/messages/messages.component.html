@@ -1,22 +1,22 @@
-@for (x of findedMessages(); track x?.id) {
+@for (item of filteredMessages; track item.id) {
   <div class="container" [@slideInOut]="state">
     <div class="container1">
       <pre>
-        <code #pre  (focusout)="save($event, x?.id, $index)" [attr.contenteditable]="x?.status !== 0" class="code messageformat2" >{{ x?.message }}</code> 
+        <code #pre (focusout)="save.emit($event)" [attr.contenteditable]="item?.status !== 0" class="code messageformat2" >{{ item.message}}</code> 
       </pre>
       <div class="container-icons">
         <mat-icon
-          (click)="changeStatuss($index, x?.id!)"
+          (click)="changeStatus.emit({ index: $index, id: item?.id! })"
           inline
           matTooltip="Mark as Translated"
           class="icon"
-          [class.hidden]="x?.status === 0"
+          [class.hidden]="item?.status === 0"
           fontIcon="spellcheck"
         ></mat-icon>
-        <mat-icon inline [matTooltip]="tooltip(x?.status)" class="icon" [fontIcon]="icon(x?.status)"></mat-icon>
+        <mat-icon inline [matTooltip]="tooltip(item?.status)" [fontIcon]="icon(item?.status)" class="icon"></mat-icon>
       </div>
     </div>
-    @if ($index !== findedMessages().length - 1) {
+    @if ($index !== filteredMessages.length - 1) {
       <mat-divider [vertical]="true"></mat-divider>
     }
   </div>
