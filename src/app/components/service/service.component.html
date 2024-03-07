@@ -50,42 +50,49 @@
     </div>
     @if (filteredTranslations$().size > 0) {
       <div style="margin-bottom: 2em">Displaying: {{ filteredTranslations$().size }} messages</div>
-      <div style="display: flex; flex: 1; width: 100%">
-        @for (lang of translations$(); track lang) {
-          <div
-            style="
-              display: flex;
-              flex-direction: row;
-              padding: 10px 10px;
-              justify-content: center;
-              border-top: 1px solid #cccccc;
-              background-color: #eeeeee;
-              align-items: stretch;
-              width: 100%;
-            "
-            [style.border-left]="$first ? '1px solid #cccccc' : 'none'"
-            [style.border-right]="$last ? '1px solid #cccccc' : 'none'"
-            [class.bold]="lang.original"
-          >
-            {{ languageNames.of(lang.language) }}
+      <div style="position: relative">
+        <a class="button" [class.show]="receivedData !== 0" (click)="scrollToTop()" style="position: absolute"></a>
+        <div>
+          <div style="display: flex; flex: 1; width: 100%">
+            @for (lang of translations$(); track lang) {
+              <div
+                style="
+                  display: flex;
+                  flex-direction: row;
+                  padding: 10px 10px;
+                  justify-content: center;
+                  border-top: 1px solid #cccccc;
+                  background-color: #eeeeee;
+                  align-items: stretch;
+                  width: 100%;
+                "
+                [style.border-left]="$first ? '1px solid #cccccc' : 'none'"
+                [style.border-right]="$last ? '1px solid #cccccc' : 'none'"
+                [class.bold]="lang.original"
+              >
+                {{ languageNames.of(lang.language) }}
+              </div>
+              <mat-divider [vertical]="true" *ngIf="$index !== translations$().length - 1"></mat-divider>
+            }
           </div>
-          <mat-divider [vertical]="true" *ngIf="$index !== translations$().length - 1"></mat-divider>
-        }
+          <cdk-virtual-scroll-viewport itemSize="100" style="min-height: 70vh; border: 1px solid #cccccc">
+            <ng-container
+              *cdkVirtualFor="let item of filteredTranslations$() | keyvalue; let index = index; templateCacheSize: 0"
+            >
+              <app-messages
+                style="display: flex"
+                [animationState]="animationState"
+                [filteredMessages]="item.value"
+                [scroll]="virtualScroll"
+                (save)="updateMessage($event, item.key)"
+                (changeStatus)="changeStatus($event, item.key)"
+                (dataEmitted)="receiveDataFromChild($event)"
+              ></app-messages>
+              <mat-divider></mat-divider>
+            </ng-container>
+          </cdk-virtual-scroll-viewport>
+        </div>
       </div>
-      <cdk-virtual-scroll-viewport itemSize="100" style="min-height: 70vh; border: 1px solid #cccccc">
-        <ng-container
-          *cdkVirtualFor="let item of filteredTranslations$() | keyvalue; let index = index; templateCacheSize: 0"
-        >
-          <app-messages
-            style="display: flex"
-            [animationState]="animationState"
-            [filteredMessages]="item.value"
-            (save)="updateMessage($event)"
-            (changeStatus)="changeStatus($event)"
-          ></app-messages>
-          <mat-divider></mat-divider>
-        </ng-container>
-      </cdk-virtual-scroll-viewport>
     } @else {
       <div style="max-width: 500px; margin: 0 auto; padding: 50px; font-size: 2rem"><span>Nothing found</span></div>
     }

@@ -13,7 +13,7 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
 import { MatSelectModule } from '@angular/material/select'
 import { MatSlideToggleModule } from '@angular/material/slide-toggle'
-import { MatSnackBarModule } from '@angular/material/snack-bar'
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar'
 import { MatToolbarModule } from '@angular/material/toolbar'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { Title } from '@angular/platform-browser'
@@ -97,6 +97,8 @@ export class ServiceComponent implements OnInit, OnDestroy {
 
   receivedData: number = 0
 
+  changes = false
+
   readonly translations = combineLatest({
     service: this.serviceid,
     subject: this.refreshTranslationsSubject,
@@ -112,6 +114,7 @@ export class ServiceComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     public title: Title,
     private router: Router,
+    private snackBar: MatSnackBar,
   ) {}
 
   ngOnInit(): void {
@@ -240,11 +243,63 @@ export class ServiceComponent implements OnInit, OnDestroy {
     }
   }
 
-  updateMessage(event: Event) {
-    console.log(event.target)
+  updateMessage(data: { event: Event; index: number }, id: string): void {
+    const value = (data.event.target as HTMLTextAreaElement).innerText
+
+    const translation = this.translations$()[data.index].clone()
+    translation.messages = this.translations$()[data.index].messages.filter((message) => {
+      if (message.id === id) {
+        this.changes = message.message !== value ? true : false
+        message.message = value
+        return message
+      }
+      return
+    })
+
+    this.serviceid
+      .pipe(
+        filter(() => this.changes),
+        switchMap((id) => this.translateService.updateTranslation(id, translation, ['messages'])),
+      )
+      .subscribe({
+        next: () =>
+          this.snackBar.open('Message updated!', undefined, {
+            duration: 5000,
+          }),
+        error: () =>
+          this.snackBar.open('Something went wrong!', undefined, {
+            duration: 5000,
+          }),
+      })
   }
 
-  changeStatus(event: { index: number; id: string }) {
-    console.log(event)
+  changeStatus(index: number, id: string): void {
+    const translation = this.translations$()[index].clone()
+
+    translation.messages = this.translations$()[index].messages.filter((message) => {
+      if (message.id === id) {
+        message.status = Message_Status.TRANSLATED
+        return message
+      }
+      return
+    })
+
+    this.serviceid
+      .pipe(switchMap((id) => this.translateService.updateTranslation(id, translation, ['messages'])))
+      .subscribe({
+        next: () => {
+          this.snackBar.open('Status changed!', undefined, {
+            duration: 5000,
+          })
+
+          setTimeout(() => {
+            this.refreshTranslationsSubject.next()
+          }, 500)
+        },
+        error: () =>
+          this.snackBar.open('Something went wrong!', undefined, {
+            duration: 5000,
+          }),
+      })
   }
 }

@@ -53,21 +53,18 @@ export class MessagesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @ViewChildren('pre') messageElements!: QueryList<ElementRef>
 
-  @Output() save = new EventEmitter<Event>()
-  @Output() changeStatus = new EventEmitter<{ index: number; id: string }>()
-
-  readonly subscription = new Subscription()
+  @Output() save = new EventEmitter<{ event: Event; index: number }>()
+  @Output() changeStatus = new EventEmitter<number>()
+  @Output() dataEmitted = new EventEmitter<number>()
 
   state = 'in'
 
-  changes = false
-
   readonly languageNames = new Intl.DisplayNames(['en'], { type: 'language' })
 
-  constructor() {}
+  readonly subscription = new Subscription()
 
   ngOnInit(): void {
-    // this.subscription.add(this.scroll?.scrolledIndexChange.subscribe((v) => this.dataEmitted.emit(v)))
+    this.subscription.add(this.scroll?.scrolledIndexChange.subscribe((v) => this.dataEmitted.emit(v)))
 
     hljs.registerLanguage('messageformat2', messageFormat2)
   }
@@ -80,57 +77,10 @@ export class MessagesComponent implements OnInit, OnDestroy, AfterViewInit {
     this.subscription.unsubscribe()
   }
 
-  // save(v: Event, msgId: string | undefined, index: number): void {
-  //   const value = (v.target as HTMLTextAreaElement).innerText
-  //   const translation = structuredClone(this.data[index])
-
-  //   translation.messages = this.data[index].messages.filter((message) => {
-  //     if (message.id === msgId) {
-  //       this.changes = message.message !== value ? true : false
-  //       message.message = value
-  //       return message
-  //     }
-  //     return
-  //   })
-  //   if (this.changes) {
-  //     this.service.updateTranslation(this.serviceid!, translation, ['messages']).subscribe(() => {
-  //       this.snackBar.open('Message updated!', undefined, {
-  //         horizontalPosition: 'center',
-  //         verticalPosition: 'bottom',
-  //         duration: 5000,
-  //       })
-
-  //       this.changes = false
-  //     })
-  //   }
-  // }
-
-  // changeStatuss(index: number, id: string): void {
-  //   const translation = structuredClone(this.data[index])
-
-  //   translation.messages = this.data[index].messages.filter((message) => {
-  //     if (message.id === id) {
-  //       this.changes = true
-  //       message.status = Message_Status.TRANSLATED
-  //       return message
-  //     }
-  //     return
-  //   })
-
-  //   this.service.updateTranslation(this.serviceid!, translation, ['messages']).subscribe(() => {
-  //     this.snackBar.open('Status changed!', undefined, {
-  //       horizontalPosition: 'center',
-  //       verticalPosition: 'bottom',
-  //       duration: 5000,
-  //     })
-
-  //     this.state = this.animationState
-
-  //     setTimeout(() => {
-  //       this.translatonsemitted.emit()
-  //     }, 500)
-  //   })
-  // }
+  change(index: number): void {
+    this.changeStatus.emit(index)
+    this.state = this.animationState
+  }
 
   tooltip(status: Message_Status | undefined): string {
     switch (status) {
