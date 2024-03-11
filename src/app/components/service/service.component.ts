@@ -25,7 +25,7 @@ import {
 } from '@buf/expectdigital_translate-agent.bufbuild_es/translate/v1/translate_pb'
 import { BehaviorSubject, Subscription, combineLatest, filter, map, shareReplay, startWith, switchMap } from 'rxjs'
 import { TranslateClientService } from 'src/app/services/translate-client.service'
-import { MessagesComponent } from '../messages/messages.component'
+import { EmittedData, MessagesComponent } from '../messages/messages.component'
 import { NewLanguageDialogComponent } from '../new-language-dialog/new-language-dialog.component'
 import { ServicesComponent } from '../services/services.component'
 import { UploadTranslationFileComponent } from '../upload-translation-file/upload-translation-file.component'
@@ -140,26 +140,21 @@ export class ServiceComponent implements OnInit, OnDestroy {
           startWith(''),
           map((v) => v.toLowerCase()),
         ),
-      ]).subscribe(
-        ([status, search]) =>
-          (this.filteredTranslations$ = computed(() => {
-            const x = this.filterMessages(this.translations$(), status, search)
+      ]).subscribe(([status, search]) => {
+        this.filteredTranslations$ = computed(() => {
+          const filteredTranslations = this.filterMessages(this.translations$(), status, search)
 
-            const filtered = new Map<string, Message[]>()
-
-            x.forEach((item) => {
-              item.messages.forEach((message) => {
-                if (filtered.has(message.id)) {
-                  filtered.get(message.id)?.push(message)
-                } else {
-                  filtered.set(message.id, [message])
-                }
-              })
-            })
-
-            return filtered
-          })),
-      ),
+          return filteredTranslations.reduce(
+            (msgs, language) =>
+              language.messages.reduce((m, v) => {
+                const existingMessages = m.get(v.id) ?? []
+                m.set(v.id, [...existingMessages, v])
+                return m
+              }, msgs),
+            new Map<string, Message[]>(),
+          )
+        })
+      }),
     )
 
     this.subscription.add(
@@ -215,19 +210,28 @@ export class ServiceComponent implements OnInit, OnDestroy {
 
     const status = statusOptions.map((v) => v.value)
 
-    const ids = translations.reduce((keys, translation) => {
-      translation.messages
-        .filter((v) => !translation.original && (status.length === 0 || status.includes(v.status)))
-        .filter(
-          (v) => (status.length === 0 || status.includes(v.status)) && v.message.toLowerCase().includes(searchText),
-        )
-        .forEach((v) => keys.add(v.id))
-      return keys
-    }, new Set<string>())
+    const filteredByTextIds = translations.reduce(
+      (keys, translation) => [
+        ...keys,
+        ...translation.messages.filter((v) => v.message.toLowerCase().includes(searchText)).map((v) => v.id),
+      ],
+      [] as string[],
+    )
+
+    const filteredByTextAndStatustIds = translations.reduce(
+      (keys, translation) => [
+        ...keys,
+        ...translation.messages
+          .filter((v) => filteredByTextIds.includes(v.id))
+          .filter((v) => status.length === 0 || (!translation.original && status.includes(v.status)))
+          .map((v) => v.id),
+      ],
+      [] as string[],
+    )
 
     return translations.map((v) => {
       v = v.clone()
-      v.messages = v.messages.filter((msg) => ids.has(msg.id))
+      v.messages = v.messages.filter((msg) => filteredByTextAndStatustIds.includes(msg.id))
       return v
     })
   }
@@ -243,11 +247,12 @@ export class ServiceComponent implements OnInit, OnDestroy {
     }
   }
 
-  updateMessage(data: { event: Event; index: number }, id: string): void {
-    const value = (data.event.target as HTMLTextAreaElement).innerText
+  updateMessage(data: EmittedData, id: string): void {
+    const { event, index } = data
+    const value = (event.target as HTMLTextAreaElement).innerText
 
-    const translation = this.translations$()[data.index].clone()
-    translation.messages = this.translations$()[data.index].messages.filter((message) => {
+    const translation = this.translations$()[index].clone()
+    translation.messages = this.translations$()[index].messages.filter((message) => {
       if (message.id === id) {
         this.changes = message.message !== value ? true : false
         message.message = value

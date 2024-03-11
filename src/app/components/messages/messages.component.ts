@@ -14,18 +14,22 @@ import {
   ViewChildren,
 } from '@angular/core'
 import { ReactiveFormsModule } from '@angular/forms'
+import { MatButtonModule } from '@angular/material/button'
 import { MatDividerModule } from '@angular/material/divider'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { Message, Message_Status } from '@buf/expectdigital_translate-agent.bufbuild_es/translate/v1/translate_pb'
-import { Subscription } from 'rxjs'
-
-import { MatButtonModule } from '@angular/material/button'
 import hljs from 'highlight.js'
+import { Subscription } from 'rxjs'
 import { slideInOut } from 'src/app/animation'
 import messageFormat2 from 'src/app/highlight'
+
+export interface EmittedData {
+  event: Event
+  index: number
+}
 
 @Component({
   selector: 'app-messages',
@@ -53,7 +57,7 @@ export class MessagesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @ViewChildren('pre') messageElements!: QueryList<ElementRef>
 
-  @Output() save = new EventEmitter<{ event: Event; index: number }>()
+  @Output() save = new EventEmitter<EmittedData>()
   @Output() changeStatus = new EventEmitter<number>()
   @Output() dataEmitted = new EventEmitter<number>()
 
