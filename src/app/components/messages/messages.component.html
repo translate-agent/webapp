@@ -2,7 +2,7 @@
   <div class="container" [@slideInOut]="state">
     <div class="container1">
       <pre>
-        <code #pre (focusout)="save.emit({event: $event, index: $index})" [attr.contenteditable]="item?.status !== 0" class="code messageformat2" >{{ item.message}}</code> 
+        <code #pre (focusout)="save.emit({value: pre.innerText , index: $index})" [attr.contenteditable]="item?.status !== 0" class="code messageformat2" >{{ item.message}}</code> 
       </pre>
       <div class="container-icons">
         <mat-icon

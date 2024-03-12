@@ -25,7 +25,7 @@ import {
 } from '@buf/expectdigital_translate-agent.bufbuild_es/translate/v1/translate_pb'
 import { BehaviorSubject, Subscription, combineLatest, filter, map, shareReplay, startWith, switchMap } from 'rxjs'
 import { TranslateClientService } from 'src/app/services/translate-client.service'
-import { EmittedData, MessagesComponent } from '../messages/messages.component'
+import { MessagesComponent, SaveEvent } from '../messages/messages.component'
 import { NewLanguageDialogComponent } from '../new-language-dialog/new-language-dialog.component'
 import { ServicesComponent } from '../services/services.component'
 import { UploadTranslationFileComponent } from '../upload-translation-file/upload-translation-file.component'
@@ -85,7 +85,7 @@ export class ServiceComponent implements OnInit, OnDestroy {
     { title: 'Fuzzy', value: Message_Status.FUZZY },
   ]
 
-  private refreshTranslationsSubject = new BehaviorSubject<void>(undefined)
+  private refreshTranslations = new BehaviorSubject<void>(undefined)
 
   translations$ = signal<Translation[]>([])
 
@@ -101,7 +101,7 @@ export class ServiceComponent implements OnInit, OnDestroy {
 
   readonly translations = combineLatest({
     service: this.serviceid,
-    subject: this.refreshTranslationsSubject,
+    subject: this.refreshTranslations,
   }).pipe(
     switchMap(({ service }) => this.translateService.listTranslations(service)),
     shareReplay(1),
@@ -178,7 +178,7 @@ export class ServiceComponent implements OnInit, OnDestroy {
       .open(UploadTranslationFileComponent, { data: this.serviceid })
       .afterClosed()
       .pipe(filter((v) => !!v))
-      .subscribe(() => this.refreshTranslationsSubject.next())
+      .subscribe(() => this.refreshTranslations.next())
   }
 
   openFileDownloadModal(): void {
@@ -192,15 +192,11 @@ export class ServiceComponent implements OnInit, OnDestroy {
       .open(NewLanguageDialogComponent, { data: this.serviceid, width: '400px' })
       .afterClosed()
       .pipe(filter((v) => !!v))
-      .subscribe(() => this.refreshTranslationsSubject.next())
+      .subscribe(() => this.refreshTranslations.next())
   }
 
   receiveDataFromChild(data: number): void {
     this.receivedData = data
-  }
-
-  receive(): void {
-    this.refreshTranslationsSubject.next()
   }
 
   filterMessages(translations: Translation[], statusOptions: StatusOption[], searchText: string): Translation[] {
@@ -247,14 +243,13 @@ export class ServiceComponent implements OnInit, OnDestroy {
     }
   }
 
-  updateMessage(data: EmittedData, id: string): void {
-    const { event, index } = data
-    const value = (event.target as HTMLTextAreaElement).innerText
+  updateMessage(data: SaveEvent, id: string): void {
+    const { value, index } = data
 
     const translation = this.translations$()[index].clone()
     translation.messages = this.translations$()[index].messages.filter((message) => {
       if (message.id === id) {
-        this.changes = message.message !== value ? true : false
+        this.changes = message.message !== value
         message.message = value
         return message
       }
@@ -297,9 +292,7 @@ export class ServiceComponent implements OnInit, OnDestroy {
             duration: 5000,
           })
 
-          setTimeout(() => {
-            this.refreshTranslationsSubject.next()
-          }, 500)
+          setTimeout(() => this.refreshTranslations.next(), 500)
         },
         error: () =>
           this.snackBar.open('Something went wrong!', undefined, {

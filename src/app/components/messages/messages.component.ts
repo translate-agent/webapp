@@ -26,8 +26,8 @@ import { Subscription } from 'rxjs'
 import { slideInOut } from 'src/app/animation'
 import messageFormat2 from 'src/app/highlight'
 
-export interface EmittedData {
-  event: Event
+export interface SaveEvent {
+  value: string
   index: number
 }
 
@@ -57,7 +57,7 @@ export class MessagesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @ViewChildren('pre') messageElements!: QueryList<ElementRef>
 
-  @Output() save = new EventEmitter<EmittedData>()
+  @Output() save = new EventEmitter<SaveEvent>()
   @Output() changeStatus = new EventEmitter<number>()
   @Output() dataEmitted = new EventEmitter<number>()
 
