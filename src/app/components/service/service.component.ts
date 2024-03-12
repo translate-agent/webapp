@@ -97,8 +97,6 @@ export class ServiceComponent implements OnInit, OnDestroy {
 
   receivedData: number = 0
 
-  changes = false
-
   readonly translations = combineLatest({
     service: this.serviceid,
     subject: this.refreshTranslations,
@@ -243,23 +241,16 @@ export class ServiceComponent implements OnInit, OnDestroy {
     }
   }
 
-  updateMessage(data: SaveEvent, id: string): void {
-    const { value, index } = data
-
-    const messageToUpdate = this.translations$()[index].messages.find((msg) => msg.id === id)
-
-    this.changes = messageToUpdate?.message !== value
+  updateMessage(data: SaveEvent): void {
+    const { message, index } = data
 
     const translation = new Translation({
       ...this.translations$()[index],
-      messages: [{ ...messageToUpdate, message: value }],
+      messages: [message],
     })
 
     this.serviceid
-      .pipe(
-        filter(() => this.changes),
-        switchMap((id) => this.translateService.updateTranslation(id, translation, ['messages'])),
-      )
+      .pipe(switchMap((id) => this.translateService.updateTranslation(id, translation, ['messages'])))
       .subscribe({
         next: () =>
           this.snackBar.open('Message updated!', undefined, {
@@ -272,12 +263,12 @@ export class ServiceComponent implements OnInit, OnDestroy {
       })
   }
 
-  changeStatus(index: number, id: string): void {
-    const messageToUpdate = this.translations$()[index].messages.find((msg) => msg.id === id)
+  changeStatus(data: SaveEvent): void {
+    const { message, index } = data
 
     const translation = new Translation({
       ...this.translations$()[index],
-      messages: [{ ...messageToUpdate, status: Message_Status.TRANSLATED }],
+      messages: [message],
     })
 
     this.serviceid

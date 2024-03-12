@@ -84,8 +84,8 @@
                 [animationState]="animationState"
                 [filteredMessages]="item.value"
                 [scroll]="virtualScroll"
-                (save)="updateMessage($event, item.key)"
-                (changeStatus)="changeStatus($event, item.key)"
+                (save)="updateMessage($event)"
+                (changeStatus)="changeStatus($event)"
                 (dataEmitted)="receiveDataFromChild($event)"
               ></app-messages>
               <mat-divider></mat-divider>

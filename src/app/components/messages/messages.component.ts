@@ -27,7 +27,7 @@ import { slideInOut } from 'src/app/animation'
 import messageFormat2 from 'src/app/highlight'
 
 export interface SaveEvent {
-  value: string
+  message: Message
   index: number
 }
 
@@ -58,10 +58,12 @@ export class MessagesComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChildren('pre') messageElements!: QueryList<ElementRef>
 
   @Output() save = new EventEmitter<SaveEvent>()
-  @Output() changeStatus = new EventEmitter<number>()
+  @Output() changeStatus = new EventEmitter<SaveEvent>()
   @Output() dataEmitted = new EventEmitter<number>()
 
   state = 'in'
+
+  private changes = false
 
   readonly languageNames = new Intl.DisplayNames(['en'], { type: 'language' })
 
@@ -81,9 +83,20 @@ export class MessagesComponent implements OnInit, OnDestroy, AfterViewInit {
     this.subscription.unsubscribe()
   }
 
-  change(index: number): void {
-    this.changeStatus.emit(index)
+  change(item: Message, index: number): void {
+    const message = new Message({ ...item, status: Message_Status.TRANSLATED })
     this.state = this.animationState
+
+    this.changeStatus.emit({ message, index })
+  }
+
+  focusOutEvent(item: Message, value: string, index: number): void {
+    const message = new Message({ ...item, message: value })
+    this.changes = item.message !== value
+
+    if (this.changes) {
+      this.save.emit({ message, index })
+    }
   }
 
   tooltip(status: Message_Status | undefined): string {
