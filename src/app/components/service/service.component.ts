@@ -246,14 +246,13 @@ export class ServiceComponent implements OnInit, OnDestroy {
   updateMessage(data: SaveEvent, id: string): void {
     const { value, index } = data
 
-    const translation = this.translations$()[index].clone()
-    translation.messages = this.translations$()[index].messages.filter((message) => {
-      if (message.id === id) {
-        this.changes = message.message !== value
-        message.message = value
-        return message
-      }
-      return
+    const messageToUpdate = this.translations$()[index].messages.find((msg) => msg.id === id)
+
+    this.changes = messageToUpdate?.message !== value
+
+    const translation = new Translation({
+      ...this.translations$()[index],
+      messages: [{ ...messageToUpdate, message: value }],
     })
 
     this.serviceid
@@ -274,14 +273,11 @@ export class ServiceComponent implements OnInit, OnDestroy {
   }
 
   changeStatus(index: number, id: string): void {
-    const translation = this.translations$()[index].clone()
+    const messageToUpdate = this.translations$()[index].messages.find((msg) => msg.id === id)
 
-    translation.messages = this.translations$()[index].messages.filter((message) => {
-      if (message.id === id) {
-        message.status = Message_Status.TRANSLATED
-        return message
-      }
-      return
+    const translation = new Translation({
+      ...this.translations$()[index],
+      messages: [{ ...messageToUpdate, status: Message_Status.TRANSLATED }],
     })
 
     this.serviceid
