@@ -28,7 +28,7 @@ import messageFormat2 from 'src/app/highlight'
 
 export interface SaveEvent {
   message: Message
-  index: number
+  translationIndex: number
 }
 
 @Component({
@@ -58,7 +58,6 @@ export class MessagesComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChildren('pre') messageElements!: QueryList<ElementRef>
 
   @Output() save = new EventEmitter<SaveEvent>()
-  @Output() changeStatus = new EventEmitter<SaveEvent>()
   @Output() dataEmitted = new EventEmitter<number>()
 
   state = 'in'
@@ -83,19 +82,19 @@ export class MessagesComponent implements OnInit, OnDestroy, AfterViewInit {
     this.subscription.unsubscribe()
   }
 
-  change(item: Message, index: number): void {
-    const message = new Message({ ...item, status: Message_Status.TRANSLATED })
+  updateMessageAsTranslated(message: Message, translationIndex: number): void {
     this.state = this.animationState
 
-    this.changeStatus.emit({ message, index })
+    message = new Message({ ...message, status: Message_Status.TRANSLATED })
+    this.save.emit({ message, translationIndex })
   }
 
-  focusOutEvent(item: Message, value: string, index: number): void {
-    const message = new Message({ ...item, message: value })
-    this.changes = item.message !== value
+  updateMessageText(message: Message, text: string, translationIndex: number): void {
+    this.changes = message.message !== text
 
+    message = new Message({ ...message, message: text })
     if (this.changes) {
-      this.save.emit({ message, index })
+      this.save.emit({ message, translationIndex })
     }
   }
 

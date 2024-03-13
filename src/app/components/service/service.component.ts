@@ -1,7 +1,8 @@
 import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling'
 import { TextFieldModule } from '@angular/cdk/text-field'
 import { CommonModule } from '@angular/common'
-import { Component, OnDestroy, OnInit, Signal, ViewChild, computed, signal } from '@angular/core'
+import { Component, OnDestroy, OnInit, ViewChild, computed, signal } from '@angular/core'
+import { toSignal } from '@angular/core/rxjs-interop'
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
 import { MatButtonToggleModule } from '@angular/material/button-toggle'
@@ -87,9 +88,23 @@ export class ServiceComponent implements OnInit, OnDestroy {
 
   private refreshTranslations = new BehaviorSubject<void>(undefined)
 
-  translations$ = signal<Translation[]>([])
+  readonly translations = signal<Translation[]>([])
 
-  filteredTranslations$!: Signal<Map<string, Message[]>>
+  private readonly filter = toSignal(this.form.valueChanges, { initialValue: { search: '', status: [] } })
+
+  readonly filteredTranslations = computed(() => {
+    const { status, search } = this.filter()
+
+    return this.filterMessages(this.translations(), status ?? [], search ?? '').reduce(
+      (msgs, language) =>
+        language.messages.reduce((m, v) => {
+          const existingMessages = m.get(v.id) ?? []
+          m.set(v.id, [...existingMessages, v])
+          return m
+        }, msgs),
+      new Map<string, Message[]>(),
+    )
+  })
 
   readonly languageNames = new Intl.DisplayNames(['en'], { type: 'language' })
 
@@ -97,7 +112,7 @@ export class ServiceComponent implements OnInit, OnDestroy {
 
   receivedData: number = 0
 
-  readonly translations = combineLatest({
+  readonly translations$ = combineLatest({
     service: this.serviceid,
     subject: this.refreshTranslations,
   }).pipe(
@@ -116,7 +131,7 @@ export class ServiceComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.subscription.add(this.translations.subscribe((v) => this.translations$.set(v)))
+    this.subscription.add(this.translations$.subscribe((v) => this.translations.set(v)))
 
     this.subscription.add(
       this.serviceid.pipe(switchMap((id) => this.translateService.getService(id))).subscribe({
@@ -128,30 +143,6 @@ export class ServiceComponent implements OnInit, OnDestroy {
             console.log(err)
           }
         },
-      }),
-    )
-
-    this.subscription.add(
-      combineLatest([
-        this.form.controls.status.valueChanges.pipe(startWith([])),
-        this.form.controls.search.valueChanges.pipe(
-          startWith(''),
-          map((v) => v.toLowerCase()),
-        ),
-      ]).subscribe(([status, search]) => {
-        this.filteredTranslations$ = computed(() => {
-          const filteredTranslations = this.filterMessages(this.translations$(), status, search)
-
-          return filteredTranslations.reduce(
-            (msgs, language) =>
-              language.messages.reduce((m, v) => {
-                const existingMessages = m.get(v.id) ?? []
-                m.set(v.id, [...existingMessages, v])
-                return m
-              }, msgs),
-            new Map<string, Message[]>(),
-          )
-        })
       }),
     )
 
@@ -202,6 +193,7 @@ export class ServiceComponent implements OnInit, OnDestroy {
       return translations
     }
 
+    searchText = searchText.toLowerCase()
     const status = statusOptions.map((v) => v.value)
 
     const filteredByTextIds = translations.reduce(
@@ -241,11 +233,11 @@ export class ServiceComponent implements OnInit, OnDestroy {
     }
   }
 
-  updateMessage(data: SaveEvent): void {
-    const { message, index } = data
+  saveMessage(data: SaveEvent): void {
+    const { message, translationIndex: index } = data
 
     const translation = new Translation({
-      ...this.translations$()[index],
+      ...this.translations()[index],
       messages: [message],
     })
 
@@ -256,31 +248,6 @@ export class ServiceComponent implements OnInit, OnDestroy {
           this.snackBar.open('Message updated!', undefined, {
             duration: 5000,
           }),
-        error: () =>
-          this.snackBar.open('Something went wrong!', undefined, {
-            duration: 5000,
-          }),
-      })
-  }
-
-  changeStatus(data: SaveEvent): void {
-    const { message, index } = data
-
-    const translation = new Translation({
-      ...this.translations$()[index],
-      messages: [message],
-    })
-
-    this.serviceid
-      .pipe(switchMap((id) => this.translateService.updateTranslation(id, translation, ['messages'])))
-      .subscribe({
-        next: () => {
-          this.snackBar.open('Status changed!', undefined, {
-            duration: 5000,
-          })
-
-          setTimeout(() => this.refreshTranslations.next(), 500)
-        },
         error: () =>
           this.snackBar.open('Something went wrong!', undefined, {
             duration: 5000,

@@ -2,11 +2,11 @@
   <div class="container" [@slideInOut]="state">
     <div class="container1">
       <pre>
-        <code #pre (focusout)="focusOutEvent(item, pre.innerText, $index)" [attr.contenteditable]="item?.status !== 0" class="code messageformat2" >{{ item.message}}</code> 
+        <code #pre (focusout)="updateMessageText(item, pre.innerText, $index)" [attr.contenteditable]="item?.status !== 0" class="code messageformat2" >{{ item.message}}</code>
       </pre>
       <div class="container-icons">
         <mat-icon
-          (click)="change(item, $index)"
+          (click)="updateMessageAsTranslated(item, $index)"
           inline
           matTooltip="Mark as Translated"
           class="icon"
