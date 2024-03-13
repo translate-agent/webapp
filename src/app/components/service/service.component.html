@@ -6,112 +6,101 @@
   <h1 class="title">{{ title.getTitle() }}</h1>
 </mat-toolbar>
 
-@if (translations$(); as translations) {
-  <div style="padding: 50px 60px 0px">
-    @if (filteredTranslations$().length !== 0) {
-      <div style="display: flex; gap: 20px; margin-bottom: 30px; align-items: baseline; justify-content: space-between">
-        <form [formGroup]="form">
-          <mat-button-toggle-group formControlName="status" multiple class="toggle-button-group">
-            @for (status of statuses; track status) {
-              <mat-button-toggle class="custom-toggle" [value]="status"
-                ><mat-icon class="icon-status" inline [fontIcon]="icon(status.value)"></mat-icon
-                >{{ status.title }}</mat-button-toggle
-              >
-            }
-          </mat-button-toggle-group>
-          <mat-form-field appearance="outline">
-            <mat-icon matPrefix fontIcon="search"></mat-icon>
-            <mat-label>Search</mat-label>
-            <input matInput formControlName="search" />
-          </mat-form-field>
-        </form>
-        <div>
-          <button
-            id="fileUploadButton"
-            mat-raised-button
-            color="primary"
-            (click)="openFileUploadModal()"
-            style="margin-right: 1em"
-          >
-            <mat-icon matTooltip="upload" fontIcon="upload"></mat-icon>Upload file
-          </button>
-          <button
-            id="fileDownloadButton"
-            mat-raised-button
-            color="primary"
-            (click)="openFileDownloadModal()"
-            style="margin-right: 1em"
-          >
-            <mat-icon fontIcon="download"></mat-icon>Download file
-          </button>
-          <button id="addLanguageButton" mat-raised-button color="primary" (click)="addLanguage()">
-            <mat-icon fontIcon="add"></mat-icon>Add language
-          </button>
-        </div>
-      </div>
-      <div style="margin-bottom: 2em">Displaying: {{ filteredTranslations$()[0].messages.length }} messages</div>
-      @if (filteredTranslations$()[0].messages.length !== 0) {
-        <div style="position: relative">
-          <a class="button" [class.show]="receivedData !== 0" (click)="scrollToTop()" style="position: absolute"></a>
-          <div>
-            <div style="display: flex; flex: 1; width: 100%">
-              @for (lang of filteredTranslations$(); track lang) {
-                <div
-                  style="
-                    display: flex;
-                    flex-direction: row;
-                    padding: 10px 10px;
-                    justify-content: center;
-                    border-top: 1px solid #cccccc;
-                    background-color: #eeeeee;
-                    align-items: stretch;
-                    width: 100%;
-                  "
-                  [style.border-left]="$first ? '1px solid #cccccc' : 'none'"
-                  [style.border-right]="$last ? '1px solid #cccccc' : 'none'"
-                  [class.bold]="lang.original"
-                >
-                  {{ languageNames.of(lang.language) }}
-                </div>
-                <mat-divider [vertical]="true" *ngIf="$index !== filteredTranslations$.length - 1"></mat-divider>
-              }
-            </div>
-            <cdk-virtual-scroll-viewport itemSize="100" style="min-height: 70vh; border: 1px solid #cccccc">
-              <ng-container
-                *cdkVirtualFor="
-                  let message of filteredTranslations$()[0].messages;
-                  let index = index;
-                  templateCacheSize: 0
-                "
-              >
-                <app-messages
-                  [serviceid]="serviceid | async"
-                  [id]="message.id"
-                  [data]="translations"
-                  [filteredTranslations]="filteredTranslations$()"
-                  [index]="index"
-                  [scroll]="virtualScroll"
-                  [animationState]="animationState"
-                  style="display: flex"
-                  (dataEmitted)="receiveDataFromChild($event)"
-                  (translatonsemitted)="receive()"
-                  #messagesList
-                ></app-messages>
-                <mat-divider></mat-divider>
-              </ng-container>
-            </cdk-virtual-scroll-viewport>
-          </div>
-        </div>
-      } @else {
-        <div style="max-width: 500px; margin: 0 auto; padding: 50px; font-size: 2rem"><span>Nothing found</span></div>
-      }
-    } @else {
-      <div style="max-width: 500px; margin: 0 auto; text-align: center; padding-top: 50px">
-        <p style="font-size: 1.5rem">No language files found. Upload language files.</p>
-        <button mat-stroked-button color="primary" (click)="openFileUploadModal()" class="mat-elevation-z3">
-          <mat-icon fontIcon="upload"></mat-icon> Upload file
+<div style="padding: 50px 60px 0px">
+  @if (translations().length > 0) {
+    <div style="display: flex; gap: 20px; margin-bottom: 30px; align-items: baseline; justify-content: space-between">
+      <form [formGroup]="form">
+        <mat-button-toggle-group formControlName="status" multiple class="toggle-button-group">
+          @for (status of statuses; track status) {
+            <mat-button-toggle class="custom-toggle" [value]="status"
+              ><mat-icon class="icon-status" inline [fontIcon]="icon(status.value)"></mat-icon
+              >{{ status.title }}</mat-button-toggle
+            >
+          }
+        </mat-button-toggle-group>
+        <mat-form-field appearance="outline">
+          <mat-icon matPrefix fontIcon="search"></mat-icon>
+          <mat-label>Search</mat-label>
+          <input matInput formControlName="search" />
+        </mat-form-field>
+      </form>
+      <div>
+        <button
+          id="fileUploadButton"
+          mat-raised-button
+          color="primary"
+          (click)="openFileUploadModal()"
+          style="margin-right: 1em"
+        >
+          <mat-icon matTooltip="upload" fontIcon="upload"></mat-icon>Upload file
+        </button>
+        <button
+          id="fileDownloadButton"
+          mat-raised-button
+          color="primary"
+          (click)="openFileDownloadModal()"
+          style="margin-right: 1em"
+        >
+          <mat-icon fontIcon="download"></mat-icon>Download file
+        </button>
+        <button id="addLanguageButton" mat-raised-button color="primary" (click)="addLanguage()">
+          <mat-icon fontIcon="add"></mat-icon>Add language
         </button>
       </div>
+    </div>
+    @if (filteredTranslations().size > 0) {
+      <div style="margin-bottom: 2em">Displaying: {{ filteredTranslations().size }} messages</div>
+      <div style="position: relative">
+        <a class="button" [class.show]="receivedData !== 0" (click)="scrollToTop()" style="position: absolute"></a>
+        <div>
+          <div style="display: flex; flex: 1; width: 100%">
+            @for (lang of translations(); track lang) {
+              <div
+                style="
+                  display: flex;
+                  flex-direction: row;
+                  padding: 10px 10px;
+                  justify-content: center;
+                  border-top: 1px solid #cccccc;
+                  background-color: #eeeeee;
+                  align-items: stretch;
+                  width: 100%;
+                "
+                [style.border-left]="$first ? '1px solid #cccccc' : 'none'"
+                [style.border-right]="$last ? '1px solid #cccccc' : 'none'"
+                [class.bold]="lang.original"
+              >
+                {{ languageNames.of(lang.language) }}
+              </div>
+              <mat-divider [vertical]="true" *ngIf="$index !== translations().length - 1"></mat-divider>
+            }
+          </div>
+          <cdk-virtual-scroll-viewport itemSize="100" style="min-height: 70vh; border: 1px solid #cccccc">
+            <ng-container
+              *cdkVirtualFor="let item of filteredTranslations() | keyvalue; let index = index; templateCacheSize: 0"
+            >
+              <app-messages
+                style="display: flex"
+                [animationState]="animationState"
+                [filteredMessages]="item.value"
+                [scroll]="virtualScroll"
+                (save)="saveMessage($event)"
+                (dataEmitted)="receiveDataFromChild($event)"
+              ></app-messages>
+              <mat-divider></mat-divider>
+            </ng-container>
+          </cdk-virtual-scroll-viewport>
+        </div>
+      </div>
+    } @else {
+      <div style="max-width: 500px; margin: 0 auto; padding: 50px; font-size: 2rem"><span>Nothing found</span></div>
     }
-  </div>
-}
+  } @else {
+    <div style="max-width: 500px; margin: 0 auto; text-align: center; padding-top: 50px">
+      <p style="font-size: 1.5rem">No language files found. Upload language files.</p>
+      <button mat-stroked-button color="primary" (click)="openFileUploadModal()" class="mat-elevation-z3">
+        <mat-icon fontIcon="upload"></mat-icon> Upload file
+      </button>
+    </div>
+  }
+</div>

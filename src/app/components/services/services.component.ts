@@ -42,7 +42,7 @@ export type ServiceNew = {
   ],
 })
 export class ServicesComponent implements OnInit, OnDestroy {
-  services$ = signal<ServiceNew[]>([])
+  services = signal<ServiceNew[]>([])
 
   readonly subscription = new Subscription()
 
@@ -57,8 +57,8 @@ export class ServicesComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.subscription.add(
       this.service.listServices().subscribe((v) => {
-        this.services$.set(structuredClone(v.services))
-        this.services$.update((services) => {
+        this.services.set(structuredClone(v.services))
+        this.services.update((services) => {
           services.forEach((service) => {
             this.service.listTranslations(service.id).subscribe((translations) => {
               service.source = translations.find((v) => v.original)?.language
@@ -86,7 +86,7 @@ export class ServicesComponent implements OnInit, OnDestroy {
             this.snackBar.open('Service created!', undefined, {
               duration: 5000,
             })
-            this.services$.update((services) => [...services, service])
+            this.services.update((services) => [...services, service])
           },
 
           error: (err) =>
@@ -105,7 +105,7 @@ export class ServicesComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.service.deleteService(service.id).subscribe({
           next: () => {
-            this.services$.update((services) => services.filter((v) => v.id !== service.id))
+            this.services.update((services) => services.filter((v) => v.id !== service.id))
 
             this.snackBar.open(`Service ${service.name} deleted!`, undefined, {
               duration: 5000,
@@ -134,7 +134,7 @@ export class ServicesComponent implements OnInit, OnDestroy {
               duration: 5000,
             })
 
-            this.services$.update((services) =>
+            this.services.update((services) =>
               services.map((service) => {
                 if (service.id === v.id) {
                   service.name = v.name

@@ -87,7 +87,7 @@ describe('ServicesComponent', () => {
   })
 
   it('should create', fakeAsync(() => {
-    component.services$().forEach((service) => {
+    component.services().forEach((service) => {
       translateClientServiceSpy.listTranslations(service.id)
     })
     tick()
@@ -114,7 +114,7 @@ describe('ServicesComponent', () => {
   })
 
   it(`should not render a button 'New service' if services list are empty `, () => {
-    component.services$.set([])
+    component.services.set([])
 
     fixture.detectChanges()
 
@@ -170,12 +170,12 @@ describe('ServicesComponent', () => {
       component.dialog.open(DialogDeleteComponent, { data: mockServices[0], width: '500px' })
 
       translateClientServiceSpy.deleteService(mockServices[0].id).subscribe(() => {
-        component.services$.update((services) => services.filter((service) => service.id !== mockServices[0].id))
+        component.services.update((services) => services.filter((service) => service.id !== mockServices[0].id))
       })
 
       expect(translateClientServiceSpy.deleteService).toHaveBeenCalled()
 
-      expect(component.services$().length).toBe(1)
+      expect(component.services().length).toBe(1)
       expect(translateClientServiceSpy.deleteService).toHaveBeenCalledWith(mockServices[0].id)
     })
 
@@ -290,14 +290,14 @@ describe('ServicesComponent', () => {
     })
 
     it('should update services$ with new value', () => {
-      spyOn(component.services$, 'update')
+      spyOn(component.services, 'update')
         .withArgs((services: ServiceNew[]) => [...services, { id: '3', name: 'Tests3' }])
         .and.returnValue()
         .and.callThrough()
-      component.services$.update((services: ServiceNew[]) => [...services, { id: '3', name: 'Tests3' }])
+      component.services.update((services: ServiceNew[]) => [...services, { id: '3', name: 'Tests3' }])
 
-      expect(component.services$.update).toHaveBeenCalledTimes(1)
-      expect(component.services$().length).toBe(3)
+      expect(component.services.update).toHaveBeenCalledTimes(1)
+      expect(component.services().length).toBe(3)
     })
   })
 
