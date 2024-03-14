@@ -1,8 +1,8 @@
 import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling'
 import { TextFieldModule } from '@angular/cdk/text-field'
 import { CommonModule } from '@angular/common'
-import { Component, OnDestroy, OnInit, Signal, ViewChild, computed, input } from '@angular/core'
-import { toSignal } from '@angular/core/rxjs-interop'
+import { Component, OnDestroy, OnInit, Signal, ViewChild, computed, input, signal } from '@angular/core'
+import { toObservable, toSignal } from '@angular/core/rxjs-interop'
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
 import { MatButtonToggleModule } from '@angular/material/button-toggle'
@@ -17,14 +17,14 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle'
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar'
 import { MatToolbarModule } from '@angular/material/toolbar'
 import { MatTooltipModule } from '@angular/material/tooltip'
-import { Title } from '@angular/platform-browser'
-import { ActivatedRoute, Router, RouterModule } from '@angular/router'
+import { Router, RouterModule } from '@angular/router'
 import {
   Message,
   Message_Status,
+  Service,
   Translation,
 } from '@buf/expectdigital_translate-agent.bufbuild_es/translate/v1/translate_pb'
-import { BehaviorSubject, Subscription, combineLatest, filter, map, shareReplay, switchMap } from 'rxjs'
+import { BehaviorSubject, Subscription, combineLatest, filter, shareReplay, switchMap } from 'rxjs'
 import { TranslateClientService } from 'src/app/services/translate-client.service'
 import { MessagesComponent, SaveEvent } from '../messages/messages.component'
 import { NewLanguageDialogComponent } from '../new-language-dialog/new-language-dialog.component'
@@ -70,12 +70,9 @@ export type AnimationState = 'in' | 'out'
 export class ServiceComponent implements OnInit, OnDestroy {
   @ViewChild(CdkVirtualScrollViewport) virtualScroll!: CdkVirtualScrollViewport
 
-  id = input.required()
+  private readonly id = input.required<string>()
 
-  readonly serviceid = this.route.paramMap.pipe(
-    map((v) => v.get('id')!),
-    shareReplay(1),
-  )
+  readonly service = signal<Service | undefined>(undefined)
 
   readonly animationState: Signal<AnimationState> = computed(() => (this.filter().status!.length > 0 ? 'out' : 'in'))
 
@@ -115,7 +112,7 @@ export class ServiceComponent implements OnInit, OnDestroy {
   receivedData: number = 0
 
   readonly translations$ = combineLatest({
-    service: this.serviceid,
+    service: toObservable(this.id),
     subject: this.refreshTranslations,
   }).pipe(
     switchMap(({ service }) => this.translateService.listTranslations(service)),
@@ -128,16 +125,14 @@ export class ServiceComponent implements OnInit, OnDestroy {
     public dialog: MatDialog,
     private fb: FormBuilder,
     private translateService: TranslateClientService,
-    private route: ActivatedRoute,
-    public title: Title,
     private router: Router,
     private snackBar: MatSnackBar,
   ) {}
 
   ngOnInit(): void {
     this.subscription.add(
-      this.serviceid.pipe(switchMap((id) => this.translateService.getService(id))).subscribe({
-        next: (service) => this.title.setTitle(service.name),
+      this.translateService.getService(this.id()).subscribe({
+        next: (service) => this.service.set(service),
         error: (err) => {
           if (err.code === 5 || err.code === 3) {
             this.router.navigate(['services'])
@@ -160,21 +155,21 @@ export class ServiceComponent implements OnInit, OnDestroy {
 
   openFileUploadModal(): void {
     this.dialog
-      .open(UploadTranslationFileComponent, { data: this.serviceid })
+      .open(UploadTranslationFileComponent, { data: this.service()?.id })
       .afterClosed()
       .pipe(filter((v) => !!v))
       .subscribe(() => this.refreshTranslations.next())
   }
 
   openFileDownloadModal(): void {
-    const dialog = this.dialog.open(UploadTranslationFileComponent, { data: this.serviceid })
+    const dialog = this.dialog.open(UploadTranslationFileComponent, { data: this.service()?.id })
 
     dialog.componentInstance.download = true
   }
 
   addLanguage(): void {
     this.dialog
-      .open(NewLanguageDialogComponent, { data: this.serviceid, width: '400px' })
+      .open(NewLanguageDialogComponent, { data: this.service()?.id, width: '400px' })
       .afterClosed()
       .pipe(filter((v) => !!v))
       .subscribe(() => this.refreshTranslations.next())
@@ -237,20 +232,18 @@ export class ServiceComponent implements OnInit, OnDestroy {
       messages: [message],
     })
 
-    this.serviceid
-      .pipe(switchMap((id) => this.translateService.updateTranslation(id, translation, ['messages'])))
-      .subscribe({
-        next: () => {
-          this.snackBar.open('Message updated!', undefined, {
-            duration: 5000,
-          })
+    this.translateService.updateTranslation(this.service()!.id, translation, ['messages']).subscribe({
+      next: () => {
+        this.snackBar.open('Message updated!', undefined, {
+          duration: 5000,
+        })
 
-          this.refreshTranslations.next()
-        },
-        error: () =>
-          this.snackBar.open('Something went wrong!', undefined, {
-            duration: 5000,
-          }),
-      })
+        this.refreshTranslations.next()
+      },
+      error: () =>
+        this.snackBar.open('Something went wrong!', undefined, {
+          duration: 5000,
+        }),
+    })
   }
 }

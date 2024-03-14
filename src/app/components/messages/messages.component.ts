@@ -6,12 +6,12 @@ import {
   Component,
   ElementRef,
   EventEmitter,
-  Input,
   OnDestroy,
   OnInit,
   Output,
   QueryList,
   ViewChildren,
+  input,
 } from '@angular/core'
 import { ReactiveFormsModule } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
@@ -52,9 +52,11 @@ export interface SaveEvent {
   animations: slideInOut,
 })
 export class MessagesComponent implements OnInit, OnDestroy, AfterViewInit {
-  @Input() filteredMessages!: Message[]
-  @Input() scroll!: CdkVirtualScrollViewport
-  @Input() animationState: AnimationState = 'in'
+  animationState = input<AnimationState>('in')
+
+  filteredMessages = input.required<Message[]>()
+
+  scroll = input<CdkVirtualScrollViewport>()
 
   @ViewChildren('pre') messageElements!: QueryList<ElementRef>
 
@@ -70,7 +72,7 @@ export class MessagesComponent implements OnInit, OnDestroy, AfterViewInit {
   readonly subscription = new Subscription()
 
   ngOnInit(): void {
-    this.subscription.add(this.scroll?.scrolledIndexChange.subscribe((v) => this.dataEmitted.emit(v)))
+    this.subscription.add(this.scroll()?.scrolledIndexChange.subscribe((v) => this.dataEmitted.emit(v)))
 
     hljs.registerLanguage('messageformat2', messageFormat2)
   }
@@ -84,7 +86,7 @@ export class MessagesComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   updateMessageAsTranslated(message: Message, translationIndex: number): void {
-    this.state = this.animationState
+    this.state = this.animationState()
 
     message = new Message({ ...message, status: Message_Status.TRANSLATED })
     this.save.emit({ message, translationIndex })

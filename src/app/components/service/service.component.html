@@ -3,7 +3,7 @@
     <mat-icon fontIcon="home"></mat-icon>
   </button>
   <span class="title" routerLink="/services" style="cursor: pointer">Services</span>&nbsp;&mdash;&nbsp;
-  <h1 class="title">{{ title.getTitle() }}</h1>
+  <h1 class="title">{{ service()?.name }}</h1>
 </mat-toolbar>
 
 <div style="padding: 50px 60px 0px">

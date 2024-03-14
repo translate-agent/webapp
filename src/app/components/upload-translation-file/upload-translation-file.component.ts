@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { CommonModule } from '@angular/common'
-import { Component, HostListener, Inject, Input, OnInit } from '@angular/core'
+import { Component, HostListener, Inject, Input } from '@angular/core'
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCheckboxModule } from '@angular/material/checkbox'
@@ -14,7 +14,7 @@ import { MatSelectModule } from '@angular/material/select'
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar'
 import { MatToolbarModule } from '@angular/material/toolbar'
 import { Schema } from '@buf/expectdigital_translate-agent.bufbuild_es/translate/v1/translate_pb'
-import { Observable, map, switchMap } from 'rxjs'
+import { map } from 'rxjs'
 import { TranslateClientService } from 'src/app/services/translate-client.service'
 
 const schemas = {
@@ -48,7 +48,7 @@ const schemas = {
     MatToolbarModule,
   ],
 })
-export class UploadTranslationFileComponent implements OnInit {
+export class UploadTranslationFileComponent {
   @Input() download = false
 
   readonly form = this.fb.nonNullable.group({
@@ -66,14 +66,9 @@ export class UploadTranslationFileComponent implements OnInit {
 
   show = false
 
-  serviceId!: string
-
-  languages!: string[]
-
-  lang = this.id.pipe(
-    switchMap((id) => this.service.listTranslations(id)),
-    map((v) => v.map((translation) => translation.language)),
-  )
+  readonly languages = this.service
+    .listTranslations(this.serviceId)
+    .pipe(map((v) => v.map((translation) => translation.language)))
 
   readonly languageNames = new Intl.DisplayNames(['en'], { type: 'language' })
 
@@ -81,7 +76,7 @@ export class UploadTranslationFileComponent implements OnInit {
     private fb: FormBuilder,
     private service: TranslateClientService,
     private dialogRef: MatDialogRef<UploadTranslationFileComponent>,
-    @Inject(MAT_DIALOG_DATA) public id: Observable<string>,
+    @Inject(MAT_DIALOG_DATA) private serviceId: string,
     private snackBar: MatSnackBar,
   ) {}
 
@@ -112,10 +107,6 @@ export class UploadTranslationFileComponent implements OnInit {
     }
   }
 
-  ngOnInit(): void {
-    this.id.subscribe((id) => (this.serviceId = id))
-  }
-
   onFileSelected(event: Event): void {
     const inputElement = event.target as HTMLInputElement
 
@@ -138,7 +129,7 @@ export class UploadTranslationFileComponent implements OnInit {
     const data = new Uint8Array(buffer)
 
     this.service
-      .uploadTranslationFile(data, language, schema, original, this.serviceId!, populateTranslations)
+      .uploadTranslationFile(data, language, schema, original, this.serviceId, populateTranslations)
       .subscribe({
         next: (v) => {
           this.dialogRef.close(v)
