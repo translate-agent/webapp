@@ -25,6 +25,7 @@ import hljs from 'highlight.js'
 import { Subscription } from 'rxjs'
 import { slideInOut } from 'src/app/animation'
 import messageFormat2 from 'src/app/highlight'
+import { AnimationState } from '../service/service.component'
 
 export interface SaveEvent {
   message: Message
@@ -53,7 +54,7 @@ export interface SaveEvent {
 export class MessagesComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() filteredMessages!: Message[]
   @Input() scroll!: CdkVirtualScrollViewport
-  @Input() animationState!: string
+  @Input() animationState: AnimationState = 'in'
 
   @ViewChildren('pre') messageElements!: QueryList<ElementRef>
 

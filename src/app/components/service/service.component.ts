@@ -1,7 +1,7 @@
 import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling'
 import { TextFieldModule } from '@angular/cdk/text-field'
 import { CommonModule } from '@angular/common'
-import { Component, OnDestroy, OnInit, ViewChild, computed, signal } from '@angular/core'
+import { Component, OnDestroy, OnInit, Signal, ViewChild, computed, input } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
@@ -24,7 +24,7 @@ import {
   Message_Status,
   Translation,
 } from '@buf/expectdigital_translate-agent.bufbuild_es/translate/v1/translate_pb'
-import { BehaviorSubject, Subscription, combineLatest, filter, map, shareReplay, startWith, switchMap } from 'rxjs'
+import { BehaviorSubject, Subscription, combineLatest, filter, map, shareReplay, switchMap } from 'rxjs'
 import { TranslateClientService } from 'src/app/services/translate-client.service'
 import { MessagesComponent, SaveEvent } from '../messages/messages.component'
 import { NewLanguageDialogComponent } from '../new-language-dialog/new-language-dialog.component'
@@ -35,6 +35,8 @@ export interface StatusOption {
   title: string
   value: Message_Status
 }
+
+export type AnimationState = 'in' | 'out'
 
 @Component({
   selector: 'app-service',
@@ -68,12 +70,14 @@ export interface StatusOption {
 export class ServiceComponent implements OnInit, OnDestroy {
   @ViewChild(CdkVirtualScrollViewport) virtualScroll!: CdkVirtualScrollViewport
 
+  id = input.required()
+
   readonly serviceid = this.route.paramMap.pipe(
     map((v) => v.get('id')!),
     shareReplay(1),
   )
 
-  animationState = 'in'
+  readonly animationState: Signal<AnimationState> = computed(() => (this.filter().status!.length > 0 ? 'out' : 'in'))
 
   readonly form = this.fb.nonNullable.group({
     status: this.fb.nonNullable.control<StatusOption[]>([]),
@@ -87,8 +91,6 @@ export class ServiceComponent implements OnInit, OnDestroy {
   ]
 
   private refreshTranslations = new BehaviorSubject<void>(undefined)
-
-  readonly translations = signal<Translation[]>([])
 
   private readonly filter = toSignal(this.form.valueChanges, { initialValue: { search: '', status: [] } })
 
@@ -120,6 +122,8 @@ export class ServiceComponent implements OnInit, OnDestroy {
     shareReplay(1),
   )
 
+  readonly translations = toSignal(this.translations$, { initialValue: [] })
+
   constructor(
     public dialog: MatDialog,
     private fb: FormBuilder,
@@ -131,8 +135,6 @@ export class ServiceComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.subscription.add(this.translations$.subscribe((v) => this.translations.set(v)))
-
     this.subscription.add(
       this.serviceid.pipe(switchMap((id) => this.translateService.getService(id))).subscribe({
         next: (service) => this.title.setTitle(service.name),
@@ -144,12 +146,6 @@ export class ServiceComponent implements OnInit, OnDestroy {
           }
         },
       }),
-    )
-
-    this.subscription.add(
-      this.form.controls.status.valueChanges
-        .pipe(startWith([]))
-        .subscribe((status) => (this.animationState = status.length > 0 ? 'out' : 'in')),
     )
   }
 
@@ -244,10 +240,13 @@ export class ServiceComponent implements OnInit, OnDestroy {
     this.serviceid
       .pipe(switchMap((id) => this.translateService.updateTranslation(id, translation, ['messages'])))
       .subscribe({
-        next: () =>
+        next: () => {
           this.snackBar.open('Message updated!', undefined, {
             duration: 5000,
-          }),
+          })
+
+          this.refreshTranslations.next()
+        },
         error: () =>
           this.snackBar.open('Something went wrong!', undefined, {
             duration: 5000,

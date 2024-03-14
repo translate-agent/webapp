@@ -81,7 +81,7 @@
             >
               <app-messages
                 style="display: flex"
-                [animationState]="animationState"
+                [animationState]="animationState()"
                 [filteredMessages]="item.value"
                 [scroll]="virtualScroll"
                 (save)="saveMessage($event)"
@@ -93,7 +93,9 @@
         </div>
       </div>
     } @else {
-      <div style="max-width: 500px; margin: 0 auto; padding: 50px; font-size: 2rem"><span>Nothing found</span></div>
+      <div style="max-width: 500px; margin: 0 auto; padding: 50px; font-size: 2rem">
+        <span>Nothing found</span>
+      </div>
     }
   } @else {
     <div style="max-width: 500px; margin: 0 auto; text-align: center; padding-top: 50px">
