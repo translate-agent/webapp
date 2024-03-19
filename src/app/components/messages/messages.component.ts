@@ -5,12 +5,11 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
-  EventEmitter,
   OnDestroy,
   OnInit,
-  Output,
   Signal,
   input,
+  output,
   viewChildren,
 } from '@angular/core'
 import { ReactiveFormsModule } from '@angular/forms'
@@ -60,8 +59,9 @@ export class MessagesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   readonly messageElements: Signal<readonly ElementRef<HTMLElement>[]> = viewChildren('pre')
 
-  @Output() save = new EventEmitter<SaveEvent>()
-  @Output() dataEmitted = new EventEmitter<number>()
+  save = output<SaveEvent>()
+
+  dataEmitted = output<number>()
 
   state = 'in'
 
