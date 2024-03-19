@@ -9,9 +9,9 @@ import {
   OnDestroy,
   OnInit,
   Output,
-  QueryList,
-  ViewChildren,
+  Signal,
   input,
+  viewChildren,
 } from '@angular/core'
 import { ReactiveFormsModule } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
@@ -52,13 +52,13 @@ export interface SaveEvent {
   animations: slideInOut,
 })
 export class MessagesComponent implements OnInit, OnDestroy, AfterViewInit {
-  animationState = input<AnimationState>('in')
+  readonly animationState = input<AnimationState>('in')
 
-  filteredMessages = input.required<Message[]>()
+  readonly filteredMessages = input.required<Message[]>()
 
-  scroll = input<CdkVirtualScrollViewport>()
+  readonly scroll = input<CdkVirtualScrollViewport>()
 
-  @ViewChildren('pre') messageElements!: QueryList<ElementRef>
+  readonly messageElements: Signal<readonly ElementRef<HTMLElement>[]> = viewChildren('pre')
 
   @Output() save = new EventEmitter<SaveEvent>()
   @Output() dataEmitted = new EventEmitter<number>()
@@ -78,7 +78,7 @@ export class MessagesComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.messageElements.forEach((element) => hljs.highlightElement(element.nativeElement))
+    this.messageElements().forEach((element) => hljs.highlightElement(element.nativeElement))
   }
 
   ngOnDestroy(): void {
