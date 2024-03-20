@@ -1,7 +1,7 @@
 import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling'
 import { TextFieldModule } from '@angular/cdk/text-field'
 import { CommonModule } from '@angular/common'
-import { Component, OnDestroy, OnInit, Signal, computed, input, signal, viewChild } from '@angular/core'
+import { Component, Signal, computed, effect, input, signal, viewChild } from '@angular/core'
 import { toObservable, toSignal } from '@angular/core/rxjs-interop'
 import { FormsModule } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
@@ -24,7 +24,7 @@ import {
   Service,
   Translation,
 } from '@buf/expectdigital_translate-agent.bufbuild_es/translate/v1/translate_pb'
-import { BehaviorSubject, Subscription, combineLatest, filter, shareReplay, switchMap } from 'rxjs'
+import { BehaviorSubject, combineLatest, filter, shareReplay, switchMap } from 'rxjs'
 import { TranslateClientService } from 'src/app/services/translate-client.service'
 import { MessagesComponent, SaveEvent } from '../messages/messages.component'
 import { NewLanguageDialogComponent } from '../new-language-dialog/new-language-dialog.component'
@@ -67,8 +67,8 @@ export type AnimationState = 'in' | 'out'
     FormsModule,
   ],
 })
-export class ServiceComponent implements OnInit, OnDestroy {
-  readonly virtualScroll = viewChild(CdkVirtualScrollViewport)
+export class ServiceComponent {
+  readonly virtualScroll = viewChild.required(CdkVirtualScrollViewport)
 
   private readonly id = input.required<string>()
 
@@ -102,8 +102,6 @@ export class ServiceComponent implements OnInit, OnDestroy {
 
   readonly languageNames = new Intl.DisplayNames(['en'], { type: 'language' })
 
-  readonly subscription = new Subscription()
-
   receivedData: number = 0
 
   readonly translations$ = combineLatest({
@@ -121,11 +119,9 @@ export class ServiceComponent implements OnInit, OnDestroy {
     private translateService: TranslateClientService,
     private router: Router,
     private snackBar: MatSnackBar,
-  ) {}
-
-  ngOnInit(): void {
-    this.subscription.add(
-      this.translateService.getService(this.id()).subscribe({
+  ) {
+    effect((onCleanup) => {
+      const sub = this.translateService.getService(this.id()).subscribe({
         next: (service) => this.service.set(service),
         error: (err) => {
           if (err.code === 5 || err.code === 3) {
@@ -134,12 +130,10 @@ export class ServiceComponent implements OnInit, OnDestroy {
             console.log(err)
           }
         },
-      }),
-    )
-  }
+      })
 
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe()
+      onCleanup(() => sub.unsubscribe())
+    })
   }
 
   scrollToTop(): void {

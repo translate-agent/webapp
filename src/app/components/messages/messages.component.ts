@@ -51,11 +51,11 @@ export interface SaveEvent {
   animations: slideInOut,
 })
 export class MessagesComponent implements OnInit, OnDestroy, AfterViewInit {
-  readonly animationState = input<AnimationState>('in')
+  readonly animationState = input.required<AnimationState>()
 
   readonly filteredMessages = input.required<Message[]>()
 
-  readonly scroll = input<CdkVirtualScrollViewport>()
+  readonly scroll = input.required<CdkVirtualScrollViewport>()
 
   readonly messageElements: Signal<readonly ElementRef<HTMLElement>[]> = viewChildren('pre')
 
