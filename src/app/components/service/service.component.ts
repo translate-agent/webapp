@@ -68,7 +68,7 @@ export type AnimationState = 'in' | 'out'
   ],
 })
 export class ServiceComponent {
-  readonly virtualScroll = viewChild.required(CdkVirtualScrollViewport)
+  readonly virtualScroll = viewChild(CdkVirtualScrollViewport)
 
   private readonly id = input.required<string>()
 
@@ -102,7 +102,7 @@ export class ServiceComponent {
 
   readonly languageNames = new Intl.DisplayNames(['en'], { type: 'language' })
 
-  receivedData: number = 0
+  receivedData = signal(0)
 
   readonly translations$ = combineLatest({
     service: toObservable(this.id),
@@ -134,6 +134,14 @@ export class ServiceComponent {
 
       onCleanup(() => sub.unsubscribe())
     })
+
+    effect((onCleanup) => {
+      const sub = this.virtualScroll()?.scrolledIndexChange.subscribe((v) => {
+        this.receivedData.set(v)
+      })
+
+      onCleanup(() => sub?.unsubscribe())
+    })
   }
 
   scrollToTop(): void {
@@ -161,10 +169,6 @@ export class ServiceComponent {
     const dialog = this.dialog.open(UploadTranslationFileComponent, { data: this.service()?.id })
 
     dialog.componentInstance.download = true
-  }
-
-  receiveDataFromChild(data: number): void {
-    this.receivedData = data
   }
 
   filterMessages(translations: Translation[], statusOptions: StatusOption[], searchText: string): Translation[] {
