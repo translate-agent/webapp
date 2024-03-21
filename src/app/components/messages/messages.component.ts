@@ -1,7 +1,7 @@
 import { ScrollingModule } from '@angular/cdk/scrolling'
 import { TextFieldModule } from '@angular/cdk/text-field'
 import { CommonModule } from '@angular/common'
-import { AfterViewInit, Component, ElementRef, OnInit, Signal, input, output, viewChildren } from '@angular/core'
+import { AfterViewInit, Component, ElementRef, OnInit, input, output, viewChildren } from '@angular/core'
 import { ReactiveFormsModule } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
 import { MatDividerModule } from '@angular/material/divider'
@@ -44,7 +44,7 @@ export class MessagesComponent implements OnInit, AfterViewInit {
 
   readonly filteredMessages = input.required<Message[]>()
 
-  readonly messageElements: Signal<readonly ElementRef<HTMLElement>[]> = viewChildren('pre')
+  readonly messageElements = viewChildren<ElementRef<HTMLElement>>('pre')
 
   save = output<SaveEvent>()
 
