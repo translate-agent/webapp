@@ -1,18 +1,7 @@
-import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling'
+import { ScrollingModule } from '@angular/cdk/scrolling'
 import { TextFieldModule } from '@angular/cdk/text-field'
 import { CommonModule } from '@angular/common'
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  EventEmitter,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output,
-  QueryList,
-  ViewChildren,
-} from '@angular/core'
+import { AfterViewInit, Component, ElementRef, OnInit, input, output, viewChildren } from '@angular/core'
 import { ReactiveFormsModule } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
 import { MatDividerModule } from '@angular/material/divider'
@@ -22,9 +11,9 @@ import { MatInputModule } from '@angular/material/input'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { Message, Message_Status } from '@buf/expectdigital_translate-agent.bufbuild_es/translate/v1/translate_pb'
 import hljs from 'highlight.js'
-import { Subscription } from 'rxjs'
 import { slideInOut } from 'src/app/animation'
 import messageFormat2 from 'src/app/highlight'
+import { AnimationState } from '../service/service.component'
 
 export interface SaveEvent {
   message: Message
@@ -50,15 +39,16 @@ export interface SaveEvent {
   styleUrl: './messages.component.scss',
   animations: slideInOut,
 })
-export class MessagesComponent implements OnInit, OnDestroy, AfterViewInit {
-  @Input() filteredMessages!: Message[]
-  @Input() scroll!: CdkVirtualScrollViewport
-  @Input() animationState!: string
+export class MessagesComponent implements OnInit, AfterViewInit {
+  readonly animationState = input.required<AnimationState>()
 
-  @ViewChildren('pre') messageElements!: QueryList<ElementRef>
+  readonly filteredMessages = input.required<Message[]>()
 
-  @Output() save = new EventEmitter<SaveEvent>()
-  @Output() dataEmitted = new EventEmitter<number>()
+  readonly messageElements = viewChildren<ElementRef<HTMLElement>>('pre')
+
+  save = output<SaveEvent>()
+
+  dataEmitted = output<number>()
 
   state = 'in'
 
@@ -66,24 +56,16 @@ export class MessagesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   readonly languageNames = new Intl.DisplayNames(['en'], { type: 'language' })
 
-  readonly subscription = new Subscription()
-
   ngOnInit(): void {
-    this.subscription.add(this.scroll?.scrolledIndexChange.subscribe((v) => this.dataEmitted.emit(v)))
-
     hljs.registerLanguage('messageformat2', messageFormat2)
   }
 
   ngAfterViewInit(): void {
-    this.messageElements.forEach((element) => hljs.highlightElement(element.nativeElement))
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe()
+    this.messageElements().forEach((element) => hljs.highlightElement(element.nativeElement))
   }
 
   updateMessageAsTranslated(message: Message, translationIndex: number): void {
-    this.state = this.animationState
+    this.state = this.animationState()
 
     message = new Message({ ...message, status: Message_Status.TRANSLATED })
     this.save.emit({ message, translationIndex })

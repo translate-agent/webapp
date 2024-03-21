@@ -1,4 +1,4 @@
-@for (item of filteredMessages; track item.id) {
+@for (item of filteredMessages(); track item.id) {
   <div class="container" [@slideInOut]="state">
     <div class="container1">
       <pre>
@@ -16,7 +16,7 @@
         <mat-icon inline [matTooltip]="tooltip(item?.status)" [fontIcon]="icon(item?.status)" class="icon"></mat-icon>
       </div>
     </div>
-    @if ($index !== filteredMessages.length - 1) {
+    @if ($index < filteredMessages().length - 1) {
       <mat-divider [vertical]="true"></mat-divider>
     }
   </div>
