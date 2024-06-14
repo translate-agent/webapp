@@ -22,7 +22,7 @@ const schemas = {
   JSON_NGX_TRANSLATE: Schema.JSON_NGX_TRANSLATE,
   GO: Schema.GO,
   ARB: Schema.ARB,
-  POT: Schema.POT,
+  PO: Schema.PO,
   XLIFF_12: Schema.XLIFF_12,
   XLIFF_2: Schema.XLIFF_2,
 }
@@ -181,7 +181,7 @@ export class UploadTranslationFileComponent {
 
   fileFormat(schema: Schema): string | undefined {
     switch (schema) {
-      case Schema.POT:
+      case Schema.PO:
         return 'po'
       case Schema.JSON_NGX_TRANSLATE:
         return 'json'

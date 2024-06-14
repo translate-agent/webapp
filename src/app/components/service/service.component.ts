@@ -70,7 +70,7 @@ export type AnimationState = 'in' | 'out'
 export class ServiceComponent {
   readonly virtualScroll = viewChild(CdkVirtualScrollViewport)
 
-  private readonly id = input.required<string>()
+  public readonly id = input.required<string>()
 
   readonly service = signal<Service | undefined>(undefined)
 
