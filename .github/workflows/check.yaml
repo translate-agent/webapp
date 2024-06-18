@@ -16,4 +16,7 @@ jobs:
           yarn set version stable
           yarn install
       - name: Lint
-        run: yarn lint
+        run: |
+          corepack enable
+          yarn set version stable
+          yarn lint
