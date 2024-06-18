@@ -11,8 +11,10 @@ jobs:
         with:
           node-version: 20
           cache: 'yarn'
-      - name: Setup .yarnrc.yml
-        run: yarn config set npmScopes.buf.npmRegistryServer "https://buf.build/gen/npm/v1"
+      - name: Setup yarn and .yarnrc.yml
+        run: |
+          corepack enable
+          yarn config set npmScopes.buf.npmRegistryServer "https://buf.build/gen/npm/v1"
       - name: Dependencies
         run: yarn install
       - name: Lint
