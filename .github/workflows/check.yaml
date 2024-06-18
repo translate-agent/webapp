@@ -16,7 +16,4 @@ jobs:
           yarn set version stable
           yarn install
       - name: Lint
-        run: |
-          corepack enable
-          yarn set version stable
-          yarn lint
+        run: yarn lint --config .prettierrc.json
