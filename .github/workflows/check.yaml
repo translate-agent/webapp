@@ -16,4 +16,4 @@ jobs:
           yarn set version stable
           yarn install
       - name: Lint
-        run: yarn lint --config .prettierrc.json
+        run: yarn lint --config .prettierrc.json --log-level debug
