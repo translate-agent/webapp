@@ -10,10 +10,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Setup yarn and .yarnrc.yml
-        run: |
-          corepack enable
-          yarn config set npmScopes.buf.npmRegistryServer "https://buf.build/gen/npm/v1"
+      - name: Setup yarn
+        run: corepack enable
       - name: Dependencies
         run: yarn install
       - name: Lint
