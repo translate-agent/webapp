@@ -7,7 +7,7 @@
   "bracketSpacing": true,
   "overrides": [
     {
-      "files": ".yarnrc.yml",
+      "files": "*.yml",
       "options": {
         "singleQuote": false
       }
