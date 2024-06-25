@@ -541,19 +541,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/platform-browser@npm:^18.0.3":
-  version: 18.0.3
-  resolution: "@angular/platform-browser@npm:18.0.3"
+"@angular/platform-browser@npm:^18.0.4":
+  version: 18.0.4
+  resolution: "@angular/platform-browser@npm:18.0.4"
   dependencies:
     tslib: "npm:^2.3.0"
   peerDependencies:
-    "@angular/animations": 18.0.3
-    "@angular/common": 18.0.3
-    "@angular/core": 18.0.3
+    "@angular/animations": 18.0.4
+    "@angular/common": 18.0.4
+    "@angular/core": 18.0.4
   peerDependenciesMeta:
     "@angular/animations":
       optional: true
-  checksum: 10c0/b1f5d1b66f0a4468b0dfb0db4e0c249ff7d8cbc6bc398eb614b970efc0494fced9875426bbbd311b3886e72e791eef8af362509f4bfb751a97121ac0dfa090b1
+  checksum: 10c0/6308d297a3fd8414631828bed7a7782901dc72a761460619a0a585f4b59146e88d66da01af140ba1e50f111cfe70eb87071d47cfe35c2a726b3ac791f4aa0b6a
   languageName: node
   linkType: hard
 
@@ -12101,7 +12101,7 @@ __metadata:
     "@angular/core": "npm:^18.0.3"
     "@angular/forms": "npm:^18.0.3"
     "@angular/material": "npm:^18.0.4"
-    "@angular/platform-browser": "npm:^18.0.3"
+    "@angular/platform-browser": "npm:^18.0.4"
     "@angular/platform-browser-dynamic": "npm:^18.0.3"
     "@angular/router": "npm:^18.0.3"
     "@buf/expectdigital_translate-agent.bufbuild_es": "npm:^1.10.0-20240321100456-03aa133a65c1.1"
