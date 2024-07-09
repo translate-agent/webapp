@@ -11,3 +11,6 @@ updates:
       interval: "weekly"
     reviewers:
       - "janishorsts"
+    ignore:
+      - dependency-name: "eslint"
+        versions: ">= 9.0.0"
