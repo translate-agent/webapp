@@ -17,6 +17,6 @@ jobs:
       - name: Lint
         run: yarn lint
       - name: Test
-        run: npx ng test --sourceMap=false --browsers=ChromeHeadless --watch=false
+        run: npx ng test --code-coverage --source-map=false --browsers=ChromeHeadless --watch=false
       - name: Build
         run: yarn build
