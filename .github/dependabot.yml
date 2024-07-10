@@ -19,6 +19,9 @@ updates:
         patterns:
           - "@buf*"
           - "@connectrpc*"
+      eslint:
+        patterns:
+          - "eslint*"
       karma:
         patterns:
           - "karma*"
