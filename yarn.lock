@@ -300,6 +300,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@angular-eslint/eslint-plugin@npm:18.1.0":
+  version: 18.1.0
+  resolution: "@angular-eslint/eslint-plugin@npm:18.1.0"
+  dependencies:
+    "@angular-eslint/bundled-angular-compiler": "npm:18.1.0"
+    "@angular-eslint/utils": "npm:18.1.0"
+  peerDependencies:
+    "@typescript-eslint/utils": ^7.11.0 || ^8.0.0-alpha.37
+    eslint: ^8.57.0 || ^9.0.0
+    typescript: "*"
+  checksum: 10c0/e943c84399a70e85706ae40f8cce77ad0720e7e70c6e7c752b94afd2ed85a5b36262b64c165672920e72a11a1ef45e09156120941aa5abce9cd8dc315933b75e
+  languageName: node
+  linkType: hard
+
 "@angular-eslint/schematics@npm:18.0.1":
   version: 18.0.1
   resolution: "@angular-eslint/schematics@npm:18.0.1"
@@ -12578,7 +12592,7 @@ __metadata:
   dependencies:
     "@angular-devkit/build-angular": "npm:^18.0.3"
     "@angular-eslint/builder": "npm:18.0.1"
-    "@angular-eslint/eslint-plugin": "npm:18.0.1"
+    "@angular-eslint/eslint-plugin": "npm:18.1.0"
     "@angular-eslint/eslint-plugin-template": "npm:18.1.0"
     "@angular-eslint/schematics": "npm:18.0.1"
     "@angular-eslint/template-parser": "npm:18.1.0"
