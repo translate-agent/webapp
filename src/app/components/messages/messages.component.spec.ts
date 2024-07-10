@@ -19,7 +19,9 @@ describe('MessagesComponent', () => {
         },
       ],
     })
+
     fixture = TestBed.createComponent(MessagesComponent)
+    fixture.componentRef.setInput('filteredMessages', [])
     component = fixture.componentInstance
 
     fixture.detectChanges()
