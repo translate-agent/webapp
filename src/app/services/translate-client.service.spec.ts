@@ -263,12 +263,12 @@ describe('TranslateClientService', () => {
       .and.callThrough()
     spyOn(service.client, 'uploadTranslationFile').and.returnValue(Promise.resolve(new Empty({})))
 
-    service.uploadTranslationFile(new Uint8Array(), 'en', Schema.POT, true, 'service-id', true)
+    service.uploadTranslationFile(new Uint8Array(), 'en', Schema.PO, true, 'service-id', true)
 
     expect(service.uploadTranslationFile).toHaveBeenCalledWith(
       new Uint8Array(),
       'en',
-      Schema.POT,
+      Schema.PO,
       true,
       'service-id',
       true,
@@ -276,7 +276,7 @@ describe('TranslateClientService', () => {
     expect(service.client.uploadTranslationFile).toHaveBeenCalledWith({
       data: new Uint8Array(),
       language: 'en',
-      schema: Schema.POT,
+      schema: Schema.PO,
       original: true,
       serviceId: 'service-id',
       populateTranslations: true,
@@ -292,12 +292,12 @@ describe('TranslateClientService', () => {
       Promise.resolve(new DownloadTranslationFileResponse({ data: new Uint8Array() })),
     )
 
-    service.downloadTranslationFile('en', Schema.POT, 'service-id')
+    service.downloadTranslationFile('en', Schema.PO, 'service-id')
 
-    expect(service.downloadTranslationFile).toHaveBeenCalledWith('en', Schema.POT, 'service-id')
+    expect(service.downloadTranslationFile).toHaveBeenCalledWith('en', Schema.PO, 'service-id')
     expect(service.client.downloadTranslationFile).toHaveBeenCalledWith({
       language: 'en',
-      schema: Schema.POT,
+      schema: Schema.PO,
       serviceId: 'service-id',
     })
   })
