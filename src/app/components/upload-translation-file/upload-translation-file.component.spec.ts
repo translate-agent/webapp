@@ -147,7 +147,7 @@ describe('UploadTranslationFileComponent', () => {
     it('should call downloadTranslationFile if form is valid and download pot file', () => {
       expect(component.form.valid).toBeFalsy()
       component.form.controls.language.setValue('en')
-      component.form.controls.schema.setValue(Schema.POT)
+      component.form.controls.schema.setValue(Schema.PO)
       fixture.detectChanges()
       component.downloadFile()
       expect(component.form.valid).toBe(true)
@@ -186,7 +186,7 @@ describe('UploadTranslationFileComponent', () => {
 
     it('should call uploadTranslationFile if form is valid', () => {
       expect(component.form.valid).toBe(false)
-      component.form.setValue({ language: 'en', schema: Schema.POT, original: true, populateTranslations: true })
+      component.form.setValue({ language: 'en', schema: Schema.PO, original: true, populateTranslations: true })
       fixture.detectChanges()
       expect(component.form.valid).toBe(true)
 

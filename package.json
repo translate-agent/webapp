@@ -23,6 +23,7 @@
     "@angular/router": "^18.0.3",
     "@buf/expectdigital_translate-agent.bufbuild_es": "^1.10.0-20240321100456-03aa133a65c1.1",
     "@buf/expectdigital_translate-agent.connectrpc_es": "^1.4.0-20240115081118-6ca511997873.2",
+    "@bufbuild/protobuf": "^1.10.0",
     "@connectrpc/connect": "^1.4.0",
     "@connectrpc/connect-web": "^1.4.0",
     "highlight.js": "^11.9.0",
