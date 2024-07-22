@@ -6531,9 +6531,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jsdoc@npm:^48.8.0":
-  version: 48.8.0
-  resolution: "eslint-plugin-jsdoc@npm:48.8.0"
+"eslint-plugin-jsdoc@npm:^48.8.3":
+  version: 48.8.3
+  resolution: "eslint-plugin-jsdoc@npm:48.8.3"
   dependencies:
     "@es-joy/jsdoccomment": "npm:~0.46.0"
     are-docs-informative: "npm:^0.0.2"
@@ -6547,7 +6547,7 @@ __metadata:
     synckit: "npm:^0.9.1"
   peerDependencies:
     eslint: ^7.0.0 || ^8.0.0 || ^9.0.0
-  checksum: 10c0/f864fc6b8642166904908f764beb7eac9ecce5af5502df03952eceda458cc3c520734afa00ee394ced748c4328138ce0e0f78f94a135a11f9b1f0c5bc2627823
+  checksum: 10c0/78d893614b188617de5a03d8163406455e3b739fd7b86192eb05a29cf8e7f06909a6f6a1b9dc2acd31e5ae2bccd94600eaea247d277f58c3c946c0fdb36a57f7
   languageName: node
   linkType: hard
 
@@ -12087,7 +12087,7 @@ __metadata:
     eslint: "npm:^9.7.0"
     eslint-config-prettier: "npm:^9.1.0"
     eslint-plugin-import: "npm:^2.29.1"
-    eslint-plugin-jsdoc: "npm:^48.8.0"
+    eslint-plugin-jsdoc: "npm:^48.8.3"
     eslint-plugin-prefer-arrow: "npm:^1.2.3"
     eslint-plugin-prettier: "npm:^5.2.1"
     highlight.js: "npm:^11.10.0"
