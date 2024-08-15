@@ -7,7 +7,7 @@ import { MatMenuModule } from '@angular/material/menu'
 import { MatMenuHarness, MatMenuItemHarness } from '@angular/material/menu/testing'
 import { By } from '@angular/platform-browser'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
-import { RouterTestingModule } from '@angular/router/testing'
+import { RouterModule } from '@angular/router'
 import { first } from 'rxjs'
 import { ServiceNew } from '../services/services.component'
 import { mockServices } from '../services/services.component.spec'
@@ -21,12 +21,12 @@ describe('ServicesListComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        ServicesListComponent,
-        RouterTestingModule,
-        MatMenuModule,
-        MatIconModule,
-        NoopAnimationsModule,
         MatButtonModule,
+        MatIconModule,
+        MatMenuModule,
+        NoopAnimationsModule,
+        RouterModule.forRoot([]),
+        ServicesListComponent,
       ],
     }).compileComponents()
 

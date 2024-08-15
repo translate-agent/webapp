@@ -7,7 +7,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar'
 import { MatToolbarModule } from '@angular/material/toolbar'
 import { By, Title } from '@angular/platform-browser'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
-import { RouterTestingModule } from '@angular/router/testing'
+import { RouterModule } from '@angular/router'
 import { ListServicesResponse, Service } from '@buf/expectdigital_translate-agent.bufbuild_es/translate/v1/translate_pb'
 import { Empty } from '@bufbuild/protobuf'
 import { of, throwError } from 'rxjs'
@@ -46,16 +46,16 @@ describe('ServicesComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        ServicesComponent,
-        RouterTestingModule,
-        MatToolbarModule,
-        MatIconModule,
-        ServicesListComponent,
+        CreateServiceComponent,
         DialogDeleteComponent,
         MatDialogModule,
-        NoopAnimationsModule,
+        MatIconModule,
         MatSnackBarModule,
-        CreateServiceComponent,
+        MatToolbarModule,
+        NoopAnimationsModule,
+        RouterModule.forRoot([]),
+        ServicesComponent,
+        ServicesListComponent,
       ],
       providers: [
         Title,
