@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core'
+import { Component, EventEmitter, input, Output } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
 import { MatListModule } from '@angular/material/list'
@@ -14,7 +14,7 @@ import { ServiceNew } from '../services/services.component'
   styleUrl: './services-list.component.scss',
 })
 export class ServicesListComponent {
-  @Input({ required: true }) services!: ServiceNew[]
+  services = input.required<ServiceNew[]>()
   @Output() delete = new EventEmitter<ServiceNew>()
   @Output() edit = new EventEmitter<ServiceNew>()
   @Output() create = new EventEmitter<string>()

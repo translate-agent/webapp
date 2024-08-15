@@ -1,5 +1,5 @@
 <div class="container">
-  <h3>{{ download ? 'File download' : 'File import' }}</h3>
+  <h3>{{ download() ? 'Download file' : 'Upload file' }}</h3>
   <button class="grow" mat-icon-button mat-dialog-close>
     <mat-icon fontIcon="close"></mat-icon>
   </button>
@@ -86,7 +86,7 @@
 }
 <mat-dialog-actions align="end" class="container-actions">
   <button mat-button mat-dialog-close>Cancel</button>
-  <button color="primary" mat-raised-button cdkFocusInitial (click)="download ? downloadFile() : upload()">
-    {{ download ? 'Download' : 'Upload' }}
+  <button color="primary" mat-raised-button cdkFocusInitial (click)="download() ? downloadFile() : upload()">
+    {{ download() ? 'Download' : 'Upload' }}
   </button>
 </mat-dialog-actions>

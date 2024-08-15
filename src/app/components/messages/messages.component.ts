@@ -46,9 +46,9 @@ export class MessagesComponent implements OnInit, AfterViewInit {
 
   readonly messageElements = viewChildren<ElementRef<HTMLElement>>('pre')
 
-  save = output<SaveEvent>()
+  readonly save = output<SaveEvent>()
 
-  dataEmitted = output<number>()
+  readonly dataEmitted = output<number>()
 
   state = 'in'
 

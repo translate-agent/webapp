@@ -1,4 +1,4 @@
-@for (item of services; track item.id) {
+@for (item of services(); track item.id) {
   <mat-selection-list multiple="false" class="service-list">
     @if ($index > 0) {
       <mat-divider></mat-divider>

@@ -23,7 +23,7 @@ export const mockServices: ServiceNew[] = [
   { id: '2', name: 'test2' },
 ]
 
-export const spy = jasmine.createSpyObj('TranslateClientService', [
+const spy = jasmine.createSpyObj<TranslateClientService>('TranslateClientService', [
   'listServices',
   'deleteService',
   'updateService',
@@ -35,6 +35,10 @@ export const spy = jasmine.createSpyObj('TranslateClientService', [
   'uploadTranslationFile',
   'downloadTranslationFile',
 ])
+
+spy.listTranslations.and.returnValue(of([]))
+
+export { spy }
 
 describe('ServicesComponent', () => {
   let component: ServicesComponent
