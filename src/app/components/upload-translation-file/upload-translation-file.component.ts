@@ -13,7 +13,7 @@ import { MatInputModule } from '@angular/material/input'
 import { MatSelectModule } from '@angular/material/select'
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar'
 import { MatToolbarModule } from '@angular/material/toolbar'
-import { Schema } from '@buf/expectdigital_translate-agent.bufbuild_es/translate/v1/translate_pb'
+import { Schema } from '@buf/expect_translate-agent.bufbuild_es/translate/v1/translate_pb'
 import { map } from 'rxjs'
 import { TranslateClientService } from 'src/app/services/translate-client.service'
 

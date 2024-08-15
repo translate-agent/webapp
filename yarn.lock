@@ -2142,66 +2142,66 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@buf/expectdigital_translate-agent.bufbuild_es@npm:1.7.2-20240321100456-03aa133a65c1.2":
-  version: 1.7.2-20240321100456-03aa133a65c1.2
-  resolution: "@buf/expectdigital_translate-agent.bufbuild_es@npm:1.7.2-20240321100456-03aa133a65c1.2"
+"@buf/expect_translate-agent.bufbuild_es@npm:1.10.0-20240809113420-06cf27dd07a0.1":
+  version: 1.10.0-20240809113420-06cf27dd07a0.1
+  resolution: "@buf/expect_translate-agent.bufbuild_es@npm:1.10.0-20240809113420-06cf27dd07a0.1"
   dependencies:
-    "@buf/googleapis_googleapis.bufbuild_es": "npm:1.7.2-20240207202044-7e6f6e774e29.2"
-  peerDependencies:
-    "@bufbuild/protobuf": ^1.7.2
-  checksum: 10c0/83358bbd29bafd692c007f03af8fd1f9ae43dc59367f694b9e3e1211cb953c79c461615b95dda78832600c8404028e1660f478c19cb2de057b9ec55410676762
-  languageName: node
-  linkType: hard
-
-"@buf/expectdigital_translate-agent.bufbuild_es@npm:^1.10.0-20240321100456-03aa133a65c1.1":
-  version: 1.10.0-20240321100456-03aa133a65c1.1
-  resolution: "@buf/expectdigital_translate-agent.bufbuild_es@npm:1.10.0-20240321100456-03aa133a65c1.1"
-  dependencies:
-    "@buf/googleapis_googleapis.bufbuild_es": "npm:1.10.0-20240207202044-7e6f6e774e29.1"
+    "@buf/googleapis_googleapis.bufbuild_es": "npm:1.10.0-20240729201550-8bc2c51e08c4.1"
   peerDependencies:
     "@bufbuild/protobuf": ^1.10.0
-  checksum: 10c0/a1f205b37f11708a8b8c4335b8b224ff7804f002ac9cb114d593041b4abc11abc1ea9ac0f6525cf526cc953a00312ccfe34f8b39f7f13b1ce7b708dd68879848
+  checksum: 10c0/87de252b90d1f285ed01d9941f9371b7f505d1c7308c99725b5f5ba16c1a07553f4c586e4ddd2b40d3176e0c3ea9ac7dd4ab7bc1289e0f707c228e0110886458
   languageName: node
   linkType: hard
 
-"@buf/expectdigital_translate-agent.connectrpc_es@npm:^1.4.0-20240115081118-6ca511997873.2":
-  version: 1.4.0-20240321100456-03aa133a65c1.3
-  resolution: "@buf/expectdigital_translate-agent.connectrpc_es@npm:1.4.0-20240321100456-03aa133a65c1.3"
+"@buf/expect_translate-agent.bufbuild_es@npm:1.7.2-20240809113420-06cf27dd07a0.2":
+  version: 1.7.2-20240809113420-06cf27dd07a0.2
+  resolution: "@buf/expect_translate-agent.bufbuild_es@npm:1.7.2-20240809113420-06cf27dd07a0.2"
   dependencies:
-    "@buf/expectdigital_translate-agent.bufbuild_es": "npm:1.7.2-20240321100456-03aa133a65c1.2"
-    "@buf/googleapis_googleapis.connectrpc_es": "npm:1.4.0-20240207202044-7e6f6e774e29.3"
-  peerDependencies:
-    "@connectrpc/connect": ^1.4.0
-  checksum: 10c0/4482d30a0181c8a2ec8ebc5d6a7aef154ceabfafaa1ae163afe1c5c343abfa97c8d72539a4ba02d378ab4a42fbe4137354cc1a8379d8338ef074c4a8f456537f
-  languageName: node
-  linkType: hard
-
-"@buf/googleapis_googleapis.bufbuild_es@npm:1.10.0-20240207202044-7e6f6e774e29.1":
-  version: 1.10.0-20240207202044-7e6f6e774e29.1
-  resolution: "@buf/googleapis_googleapis.bufbuild_es@npm:1.10.0-20240207202044-7e6f6e774e29.1"
-  peerDependencies:
-    "@bufbuild/protobuf": ^1.10.0
-  checksum: 10c0/07ee9bbf94c4bceb087e92181b2da94c03c959012dd7dafdc0d263ad7cd1d758ae5e4363696cca653037f50fe2e615d080e71f23e2ee309a664375483d74c9f2
-  languageName: node
-  linkType: hard
-
-"@buf/googleapis_googleapis.bufbuild_es@npm:1.7.2-20240207202044-7e6f6e774e29.2":
-  version: 1.7.2-20240207202044-7e6f6e774e29.2
-  resolution: "@buf/googleapis_googleapis.bufbuild_es@npm:1.7.2-20240207202044-7e6f6e774e29.2"
+    "@buf/googleapis_googleapis.bufbuild_es": "npm:1.7.2-20240729201550-8bc2c51e08c4.2"
   peerDependencies:
     "@bufbuild/protobuf": ^1.7.2
-  checksum: 10c0/36088ff6cfb15b0e338027af5d2eea00cafb6554b9760b3c442e75768bd3067730a95478db2a295f1674227c5622a9faa6cc1e9b35ecb7c7e25ec9baf2bb5535
+  checksum: 10c0/353ad1066c89befc9f6499a20134f0d63685f07b3c4ae77b508e0d89143f50a6ea7f49b6689269da3381c7fb68400c16b318ed2d57a3abdbae8080528ce50b5b
   languageName: node
   linkType: hard
 
-"@buf/googleapis_googleapis.connectrpc_es@npm:1.4.0-20240207202044-7e6f6e774e29.3":
-  version: 1.4.0-20240207202044-7e6f6e774e29.3
-  resolution: "@buf/googleapis_googleapis.connectrpc_es@npm:1.4.0-20240207202044-7e6f6e774e29.3"
+"@buf/expect_translate-agent.connectrpc_es@npm:^1.4.0-20240809113420-06cf27dd07a0.3":
+  version: 1.4.0-20240809113420-06cf27dd07a0.3
+  resolution: "@buf/expect_translate-agent.connectrpc_es@npm:1.4.0-20240809113420-06cf27dd07a0.3"
   dependencies:
-    "@buf/googleapis_googleapis.bufbuild_es": "npm:1.7.2-20240207202044-7e6f6e774e29.2"
+    "@buf/expect_translate-agent.bufbuild_es": "npm:1.7.2-20240809113420-06cf27dd07a0.2"
+    "@buf/googleapis_googleapis.connectrpc_es": "npm:1.4.0-20240729201550-8bc2c51e08c4.3"
   peerDependencies:
     "@connectrpc/connect": ^1.4.0
-  checksum: 10c0/a287f73b2ba55c0dc6e7647bf415b219414d6f4f6e66f1d0bf890a0843f0beb076bd3b627caf1d113e0a0f51ba6b141577a7778188201ffa413a267ae0f7eb16
+  checksum: 10c0/6983599aaa36bddd3ef7a1b6f921d7dbf68dd3deddb748c00df6bae0bbcecc411b9d096bb61c201dcf144c2843716da722c55362a7105e364b8141548c81585b
+  languageName: node
+  linkType: hard
+
+"@buf/googleapis_googleapis.bufbuild_es@npm:1.10.0-20240729201550-8bc2c51e08c4.1":
+  version: 1.10.0-20240729201550-8bc2c51e08c4.1
+  resolution: "@buf/googleapis_googleapis.bufbuild_es@npm:1.10.0-20240729201550-8bc2c51e08c4.1"
+  peerDependencies:
+    "@bufbuild/protobuf": ^1.10.0
+  checksum: 10c0/61601698c8060e34d8bfb08c1ea29ee5ee497fa0664835d562b3ebcde5093603ee0de92ea362fa3ba1e4f9dd81d1799947dd2c7ae9b33cd610dd96b2985f8d43
+  languageName: node
+  linkType: hard
+
+"@buf/googleapis_googleapis.bufbuild_es@npm:1.7.2-20240729201550-8bc2c51e08c4.2":
+  version: 1.7.2-20240729201550-8bc2c51e08c4.2
+  resolution: "@buf/googleapis_googleapis.bufbuild_es@npm:1.7.2-20240729201550-8bc2c51e08c4.2"
+  peerDependencies:
+    "@bufbuild/protobuf": ^1.7.2
+  checksum: 10c0/c62bcf8f97b30815d2c6bb524b28c8dc76e5cccf5433ff1d1b84d7f473bd65bcf0e6590c36487d16e111c0e8fd7edac3790084bd4c35579074dba928fa19b99d
+  languageName: node
+  linkType: hard
+
+"@buf/googleapis_googleapis.connectrpc_es@npm:1.4.0-20240729201550-8bc2c51e08c4.3":
+  version: 1.4.0-20240729201550-8bc2c51e08c4.3
+  resolution: "@buf/googleapis_googleapis.connectrpc_es@npm:1.4.0-20240729201550-8bc2c51e08c4.3"
+  dependencies:
+    "@buf/googleapis_googleapis.bufbuild_es": "npm:1.7.2-20240729201550-8bc2c51e08c4.2"
+  peerDependencies:
+    "@connectrpc/connect": ^1.4.0
+  checksum: 10c0/a365e80837494db5cd2ea960e1a83f454db26604531df4d8672a5a16bc6cd7fe0a7b1d63e7bf3bda2d748c64fba6dcafe5e71fd6c228db7420eb0f3005e568eb
   languageName: node
   linkType: hard
 
@@ -11301,8 +11301,8 @@ __metadata:
     "@angular/platform-browser": "npm:^18.2.0"
     "@angular/platform-browser-dynamic": "npm:^18.2.0"
     "@angular/router": "npm:^18.2.0"
-    "@buf/expectdigital_translate-agent.bufbuild_es": "npm:^1.10.0-20240321100456-03aa133a65c1.1"
-    "@buf/expectdigital_translate-agent.connectrpc_es": "npm:^1.4.0-20240115081118-6ca511997873.2"
+    "@buf/expect_translate-agent.bufbuild_es": "npm:1.10.0-20240809113420-06cf27dd07a0.1"
+    "@buf/expect_translate-agent.connectrpc_es": "npm:^1.4.0-20240809113420-06cf27dd07a0.3"
     "@bufbuild/protobuf": "npm:^1.10.0"
     "@connectrpc/connect": "npm:^1.4.0"
     "@connectrpc/connect-web": "npm:^1.4.0"

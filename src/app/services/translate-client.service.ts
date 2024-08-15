@@ -5,8 +5,8 @@ import {
   Schema,
   Service,
   Translation,
-} from '@buf/expectdigital_translate-agent.bufbuild_es/translate/v1/translate_pb.js'
-import { TranslateService } from '@buf/expectdigital_translate-agent.connectrpc_es/translate/v1/translate_connect'
+} from '@buf/expect_translate-agent.bufbuild_es/translate/v1/translate_pb'
+import { TranslateService } from '@buf/expect_translate-agent.connectrpc_es/translate/v1/translate_connect'
 import { Empty } from '@bufbuild/protobuf'
 import { createPromiseClient } from '@connectrpc/connect'
 import { createGrpcWebTransport } from '@connectrpc/connect-web'
@@ -17,11 +17,12 @@ import { environment } from 'src/environments/environments'
   providedIn: 'root',
 })
 export class TranslateClientService {
-  private transport = createGrpcWebTransport({
-    baseUrl: environment.backendUrl,
-  })
-
-  readonly client = createPromiseClient(TranslateService, this.transport)
+  readonly client = createPromiseClient(
+    TranslateService,
+    createGrpcWebTransport({
+      baseUrl: environment.backendUrl,
+    }),
+  )
 
   listServices(): Observable<ListServicesResponse> {
     return from(this.client.listServices({}))

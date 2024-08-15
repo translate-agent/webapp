@@ -6,7 +6,7 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
-import { Service } from '@buf/expectdigital_translate-agent.bufbuild_es/translate/v1/translate_pb'
+import { Service } from '@buf/expect_translate-agent.bufbuild_es/translate/v1/translate_pb'
 
 @Component({
   selector: 'app-create-service',
