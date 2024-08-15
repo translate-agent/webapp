@@ -7,7 +7,7 @@ import {
   Schema,
   Service,
   Translation,
-} from '@buf/expectdigital_translate-agent.bufbuild_es/translate/v1/translate_pb.js'
+} from '@buf/expect_translate-agent.bufbuild_es/translate/v1/translate_pb.js'
 import { Empty } from '@bufbuild/protobuf'
 import { of } from 'rxjs'
 import { TranslateClientService } from './translate-client.service'

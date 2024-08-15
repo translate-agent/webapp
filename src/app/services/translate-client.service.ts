@@ -17,7 +17,7 @@ import { environment } from 'src/environments/environments'
   providedIn: 'root',
 })
 export class TranslateClientService {
-  private readonly client = createPromiseClient(
+  readonly client = createPromiseClient(
     TranslateService,
     createGrpcWebTransport({
       baseUrl: environment.backendUrl,
