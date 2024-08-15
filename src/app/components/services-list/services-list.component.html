@@ -7,13 +7,14 @@
       <div routerLink="/services/{{ item.id }}" class="service-list-option">
         <span class="option-name">{{ item.name }}</span>
         @if (item.source) {
-          <span class="option-source">Source language: {{ languageNames.of(item.source) }}</span>
+          <span class="option-source">Source language: {{ languageName(item.source) }}</span>
         }
         @if (item.target && item.target.length > 0) {
           <span class="option-target"
             >Target languages:
             @for (target of item.target; track target) {
-              <span>{{ languageNames.of(target) + ' ' }}</span>
+              <span>{{ languageName(target) }}</span
+              >&nbsp;
             }
           </span>
         }

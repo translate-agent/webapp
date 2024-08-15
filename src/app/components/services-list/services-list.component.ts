@@ -19,4 +19,6 @@ export class ServicesListComponent {
   readonly delete = output<ServiceNew>()
   readonly edit = output<ServiceNew>()
   readonly create = output()
+
+  readonly languageName = (v: string) => new Intl.DisplayNames(['en'], { type: 'language' }).of(v)
 }

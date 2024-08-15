@@ -72,7 +72,7 @@ export class UploadTranslationFileComponent {
     .listTranslations(this.serviceId)
     .pipe(map((v) => v.map((translation) => translation.language)))
 
-  readonly languageName = new Intl.DisplayNames(['en'], { type: 'language' }).of
+  readonly languageName = (v: string) => new Intl.DisplayNames(['en'], { type: 'language' }).of(v)
 
   constructor(
     private fb: FormBuilder,
