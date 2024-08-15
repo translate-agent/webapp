@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { MatDialogRef } from '@angular/material/dialog'
 import { Title } from '@angular/platform-browser'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
-import { RouterTestingModule } from '@angular/router/testing'
+import { RouterModule } from '@angular/router'
 import { Service } from '@buf/expectdigital_translate-agent.bufbuild_es/translate/v1/translate_pb'
 import { of } from 'rxjs'
 import { TranslateClientService } from 'src/app/services/translate-client.service'
@@ -22,7 +22,7 @@ describe('ServiceComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ServiceComponent, RouterTestingModule, NoopAnimationsModule],
+      imports: [NoopAnimationsModule, RouterModule.forRoot([]), ServiceComponent],
       providers: [
         Title,
         {
