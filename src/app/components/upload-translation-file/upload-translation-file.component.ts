@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { CommonModule } from '@angular/common'
-import { Component, HostListener, Inject, Input } from '@angular/core'
+import { Component, HostListener, Inject, model } from '@angular/core'
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCheckboxModule } from '@angular/material/checkbox'
@@ -27,6 +27,8 @@ const schemas = {
   XLIFF_2: Schema.XLIFF_2,
 }
 
+// TODO(jhorsts): split into two components - upload and download
+
 @Component({
   selector: 'app-upload-translation-file',
   templateUrl: './upload-translation-file.component.html',
@@ -49,7 +51,7 @@ const schemas = {
   ],
 })
 export class UploadTranslationFileComponent {
-  @Input() download = false
+  readonly download = model(false)
 
   readonly form = this.fb.nonNullable.group({
     language: ['', Validators.required],

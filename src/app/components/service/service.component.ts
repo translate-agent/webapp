@@ -168,7 +168,7 @@ export class ServiceComponent {
   openFileDownloadModal(): void {
     const dialog = this.dialog.open(UploadTranslationFileComponent, { data: this.service()?.id })
 
-    dialog.componentInstance.download = true
+    dialog.componentInstance.download.set(true)
   }
 
   filterMessages(translations: Translation[], statusOptions: StatusOption[], searchText: string): Translation[] {

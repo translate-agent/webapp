@@ -33,13 +33,13 @@ describe('ServicesListComponent', () => {
     fixture = TestBed.createComponent(ServicesListComponent)
     component = fixture.componentInstance
     loader = TestbedHarnessEnvironment.loader(fixture)
-    component.services = mockServices
+    fixture.componentRef.setInput('services', mockServices)
 
     fixture.detectChanges()
   })
 
   it('should create', () => {
-    expect(component).toBeTruthy()
+    expect(fixture.componentInstance).toBeTruthy()
   })
 
   it('should render 2 menu items', async () => {
@@ -63,8 +63,7 @@ describe('ServicesListComponent', () => {
     })
 
     it('should render empty message if there are no services', () => {
-      component.services = []
-
+      fixture.componentRef.setInput('services', [])
       fixture.detectChanges()
 
       const emptyMessage = fixture.debugElement.query(By.css('.empty'))
@@ -108,7 +107,7 @@ describe('ServicesListComponent', () => {
     })
 
     it('should emit when create button is clicked', () => {
-      component.services = []
+      fixture.componentRef.setInput('services', [])
 
       fixture.detectChanges()
 

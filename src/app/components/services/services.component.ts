@@ -42,7 +42,7 @@ export type ServiceNew = {
   ],
 })
 export class ServicesComponent implements OnInit, OnDestroy {
-  services = signal<ServiceNew[]>([])
+  readonly services = signal<ServiceNew[]>([])
 
   readonly subscription = new Subscription()
 
@@ -121,8 +121,6 @@ export class ServicesComponent implements OnInit, OnDestroy {
 
   editService(service: ServiceNew): void {
     const dialog = this.dialog.open(CreateServiceComponent, { width: '500px', data: service })
-
-    dialog.componentInstance.edit = true
 
     dialog
       .afterClosed()
