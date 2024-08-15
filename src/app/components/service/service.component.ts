@@ -23,7 +23,7 @@ import {
   Message_Status,
   Service,
   Translation,
-} from '@buf/expectdigital_translate-agent.bufbuild_es/translate/v1/translate_pb'
+} from '@buf/expect_translate-agent.bufbuild_es/translate/v1/translate_pb'
 import { BehaviorSubject, combineLatest, filter, shareReplay, switchMap } from 'rxjs'
 import { TranslateClientService } from 'src/app/services/translate-client.service'
 import { MessagesComponent, SaveEvent } from '../messages/messages.component'
