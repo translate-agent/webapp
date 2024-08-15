@@ -19,6 +19,4 @@ export class ServicesListComponent {
   readonly delete = output<ServiceNew>()
   readonly edit = output<ServiceNew>()
   readonly create = output()
-
-  readonly languageNames = new Intl.DisplayNames(['en'], { type: 'language' })
 }

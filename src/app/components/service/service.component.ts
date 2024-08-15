@@ -100,7 +100,7 @@ export class ServiceComponent {
     ),
   )
 
-  readonly languageNames = new Intl.DisplayNames(['en'], { type: 'language' })
+  readonly languageName = new Intl.DisplayNames(['en'], { type: 'language' }).of
 
   receivedData = signal(0)
 

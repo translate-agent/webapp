@@ -54,8 +54,6 @@ export class MessagesComponent implements OnInit, AfterViewInit {
 
   private changes = false
 
-  readonly languageNames = new Intl.DisplayNames(['en'], { type: 'language' })
-
   ngOnInit(): void {
     hljs.registerLanguage('messageformat2', messageFormat2)
   }
