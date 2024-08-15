@@ -7,8 +7,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar'
 import { MatToolbarModule } from '@angular/material/toolbar'
 import { By, Title } from '@angular/platform-browser'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
-import { RouterTestingModule } from '@angular/router/testing'
-import { ListServicesResponse, Service } from '@buf/expect_translate-agent.bufbuild_es/translate/v1/translate_pb'
+import { RouterModule } from '@angular/router'
+import { ListServicesResponse, Service } from '@buf/expectdigital_translate-agent.bufbuild_es/translate/v1/translate_pb'
 import { Empty } from '@bufbuild/protobuf'
 import { of, throwError } from 'rxjs'
 import { TranslateClientService } from 'src/app/services/translate-client.service'
@@ -23,7 +23,7 @@ export const mockServices: ServiceNew[] = [
   { id: '2', name: 'test2' },
 ]
 
-export const spy = jasmine.createSpyObj('TranslateClientService', [
+const spy = jasmine.createSpyObj<TranslateClientService>('TranslateClientService', [
   'listServices',
   'deleteService',
   'updateService',
@@ -36,6 +36,10 @@ export const spy = jasmine.createSpyObj('TranslateClientService', [
   'downloadTranslationFile',
 ])
 
+spy.listTranslations.and.returnValue(of([]))
+
+export { spy }
+
 describe('ServicesComponent', () => {
   let component: ServicesComponent
   let fixture: ComponentFixture<ServicesComponent>
@@ -46,16 +50,16 @@ describe('ServicesComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        ServicesComponent,
-        RouterTestingModule,
-        MatToolbarModule,
-        MatIconModule,
-        ServicesListComponent,
+        CreateServiceComponent,
         DialogDeleteComponent,
         MatDialogModule,
-        NoopAnimationsModule,
+        MatIconModule,
         MatSnackBarModule,
-        CreateServiceComponent,
+        MatToolbarModule,
+        NoopAnimationsModule,
+        RouterModule.forRoot([]),
+        ServicesComponent,
+        ServicesListComponent,
       ],
       providers: [
         Title,

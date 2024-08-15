@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core'
+import { Component, input, output } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
 import { MatListModule } from '@angular/material/list'
@@ -14,10 +14,11 @@ import { ServiceNew } from '../services/services.component'
   styleUrl: './services-list.component.scss',
 })
 export class ServicesListComponent {
-  @Input({ required: true }) services!: ServiceNew[]
-  @Output() delete = new EventEmitter<ServiceNew>()
-  @Output() edit = new EventEmitter<ServiceNew>()
-  @Output() create = new EventEmitter<string>()
+  readonly services = input.required<ServiceNew[]>()
+
+  readonly delete = output<ServiceNew>()
+  readonly edit = output<ServiceNew>()
+  readonly create = output()
 
   readonly languageNames = new Intl.DisplayNames(['en'], { type: 'language' })
 }

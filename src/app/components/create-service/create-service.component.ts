@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common'
-import { Component, Inject, Input } from '@angular/core'
+import { Component, Inject } from '@angular/core'
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog'
@@ -25,10 +25,8 @@ import { Service } from '@buf/expect_translate-agent.bufbuild_es/translate/v1/tr
   ],
 })
 export class CreateServiceComponent {
-  @Input() edit = false
-
   readonly form = this.fb.nonNullable.group({
-    serviceName: [this.data ? this.data.name : '', Validators.required],
+    serviceName: [this.data?.name || '', Validators.required],
   })
 
   constructor(

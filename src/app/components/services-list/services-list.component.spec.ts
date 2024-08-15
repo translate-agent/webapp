@@ -7,8 +7,7 @@ import { MatMenuModule } from '@angular/material/menu'
 import { MatMenuHarness, MatMenuItemHarness } from '@angular/material/menu/testing'
 import { By } from '@angular/platform-browser'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
-import { RouterTestingModule } from '@angular/router/testing'
-import { first } from 'rxjs'
+import { RouterModule } from '@angular/router'
 import { ServiceNew } from '../services/services.component'
 import { mockServices } from '../services/services.component.spec'
 import { ServicesListComponent } from './services-list.component'
@@ -21,25 +20,25 @@ describe('ServicesListComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        ServicesListComponent,
-        RouterTestingModule,
-        MatMenuModule,
-        MatIconModule,
-        NoopAnimationsModule,
         MatButtonModule,
+        MatIconModule,
+        MatMenuModule,
+        NoopAnimationsModule,
+        RouterModule.forRoot([]),
+        ServicesListComponent,
       ],
     }).compileComponents()
 
     fixture = TestBed.createComponent(ServicesListComponent)
     component = fixture.componentInstance
     loader = TestbedHarnessEnvironment.loader(fixture)
-    component.services = mockServices
+    fixture.componentRef.setInput('services', mockServices)
 
     fixture.detectChanges()
   })
 
   it('should create', () => {
-    expect(component).toBeTruthy()
+    expect(fixture.componentInstance).toBeTruthy()
   })
 
   it('should render 2 menu items', async () => {
@@ -63,8 +62,7 @@ describe('ServicesListComponent', () => {
     })
 
     it('should render empty message if there are no services', () => {
-      component.services = []
-
+      fixture.componentRef.setInput('services', [])
       fixture.detectChanges()
 
       const emptyMessage = fixture.debugElement.query(By.css('.empty'))
@@ -86,7 +84,7 @@ describe('ServicesListComponent', () => {
 
       const deleteButton = await menu.getHarness(MatMenuItemHarness.with({ selector: '#delete' }))
 
-      component.delete.pipe(first()).subscribe((service: ServiceNew) => (emitedData = service))
+      component.delete.subscribe((service: ServiceNew) => (emitedData = service))
 
       await deleteButton.click()
       expect(emitedData).toEqual(mockServices[0])
@@ -100,7 +98,7 @@ describe('ServicesListComponent', () => {
       spyOn(component.edit, 'emit').and.callThrough()
 
       const editButton = await menu.getHarness(MatMenuItemHarness.with({ selector: '#edit' }))
-      component.edit.pipe(first()).subscribe((service: ServiceNew) => (emitedData = service))
+      component.edit.subscribe((service: ServiceNew) => (emitedData = service))
 
       await editButton.click()
       expect(emitedData).toEqual(mockServices[0])
@@ -108,15 +106,13 @@ describe('ServicesListComponent', () => {
     })
 
     it('should emit when create button is clicked', () => {
-      component.services = []
+      fixture.componentRef.setInput('services', [])
 
       fixture.detectChanges()
 
       spyOn(component.create, 'emit').and.callThrough()
 
       const createButton = fixture.debugElement.query(By.css('#create')).nativeElement
-
-      component.create.subscribe()
 
       createButton.click()
 
