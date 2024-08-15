@@ -7,7 +7,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import {
   DownloadTranslationFileResponse,
   Schema,
-} from '@buf/expectdigital_translate-agent.bufbuild_es/translate/v1/translate_pb'
+} from '@buf/expect_translate-agent.bufbuild_es/translate/v1/translate_pb'
 import { Empty } from '@bufbuild/protobuf'
 import { of } from 'rxjs'
 import { TranslateClientService } from 'src/app/services/translate-client.service'
