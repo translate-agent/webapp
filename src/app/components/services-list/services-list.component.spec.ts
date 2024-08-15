@@ -8,7 +8,6 @@ import { MatMenuHarness, MatMenuItemHarness } from '@angular/material/menu/testi
 import { By } from '@angular/platform-browser'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { RouterModule } from '@angular/router'
-import { first } from 'rxjs'
 import { ServiceNew } from '../services/services.component'
 import { mockServices } from '../services/services.component.spec'
 import { ServicesListComponent } from './services-list.component'
@@ -85,7 +84,7 @@ describe('ServicesListComponent', () => {
 
       const deleteButton = await menu.getHarness(MatMenuItemHarness.with({ selector: '#delete' }))
 
-      component.delete.pipe(first()).subscribe((service: ServiceNew) => (emitedData = service))
+      component.delete.subscribe((service: ServiceNew) => (emitedData = service))
 
       await deleteButton.click()
       expect(emitedData).toEqual(mockServices[0])
@@ -99,7 +98,7 @@ describe('ServicesListComponent', () => {
       spyOn(component.edit, 'emit').and.callThrough()
 
       const editButton = await menu.getHarness(MatMenuItemHarness.with({ selector: '#edit' }))
-      component.edit.pipe(first()).subscribe((service: ServiceNew) => (emitedData = service))
+      component.edit.subscribe((service: ServiceNew) => (emitedData = service))
 
       await editButton.click()
       expect(emitedData).toEqual(mockServices[0])
@@ -114,8 +113,6 @@ describe('ServicesListComponent', () => {
       spyOn(component.create, 'emit').and.callThrough()
 
       const createButton = fixture.debugElement.query(By.css('#create')).nativeElement
-
-      component.create.subscribe()
 
       createButton.click()
 
