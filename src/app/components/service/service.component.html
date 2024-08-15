@@ -75,7 +75,7 @@
                 [style.border-right]="$last ? '1px solid #cccccc' : 'none'"
                 [class.bold]="lang.original"
               >
-                {{ languageNames.of(lang.language) }}
+                {{ languageName(lang.language) }}
               </div>
               <mat-divider [vertical]="true" *ngIf="$index !== translations().length - 1"></mat-divider>
             }
