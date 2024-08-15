@@ -20,5 +20,7 @@ export class ServicesListComponent {
   readonly edit = output<ServiceNew>()
   readonly create = output()
 
-  readonly languageName = (v: string) => new Intl.DisplayNames(['en'], { type: 'language' }).of(v)
+  languageName(lang: string) {
+    return new Intl.DisplayNames(['en'], { type: 'language' }).of(lang)
+  }
 }

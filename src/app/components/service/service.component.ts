@@ -100,8 +100,6 @@ export class ServiceComponent {
     ),
   )
 
-  readonly languageName = (v: string) => new Intl.DisplayNames(['en'], { type: 'language' }).of(v)
-
   receivedData = signal(0)
 
   readonly translations$ = combineLatest({
@@ -237,5 +235,9 @@ export class ServiceComponent {
       default:
         return 'g_translated'
     }
+  }
+
+  languageName(lang: string) {
+    return new Intl.DisplayNames(['en'], { type: 'language' }).of(lang)
   }
 }
