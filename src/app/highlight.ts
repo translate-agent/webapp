@@ -39,7 +39,8 @@ name-char  = name-start / DIGIT / "-" / "."
                   / %xE000-10FFFF
   */
   // eslint-disable-next-line no-control-regex
-  const _CONTENT_CHAR = /[\x01-\x08\x0b-\x0c\x0e-\x1f\x21-\x2d\x2f-\x3f\x41-\x5b\x5d-\x7a\x7e-\u27ff\u3001-\ud7ff\ue000-\uffff]/
+  const _CONTENT_CHAR =
+    /[\x01-\x08\x0b-\x0c\x0e-\x1f\x21-\x2d\x2f-\x3f\x41-\x5b\x5d-\x7a\x7e-\u27ff\u3001-\ud7ff\ue000-\uffff]/
 
   const _QUOTED_CHAR = regex.either(_CONTENT_CHAR, '[\\s\\.@\\{\\}]')
 
