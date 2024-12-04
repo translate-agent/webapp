@@ -11,7 +11,6 @@ import { TranslateClientService } from 'src/app/services/translate-client.servic
 
 @Component({
   selector: 'app-new-language-dialog',
-  standalone: true,
   imports: [
     CommonModule,
     MatDialogModule,

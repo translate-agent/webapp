@@ -8,7 +8,6 @@ import { ServiceNew } from '../services/services.component'
 
 @Component({
   selector: 'app-services-list',
-  standalone: true,
   imports: [MatListModule, RouterLink, MatIconModule, MatMenuModule, MatButtonModule],
   templateUrl: './services-list.component.html',
   styleUrl: './services-list.component.scss',

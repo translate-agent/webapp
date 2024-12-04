@@ -22,7 +22,6 @@ export interface SaveEvent {
 
 @Component({
   selector: 'app-messages',
-  standalone: true,
   imports: [
     CommonModule,
     MatInputModule,

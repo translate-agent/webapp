@@ -12,7 +12,6 @@ import { Service } from '@buf/expect_translate-agent.bufbuild_es/translate/v1/tr
   selector: 'app-create-service',
   templateUrl: './create-service.component.html',
   styleUrl: './create-service.component.scss',
-  standalone: true,
   imports: [
     CommonModule,
     MatDialogModule,

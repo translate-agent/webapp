@@ -7,7 +7,6 @@ import { Service } from '@buf/expect_translate-agent.bufbuild_es/translate/v1/tr
 
 @Component({
   selector: 'app-dialog-delete',
-  standalone: true,
   imports: [CommonModule, MatDialogModule, MatButtonModule, MatIconModule],
   templateUrl: './dialog-delete.component.html',
   styleUrl: './dialog-delete.component.scss',

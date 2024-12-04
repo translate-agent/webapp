@@ -27,7 +27,6 @@ export type ServiceNew = {
   selector: 'app-services',
   templateUrl: './services.component.html',
   styleUrl: './services.component.scss',
-  standalone: true,
   imports: [
     CommonModule,
     MatButtonModule,

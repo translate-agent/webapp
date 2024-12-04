@@ -33,7 +33,6 @@ const schemas = {
   selector: 'app-upload-translation-file',
   templateUrl: './upload-translation-file.component.html',
   styleUrl: './upload-translation-file.component.scss',
-  standalone: true,
   imports: [
     CommonModule,
     MatDialogModule,

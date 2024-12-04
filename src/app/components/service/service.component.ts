@@ -28,7 +28,6 @@ import { BehaviorSubject, combineLatest, filter, shareReplay, switchMap } from '
 import { TranslateClientService } from 'src/app/services/translate-client.service'
 import { MessagesComponent, SaveEvent } from '../messages/messages.component'
 import { NewLanguageDialogComponent } from '../new-language-dialog/new-language-dialog.component'
-import { ServicesComponent } from '../services/services.component'
 import { UploadTranslationFileComponent } from '../upload-translation-file/upload-translation-file.component'
 
 export interface StatusOption {
@@ -42,7 +41,6 @@ export type AnimationState = 'in' | 'out'
   selector: 'app-service',
   templateUrl: './service.component.html',
   styleUrl: './service.component.scss',
-  standalone: true,
   imports: [
     CommonModule,
     MatSlideToggleModule,
@@ -60,8 +58,6 @@ export type AnimationState = 'in' | 'out'
     MatTooltipModule,
     MatToolbarModule,
     RouterModule,
-    UploadTranslationFileComponent,
-    ServicesComponent,
     MatSnackBarModule,
     MatButtonToggleModule,
     FormsModule,
