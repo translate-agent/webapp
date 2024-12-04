@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 
-import { MatDialogRef } from '@angular/material/dialog'
 import { Title } from '@angular/platform-browser'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { RouterModule } from '@angular/router'
@@ -9,14 +8,12 @@ import { of } from 'rxjs'
 import { TranslateClientService } from 'src/app/services/translate-client.service'
 import { mockListTranslationsResponse } from 'src/app/services/translate-client.service.spec'
 import { spy } from '../services/services.component.spec'
-import { UploadTranslationFileComponent } from '../upload-translation-file/upload-translation-file.component'
 import { ServiceComponent } from './service.component'
 
 describe('ServiceComponent', () => {
   let component: ServiceComponent
   let fixture: ComponentFixture<ServiceComponent>
   let serviceSpy: jasmine.SpyObj<TranslateClientService>
-  let matDialogRefSpy: jasmine.SpyObj<MatDialogRef<UploadTranslationFileComponent>>
 
   const mockResponse = new Service({ id: '1', name: 'test' })
 
@@ -29,7 +26,6 @@ describe('ServiceComponent', () => {
           provide: TranslateClientService,
           useValue: spy,
         },
-        { provide: MatDialogRef, useValue: matDialogRefSpy },
       ],
     }).compileComponents()
 
