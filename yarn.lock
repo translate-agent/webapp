@@ -2063,10 +2063,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bufbuild/protobuf@npm:^1.10.0":
-  version: 1.10.0
-  resolution: "@bufbuild/protobuf@npm:1.10.0"
-  checksum: 10c0/5487b9c2e63846d0e3bde4d025cc77ae44a22166a5d6c184df0da5581e1ab6d66dd115af0ccad814576dcd011bb1b93989fb0ac1eb4ae452979bb8b186693ba0
+"@bufbuild/protobuf@npm:^2.12.0":
+  version: 2.12.0
+  resolution: "@bufbuild/protobuf@npm:2.12.0"
+  checksum: 10c0/28959e371fd2e7c8d67d52af9e3c8f8e6770e2e116dcc5508f469ca736afa6905e216bc76183835898a5f3deb8aa2e7db47d4a0e706fba76115e9a1996893191
   languageName: node
   linkType: hard
 
@@ -2077,22 +2077,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@connectrpc/connect-web@npm:^1.4.0":
-  version: 1.4.0
-  resolution: "@connectrpc/connect-web@npm:1.4.0"
+"@connectrpc/connect-web@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "@connectrpc/connect-web@npm:2.1.1"
   peerDependencies:
-    "@bufbuild/protobuf": ^1.4.2
-    "@connectrpc/connect": 1.4.0
-  checksum: 10c0/8f636ebda5b2707416c94aff72d285972e85eba15cae57eb6126b1d0da6f9dcdc7452ab3bd5d527cd987eb527e2f5cdc453ccb43098ac20ea2e2c3604c69c366
+    "@bufbuild/protobuf": ^2.7.0
+    "@connectrpc/connect": 2.1.1
+  checksum: 10c0/cfbd2557f7f2b6acb9f72296fbecc16c09e4d02915c16cfdac3fa04a60a2d8241cde285ba050d10bd844ea75d13a70f50de7a4a8906301fdbcc26e4abad4d8e3
   languageName: node
   linkType: hard
 
-"@connectrpc/connect@npm:^1.4.0":
-  version: 1.4.0
-  resolution: "@connectrpc/connect@npm:1.4.0"
+"@connectrpc/connect@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "@connectrpc/connect@npm:2.1.1"
   peerDependencies:
-    "@bufbuild/protobuf": ^1.4.2
-  checksum: 10c0/6006e4aef6908a786ffbda6f7c9c92fe0906e031e891c7ce28de9d1b8e3feb9115d924ec6fc38131a5b9936b537594b0a828711e3e0544f760c78e010eda1ea1
+    "@bufbuild/protobuf": ^2.7.0
+  checksum: 10c0/7a9f2330c6025e09322ed75b9baf12fd4307e4c7db7a09f6523cd03b35aad86dcf119e2f5e1f5d45ab636956f3fe1dd11cc7c6953b80591fc7cac8675845d3b0
   languageName: node
   linkType: hard
 
@@ -11840,9 +11840,9 @@ __metadata:
     "@angular/router": "npm:^19.0.4"
     "@buf/expect_translate-agent.bufbuild_es": "npm:1.10.0-20240809113420-06cf27dd07a0.1"
     "@buf/expect_translate-agent.connectrpc_es": "npm:^1.4.0-20240809113420-06cf27dd07a0.3"
-    "@bufbuild/protobuf": "npm:^1.10.0"
-    "@connectrpc/connect": "npm:^1.4.0"
-    "@connectrpc/connect-web": "npm:^1.4.0"
+    "@bufbuild/protobuf": "npm:^2.12.0"
+    "@connectrpc/connect": "npm:^2.1.1"
+    "@connectrpc/connect-web": "npm:^2.1.1"
     "@types/jasmine": "npm:~6.0.0"
     "@typescript-eslint/eslint-plugin": "npm:^8.18.1"
     "@typescript-eslint/parser": "npm:^8.18.1"
