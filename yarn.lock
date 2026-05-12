@@ -3952,10 +3952,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jasmine@npm:~5.1.5":
-  version: 5.1.5
-  resolution: "@types/jasmine@npm:5.1.5"
-  checksum: 10c0/904a2a6bfe7478478ec73d502708dc4b4cc46fa554c459cee3e0be01efda96fba7d26ef8bec2f246d9163cc517407b135acabcf6f076c11aa514ed9b79bc67e5
+"@types/jasmine@npm:~6.0.0":
+  version: 6.0.0
+  resolution: "@types/jasmine@npm:6.0.0"
+  checksum: 10c0/9521bb7bd9c897ba6333478cd1c4acd68f813ea9b2ebf0f61283cc0357a9d7581c44f1798f4733ad662b3d1498449ebbb074a0e8bf96b95d6c72e9651fe7e047
   languageName: node
   linkType: hard
 
@@ -11843,7 +11843,7 @@ __metadata:
     "@bufbuild/protobuf": "npm:^1.10.0"
     "@connectrpc/connect": "npm:^1.4.0"
     "@connectrpc/connect-web": "npm:^1.4.0"
-    "@types/jasmine": "npm:~5.1.5"
+    "@types/jasmine": "npm:~6.0.0"
     "@typescript-eslint/eslint-plugin": "npm:^8.18.1"
     "@typescript-eslint/parser": "npm:^8.18.1"
     eslint: "npm:^9.17.0"
